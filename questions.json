@@ -1,5 +1,23 @@
 [
-  { "q": "Unit of Capacitance is?", "options": ["Henry", "Farad", "Tesla", "Ohm"], "correct": 1 },
-  { "q": "Which is an example of hormone releasing IUD?", "options": ["Lippes loop", "Multiload 375", "LNG-20", "Cu7"], "correct": 2 },
-  { "q": "Formula for Root Mean Square speed is?", "options": ["$$\\sqrt{3RT/M}$$", "$$\\sqrt{2RT/M}$$", "$$\\sqrt{8RT/\\pi M}$$", "Zero"], "correct": 0 }
+  { "q": "PHYSICS: Unit of Capacitance is?", "options": ["Henry", "Farad", "Tesla", "Ohm"], "correct": 1 },
+  { "q": "BIOLOGY: Which is an example of hormone releasing IUD?", "options": ["Lippes loop", "Multiload 375", "LNG-20", "Cu7"], "correct": 2 },
+  { "q": "PHYSICS: Formula for Root Mean Square speed is?", "options": ["$$\\sqrt{3RT/M}$$", "$$\\sqrt{2RT/M}$$", "$$\\sqrt{8RT/\\pi M}$$", "Zero"], "correct": 0 },
+  { "q": "CHEMISTRY: Which gas is usually filled in electric bulbs?", "options": ["Nitrogen", "Hydrogen", "Oxygen", "Argon"], "correct": 3 },
+  { "q": "BIOLOGY: The 'Powerhouse' of the cell is?", "options": ["Nucleus", "Ribosome", "Mitochondria", "Lysosome"], "correct": 2 },
+  { "q": "PHYSICS: The dimension of Planck's constant is equivalent to?", "options": ["Energy", "Linear Momentum", "Angular Momentum", "Power"], "correct": 2 },
+  { "q": "CHEMISTRY: What is the pH of pure water?", "options": ["6", "7", "8", "9"], "correct": 1 },
+  { "q": "BIOLOGY: Functional unit of inheritance is?", "options": ["Gene", "DNA", "Chromosome", "Nucleolus"], "correct": 0 },
+  { "q": "PHYSICS: Light year is a unit of?", "options": ["Time", "Distance", "Light", "Intensity"], "correct": 1 },
+  { "q": "CHEMISTRY: Which of the following is the strongest acid?", "options": ["HCl", "H2SO4", "HClO4", "HNO3"], "correct": 2 },
+  { "q": "BIOLOGY: Double fertilization is a feature of?", "options": ["Algae", "Fungi", "Angiosperms", "Gymnosperms"], "correct": 2 },
+  { "q": "PHYSICS: The resistance of an ideal Ammeter is?", "options": ["Zero", "Infinite", "1 Ohm", "High"], "correct": 0 },
+  { "q": "CHEMISTRY: Hybridization of Carbon in Ethane is?", "options": ["sp", "sp2", "sp3", "sp3d"], "correct": 2 },
+  { "q": "BIOLOGY: Which hormone is called 'Emergency Hormone'?", "options": ["Insulin", "Adrenaline", "Thyroxine", "Oxytocin"], "correct": 1 },
+  { "q": "PHYSICS: The color of light that travels fastest in glass is?", "options": ["Violet", "Red", "Green", "Yellow"], "correct": 1 },
+  { "q": "CHEMISTRY: Main component of LPG is?", "options": ["Methane", "Ethane", "Butane", "Propane"], "correct": 2 },
+  { "q": "BIOLOGY: Total number of bones in adult human body?", "options": ["200", "206", "300", "210"], "correct": 1 },
+  { "q": "PHYSICS: Unit of Magnetic Flux is?", "options": ["Tesla", "Weber", "Gauss", "Henry"], "correct": 1 },
+  { "q": "CHEMISTRY: Oxidation number of Oxygen in $$ O_2 $$ is?", "options": ["-2", "-1", "0", "+2"], "correct": 2 },
+  { "q": "BIOLOGY: 'Lac Operon' model was given by?", "options": ["Mendel", "Watson & Crick", "Jacob & Monod", "Morgan"], "correct": 2 }
 ]
+
