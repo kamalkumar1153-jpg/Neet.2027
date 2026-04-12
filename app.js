@@ -1,86 +1,37 @@
-let currentQ = 0;
-let quizData = [];
-let score = 0;
+function solveDoubt() {
+    const inputField = document.getElementById('ai-input');
+    const output = document.getElementById('ai-output');
+    const query = inputField.value.trim();
 
-// 1. Timer Logic
-function updateTimer() {
-    const target = new Date("May 3, 2026 10:00:00").getTime();
-    const now = new Date().getTime();
-    const diff = target - now;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    document.getElementById('countdown').innerText = `${days} Days to NEET 2026`;
-}
-setInterval(updateTimer, 1000);
-
-// 2. Tab Switching
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-}
-
-// 3. Swipe Card Formulas
-const formulas = [
-    {cat: "PHYSICS", val: "$$V = IR$$"},
-    {cat: "CHEMISTRY", val: "$$pH = -\\log[H^+]$$"},
-    {cat: "PHYSICS", val: "$$\\lambda = \\frac{h}{p}$$"},
-    {cat: "BIOLOGY", val: "120/80 mmHg"}
-];
-let fIdx = 0;
-function nextCard() {
-    fIdx = (fIdx + 1) % formulas.length;
-    document.getElementById('card-cat').innerText = formulas[fIdx].cat;
-    document.getElementById('card-content').innerHTML = formulas[fIdx].val;
-    MathJax.typesetPromise();
-}
-
-// 4. Mock Test Engine
-async function startTest() {
-    try {
-        const res = await fetch('questions.json');
-        quizData = await res.json();
-        document.getElementById('start-btn').style.display = 'none';
-        showQuestion();
-    } catch (e) { alert("questions.json file nahi mili!"); }
-}
-
-function showQuestion() {
-    if (currentQ < quizData.length) {
-        const q = quizData[currentQ];
-        document.getElementById('q-text').innerText = q.q;
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
-        q.options.forEach((opt, i) => {
-            container.innerHTML += `<button class="option-btn" onclick="checkAns(${i})">${opt}</button>`;
-        });
-        MathJax.typesetPromise();
-    } else {
-        finishTest();
+    if (query === "") {
+        output.innerHTML = "<span style='color: #ef4444;'>Pehle apna sawal yahan likhein!</span>";
+        return;
     }
-}
 
-function checkAns(idx) {
-    if (idx === quizData[currentQ].correct) {
-        score += 4;
-        confetti({particleCount: 50, spread: 60});
-    } else {
-        score -= 1;
-    }
-    document.getElementById('live-score').innerText = score;
-    currentQ++;
-    showQuestion();
-}
+    // AI Thinking Effect
+    output.innerHTML = "<b>AI Professor:</b> Analyzing your doubt...";
+    output.style.color = "#38bdf8";
 
-function finishTest() {
-    document.getElementById('q-text').innerText = "Test Finished! Score: " + score;
-    document.getElementById('options-container').innerHTML = `<button class="primary-btn" onclick="location.reload()">Try Again</button>`;
-}
+    setTimeout(() => {
+        // 1. Pehle app ke andar ek expert tip dikhayega
+        let tip = "NCERT Focus Tip: ";
+        if (query.toLowerCase().includes("physics")) {
+            tip += "Numericals mein hamesha units convert karein (m/s, Kg, etc).";
+        } else if (query.toLowerCase().includes("chem")) {
+            tip += "Organic reactions mein reagents aur catalysts par dhyan dein.";
+        } else {
+            tip += "Biology mein diagrams ki labeling hamesha dhyan se dekhein.";
+        }
 
-// Initialize Bars
-window.onload = () => {
-    updateTimer();
-    document.getElementById('bio-bar').style.width = "85%";
-    document.getElementById('chem-bar').style.width = "65%";
-    document.getElementById('phys-bar').style.width = "40%";
-};
+        output.innerHTML = `<b>AI Professor:</b> ${tip}<br><br>
+        <button class="primary-btn" style="background:#22c55e; color:white;" 
+        onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(query + ' NEET NCERT solution')}', '_blank')">
+        🔍 View Video & Text Solution
+        </button>`;
+        
+        // Celebration effect
+        confetti({ particleCount: 40, spread: 50, origin: { y: 0.8 } });
+    }, 1200);
+}
 
 
