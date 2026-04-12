@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET Pro Terminal v3</title>
+    <title>NEET 2026 PRO Tracker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -12,43 +12,49 @@
 <body>
     <div class="app-container">
         <header>
-            <h1>NEET 2026 PRO</h1>
-            <div id="countdown" class="timer-badge">Loading Timer...</div>
+            <h1 id="main-title">NEET 2026 Tracker</h1>
+            <div id="countdown" class="timer-badge">Loading...</div>
         </header>
 
-        <div class="card progress-card">
-            <h3>Subject Progress</h3>
-            <div class="p-group"><label>Bio</label><div class="b-cont"><div id="bio-bar" class="bar"></div></div></div>
-            <div class="p-group"><label>Chem</label><div class="b-cont"><div id="chem-bar" class="bar"></div></div></div>
-            <div class="p-group"><label>Phys</label><div class="b-cont"><div id="phys-bar" class="bar"></div></div></div>
+        <div class="tabs">
+            <button onclick="switchTab('dash')">Dashboard</button>
+            <button onclick="switchTab('test')">Mock Test</button>
+            <button onclick="switchTab('ai')">AI Solver</button>
         </div>
 
-        <nav class="tabs">
-            <button onclick="switchTab('rev')">Revision</button>
-            <button onclick="switchTab('test')">Mock Test</button>
-            <button onclick="switchTab('ai')">AI Professor</button>
-        </nav>
-
-        <section id="rev" class="tab-content active">
+        <section id="dash" class="tab-content active">
+            <div class="card">
+                <h3>Preparation Streak: 🔥 <span id="streak">0</span> Days</h3>
+                <p>Target Exam: 3 May 2026</p>
+            </div>
+            <div class="card">
+                <h3>Subject Progress</h3>
+                <div class="p-group"><label>Bio</label><div class="b-cont"><div id="bio-bar" class="bar"></div></div></div>
+                <div class="p-group"><label>Chem</label><div class="b-cont"><div id="chem-bar" class="bar"></div></div></div>
+                <div class="p-group"><label>Phys</label><div class="b-cont"><div id="phys-bar" class="bar"></div></div></div>
+            </div>
             <div class="card swipe-card" onclick="nextCard()">
-                <small id="card-cat">PHYSICS</small>
+                <small id="card-cat">PHYSICS FORMULA</small>
                 <div id="card-content">$$E = mc^2$$</div>
-                <p id="card-desc">Tap to flip next</p>
+                <p class="hint">Tap for Next</p>
             </div>
         </section>
 
         <section id="test" class="tab-content">
             <div class="card quiz-card">
-                <h3 id="q-text">Ready for Mock Test?</h3>
+                <div id="quiz-header">
+                    <h3 id="q-text">Ready for the Challenge?</h3>
+                    <div id="score-box">Score: <span id="live-score">0</span></div>
+                </div>
                 <div id="options-container"></div>
-                <button class="primary-btn" onclick="startTest()">Start Test</button>
+                <button id="start-btn" class="primary-btn" onclick="startTest()">Start Mock Test</button>
             </div>
         </section>
 
         <section id="ai" class="tab-content">
             <div class="card">
-                <textarea id="ai-input" placeholder="Enter Numerical or Concept..."></textarea>
-                <button class="primary-btn" onclick="solveDoubt()">Get Step-by-Step Solution</button>
+                <textarea id="ai-input" placeholder="Type or paste your doubt here..."></textarea>
+                <button class="primary-btn" onclick="solveDoubt()">Ask AI Professor</button>
                 <div id="ai-output" class="output-box"></div>
             </div>
         </section>
@@ -56,4 +62,5 @@
     <script src="app.js"></script>
 </body>
 </html>
+
 
