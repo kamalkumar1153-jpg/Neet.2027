@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEET Pro 2026 | Prep Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>NEET 2026 Tracker</h1>
+            <div id="countdown" class="timer-badge">Loading Timer...</div>
+        </header>
+
+        <nav class="tabs">
+            <button onclick="switchTab('dashboard')">Dashboard</button>
+            <button onclick="switchTab('test')">Mock Test</button>
+            <button onclick="switchTab('ai')">AI Solver</button>
+        </nav>
+
+        <section id="dashboard" class="tab-content active">
+            <div class="card">
+                <h3>Preparation Streak: <span id="streak">🔥 0 Days</span></h3>
+                <p>Target Exam: 3 May 2026</p>
+            </div>
+            <div class="card">
+                <h3>Quick Formula (Physics)</h3>
+                <p id="formula-display">$E = mc^2$</p>
+            </div>
+        </section>
+
+        <section id="test" class="tab-content">
+            <div id="quiz-container" class="card">
+                <h3 id="q-text">Press Start to Begin</h3>
+                <div id="options-container"></div>
+                <button id="start-btn" onclick="startQuiz()">Start High-Yield Test</button>
+            </div>
+        </section>
+
+        <section id="ai" class="tab-content">
+            <div class="card">
+                <textarea id="ai-input" placeholder="Type your doubt here (Physics/Chemistry/Bio)..."></textarea>
+                <button onclick="askAI()">Solve with AI</button>
+                <div id="ai-output"></div>
+            </div>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
