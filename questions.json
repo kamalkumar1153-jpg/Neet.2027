@@ -1,12 +1,5 @@
 [
-  {
-    "q": "What is the unit of Electric Flux?",
-    "options": ["Weber", "Newton/Coulomb", "Volt-meter", "Tesla"],
-    "correct": 2
-  },
-  {
-    "q": "Which cell organelle is known as Powerhouse of cell?",
-    "options": ["Ribosome", "Mitochondria", "Nucleus", "Golgi Body"],
-    "correct": 1
-  }
+  { "q": "Unit of Capacitance is?", "options": ["Henry", "Farad", "Tesla", "Ohm"], "correct": 1 },
+  { "q": "Which is an example of hormone releasing IUD?", "options": ["Lippes loop", "Multiload 375", "LNG-20", "Cu7"], "correct": 2 },
+  { "q": "Formula for Root Mean Square speed is?", "options": ["$$\\sqrt{3RT/M}$$", "$$\\sqrt{2RT/M}$$", "$$\\sqrt{8RT/\\pi M}$$", "Zero"], "correct": 0 }
 ]
