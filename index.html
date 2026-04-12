@@ -3,64 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET 2026 PRO Tracker</title>
+    <title>NEET 2026 PRO</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="app-container">
         <header>
-            <h1 id="main-title">NEET 2026 Tracker</h1>
-            <div id="countdown" class="timer-badge">Loading...</div>
+            <h1>NEET 2026 Tracker</h1>
+            <div id="countdown" class="timer-badge">Connecting...</div>
         </header>
 
-        <div class="tabs">
+        <nav class="tabs">
             <button onclick="switchTab('dash')">Dashboard</button>
             <button onclick="switchTab('test')">Mock Test</button>
-            <button onclick="switchTab('ai')">AI Solver</button>
-        </div>
+            <button onclick="switchTab('ai')">AI Search</button>
+        </nav>
 
         <section id="dash" class="tab-content active">
             <div class="card">
-                <h3>Preparation Streak: 🔥 <span id="streak">0</span> Days</h3>
-                <p>Target Exam: 3 May 2026</p>
+                <h3>Preparation Streak: 🔥 <span id="streak">1</span> Days</h3>
             </div>
             <div class="card">
                 <h3>Subject Progress</h3>
-                <div class="p-group"><label>Bio</label><div class="b-cont"><div id="bio-bar" class="bar"></div></div></div>
-                <div class="p-group"><label>Chem</label><div class="b-cont"><div id="chem-bar" class="bar"></div></div></div>
-                <div class="p-group"><label>Phys</label><div class="b-cont"><div id="phys-bar" class="bar"></div></div></div>
+                <div class="p-group"><label>Bio</label><div class="b-cont"><div id="bio-bar" class="bar" style="width:85%"></div></div></div>
+                <div class="p-group"><label>Chem</label><div class="b-cont"><div id="chem-bar" class="bar" style="width:65%"></div></div></div>
+                <div class="p-group"><label>Phys</label><div class="b-cont"><div id="phys-bar" class="bar" style="width:45%"></div></div></div>
             </div>
             <div class="card swipe-card" onclick="nextCard()">
                 <small id="card-cat">PHYSICS FORMULA</small>
-                <div id="card-content">$$E = mc^2$$</div>
-                <p class="hint">Tap for Next</p>
+                <div id="card-content">$$V = IR$$</div>
+                <p style="font-size: 11px; color: #38bdf8;">Tap to Next Formula</p>
             </div>
         </section>
 
         <section id="test" class="tab-content">
-            <div class="card quiz-card">
-                <div id="quiz-header">
-                    <h3 id="q-text">Ready for the Challenge?</h3>
-                    <div id="score-box">Score: <span id="live-score">0</span></div>
+            <div class="card">
+                <div style="display:flex; justify-content: space-between; align-items:center;">
+                    <h3 id="q-text">NEET Mock Test</h3>
+                    <div id="score-box" style="background:#0f172a; padding:5px 10px; border-radius:5px;">Score: <span id="live-score">0</span></div>
                 </div>
+                <hr style="border:0.5px solid #334155; margin:15px 0;">
                 <div id="options-container"></div>
-                <button id="start-btn" class="primary-btn" onclick="startTest()">Start Mock Test</button>
+                <button id="start-btn" class="primary-btn" onclick="startTest()">🚀 Start 150+ Questions</button>
             </div>
         </section>
 
         <section id="ai" class="tab-content">
-            <div class="card">
-                <textarea id="ai-input" placeholder="Type or paste your doubt here..."></textarea>
-                <button class="primary-btn" onclick="solveDoubt()">Ask AI Professor</button>
-                <div id="ai-output" class="output-box"></div>
+            <div class="card" style="text-align: center;">
+                <h3 style="color: #38bdf8; margin-bottom: 10px;">🔍 Smart NCERT Search</h3>
+                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">Type any question to find Video & Text solutions</p>
+                <input type="text" id="ai-input" placeholder="Paste your doubt here..." 
+                       style="width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #38bdf8; background: #0f172a; color: white; margin-bottom: 15px; box-sizing: border-box; font-size: 16px;">
+                <button class="primary-btn" onclick="solveDoubt()" style="background: #22c55e; color: white;">Search on Google</button>
             </div>
         </section>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
+
 
 
