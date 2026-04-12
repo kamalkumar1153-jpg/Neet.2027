@@ -2,39 +2,37 @@ let currentQ = 0;
 let score = 0;
 let quizData = [];
 
-// 1. App Initialize
+// 1. Initial Load
 window.onload = () => {
     updateTimer();
     setInterval(updateTimer, 60000);
-    // Bars manually set kar rahe hain taaki khali na dikhein
+    // Bars initialization
     document.getElementById('bio-bar').style.width = "85%";
     document.getElementById('chem-bar').style.width = "65%";
     document.getElementById('phys-bar').style.width = "45%";
 };
 
-// 2. Timer Logic
+// 2. Timer
 function updateTimer() {
     const target = new Date("May 3, 2026").getTime();
     const diff = target - new Date().getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const timer = document.getElementById('countdown');
-    if(timer) timer.innerText = days > 0 ? `${days} Days to NEET 2026` : "Exam Day!";
+    if(timer) timer.innerText = days > 0 ? `${days} Days to NEET 2026` : "Exam Today!";
 }
 
-// 3. Mock Test Logic (With Path Fix)
+// 3. Mock Test (Force Fetch Logic)
 async function startTest() {
     const qText = document.getElementById('q-text');
     const startBtn = document.getElementById('start-btn');
     
-    qText.innerText = "Questions load ho rahe hain...";
+    qText.innerText = "Loading questions...";
 
     try {
-        // './' lagane se GitHub Pages ko current folder mein file mil jayegi
-        const response = await fetch('./questions.json');
+        // 'v=' ke sath random number dalne se browser hamesha fresh file lega
+        const response = await fetch('./questions.json?v=' + Math.random());
         
-        if (!response.ok) {
-            throw new Error("File nahi mili");
-        }
+        if (!response.ok) throw new Error("File not found");
 
         quizData = await response.json();
         
@@ -43,9 +41,8 @@ async function startTest() {
             showQuestion();
         }
     } catch (error) {
-        console.error(error);
-        qText.innerText = "Error: questions.json nahi mili!";
-        alert("Galti: GitHub par file ka naam 'questions.json' (lowercase) hona chahiye.");
+        qText.innerText = "Error loading questions.json";
+        alert("Galti: GitHub par file ka naam 'questions.json' check karein.");
     }
 }
 
@@ -68,42 +65,30 @@ function showQuestion() {
 
         if (window.MathJax) MathJax.typesetPromise();
     } else {
-        qText.innerText = "Test Complete! Score: " + score;
-        container.innerHTML = `<button class="primary-btn" onclick="location.reload()">Restart Test</button>`;
+        qText.innerText = "Complete! Score: " + score;
+        container.innerHTML = `<button class="primary-btn" onclick="location.reload()">Restart</button>`;
         confetti({ particleCount: 150, spread: 70 });
     }
 }
 
 function checkAns(idx) {
-    if (idx === quizData[currentQ].correct) {
-        score += 4;
-    } else {
-        score -= 1;
-    }
+    if (idx === quizData[currentQ].correct) { score += 4; } else { score -= 1; }
     document.getElementById('live-score').innerText = score;
     currentQ++;
     showQuestion();
 }
 
-// 4. Smart Google Search
+// 4. Search & Tabs
 function solveDoubt() {
     const query = document.getElementById('ai-input').value.trim();
     if(!query) return alert("Sawal likhein!");
     window.open(`https://www.google.com/search?q=${encodeURIComponent(query + " NEET solution")}`, '_blank');
 }
 
-// 5. Tabs & Swipe
 function switchTab(id) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
 
-let fIdx = 0;
-const formulas = [{v:"$$V=IR$$"}, {v:"$$F=ma$$"}, {v:"$$E=mc^2$$"}];
-function nextCard() {
-    fIdx = (fIdx + 1) % formulas.length;
-    document.getElementById('card-content').innerHTML = formulas[fIdx].v;
-    if(window.MathJax) MathJax.typesetPromise();
-}
 
 
