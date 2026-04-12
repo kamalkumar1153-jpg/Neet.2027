@@ -1,50 +1,51 @@
 let currentQ = 0;
 let score = 0;
-let quizData = []; // Khali array, jo file se bharega
+let quizData = [];
 
-// 1. App Load Setup
+// 1. App Initialize
 window.onload = () => {
     updateTimer();
     setInterval(updateTimer, 60000);
-    // Progress bars set karein
+    // Bars manually set kar rahe hain taaki khali na dikhein
     document.getElementById('bio-bar').style.width = "85%";
     document.getElementById('chem-bar').style.width = "65%";
-    document.getElementById('phys-bar').style.width = "40%";
+    document.getElementById('phys-bar').style.width = "45%";
 };
 
-// 2. Timer
+// 2. Timer Logic
 function updateTimer() {
     const target = new Date("May 3, 2026").getTime();
     const diff = target - new Date().getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const timer = document.getElementById('countdown');
-    if(timer) timer.innerText = `${days} Days to NEET 2026`;
+    if(timer) timer.innerText = days > 0 ? `${days} Days to NEET 2026` : "Exam Day!";
 }
 
-// 3. Mock Test Logic (Fix: Loading from File)
+// 3. Mock Test Logic (With Path Fix)
 async function startTest() {
-    const startBtn = document.getElementById('start-btn');
     const qText = document.getElementById('q-text');
+    const startBtn = document.getElementById('start-btn');
     
-    qText.innerText = "Loading Questions...";
-    
+    qText.innerText = "Questions load ho rahe hain...";
+
     try {
-        // Aapki GitHub file ko fetch karega
-        const response = await fetch('questions.json');
-        if (!response.ok) throw new Error("File not found");
+        // './' lagane se GitHub Pages ko current folder mein file mil jayegi
+        const response = await fetch('./questions.json');
         
+        if (!response.ok) {
+            throw new Error("File nahi mili");
+        }
+
         quizData = await response.json();
         
         if (quizData.length > 0) {
             startBtn.style.display = 'none';
             showQuestion();
-        } else {
-            qText.innerText = "questions.json khali hai!";
         }
     } catch (error) {
         console.error(error);
-        qText.innerText = "Error: questions.json file nahi mili!";
-        alert("Check karein ki questions.json file GitHub par hai ya nahi.");
+        qText.innerText = "Error: questions.json nahi mili!";
+        alert("Galti: GitHub par file ka naam 'questions.json' (lowercase) hona chahiye.");
     }
 }
 
@@ -67,7 +68,7 @@ function showQuestion() {
 
         if (window.MathJax) MathJax.typesetPromise();
     } else {
-        qText.innerText = "Final Score: " + score;
+        qText.innerText = "Test Complete! Score: " + score;
         container.innerHTML = `<button class="primary-btn" onclick="location.reload()">Restart Test</button>`;
         confetti({ particleCount: 150, spread: 70 });
     }
@@ -104,4 +105,5 @@ function nextCard() {
     document.getElementById('card-content').innerHTML = formulas[fIdx].v;
     if(window.MathJax) MathJax.typesetPromise();
 }
+
 
