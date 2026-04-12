@@ -49,7 +49,7 @@
   { "q": "CHEM: Number of groups in Periodic Table?", "options": ["7", "18", "9", "32"], "correct": 1 },
   { "q": "BIO: Hormone that lowers blood sugar?", "options": ["Glucagon", "Insulin", "Adrenaline", "Thyroxine"], "correct": 1 },
   { "q": "PHYSICS: Device to measure electric current?", "options": ["Voltmeter", "Ammeter", "Galvanometer", "Ohmeter"], "correct": 1 }
-],
+]
 [
   { "q": "BIO: Powerhouse of the cell is?", "options": ["Nucleus", "Ribosome", "Mitochondria", "Lysosome"], "correct": 2 },
   { "q": "PHYSICS: Unit of Capacitance is?", "options": ["Henry", "Farad", "Tesla", "Ohm"], "correct": 1 },
@@ -101,7 +101,7 @@
   { "q": "CHEM: Number of groups in Periodic Table?", "options": ["7", "18", "9", "32"], "correct": 1 },
   { "q": "BIO: Hormone that lowers blood sugar?", "options": ["Glucagon", "Insulin", "Adrenaline", "Thyroxine"], "correct": 1 },
   { "q": "PHYSICS: Device to measure electric current?", "options": ["Voltmeter", "Ammeter", "Galvanometer", "Ohmeter"], "correct": 1 }
-],[
+][
   { "q": "BIO: Powerhouse of the cell is?", "options": ["Nucleus", "Ribosome", "Mitochondria", "Lysosome"], "correct": 2 },
   { "q": "PHYSICS: Unit of Capacitance is?", "options": ["Henry", "Farad", "Tesla", "Ohm"], "correct": 1 },
   { "q": "CHEM: What is the pH of pure water?", "options": ["6", "7", "8", "9"], "correct": 1 },
