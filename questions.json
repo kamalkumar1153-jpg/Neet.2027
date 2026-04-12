@@ -1,0 +1,12 @@
+[
+  {
+    "q": "What is the unit of Electric Flux?",
+    "options": ["Weber", "Newton/Coulomb", "Volt-meter", "Tesla"],
+    "correct": 2
+  },
+  {
+    "q": "Which cell organelle is known as Powerhouse of cell?",
+    "options": ["Ribosome", "Mitochondria", "Nucleus", "Golgi Body"],
+    "correct": 1
+  }
+]
