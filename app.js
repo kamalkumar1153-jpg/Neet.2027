@@ -42,7 +42,7 @@ async function startTest() {
         }
     } catch (error) {
         qText.innerText = "Error loading questions.json";
-        alert("Galti: GitHub par file ka naam 'questions.json' check karein.");
+        alert("Galti: GitHub par file ka naam 'questions.json check karein.");
     }
 }
 
