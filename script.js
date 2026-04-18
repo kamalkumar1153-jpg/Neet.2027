@@ -1,9 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// --- 1. FIREBASE CONFIG ---
+// --- 1. AAPKA ASLI FIREBASE CONFIG ---
 const firebaseConfig = {
-    apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
+  apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
   authDomain: "neet-2027-9792f.firebaseapp.com",
   databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
   projectId: "neet-2027-9792f",
@@ -14,14 +14,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-Note: This option uses the modular JavaScript SDK, which provides reduced SDK size.
-
-Learn more about Firebase for web: Get Started, Web SDK API Reference, Samples
-
-
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -44,33 +36,31 @@ updateTimer();
 
 // --- 4. FETCH DATA FROM FIREBASE ---
 const questionsRef = ref(db, 'rbse_questions');
+
 onValue(questionsRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
-        // Object ko Array mein sahi tarike se badalna
+        // Firebase object ko array mein badalna
         allQuestions = Object.values(data);
         const savedSub = localStorage.getItem('rbse_last_sub') || 'All';
-        window.filterQuestions(savedSub); 
+        window.filterQuestions(savedSub);
     } else {
-        const qText = document.getElementById("question-text");
-        if(qText) qText.innerText = "Database khali hai! Admin panel se sawal dalein.";
+        document.getElementById("question-text").innerText = "Database khali hai! Admin panel se sawal dalein.";
     }
 }, (error) => {
-    console.error("Firebase Error:", error);
+    console.error("Firebase Connection Error:", error);
+    document.getElementById("question-text").innerText = "Connection Error! Check Rules.";
 });
 
 // --- 5. FILTER LOGIC ---
 window.filterQuestions = function(subject, btnElement) {
-    // UI Update
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     
-    // Agar btnElement manually nahi pass kiya, toh button dhoondein
     if(!btnElement) {
         btnElement = document.querySelector(`button[onclick*="'${subject}'"]`);
     }
     if(btnElement) btnElement.classList.add('active');
 
-    // Filtering
     if (subject === 'All') {
         filteredQuestions = allQuestions;
         document.getElementById("subject-label").innerText = "All Subjects";
@@ -91,8 +81,9 @@ function displayQuestion() {
     const qCounter = document.getElementById("q-counter");
 
     if (!filteredQuestions || filteredQuestions.length === 0) {
-        if(questionText) questionText.innerText = "Is subject mein sawal nahi hain.";
-        if(optionsContainer) optionsContainer.innerHTML = "";
+        questionText.innerText = "Is subject mein koi sawal nahi hai.";
+        optionsContainer.innerHTML = "";
+        qCounter.innerText = "Q: 0 / 0";
         return;
     }
 
@@ -131,25 +122,19 @@ function checkAnswer(btn, selected, correct) {
 }
 
 // --- 8. NAVIGATION ---
-const nextBtn = document.getElementById("next-btn");
-const prevBtn = document.getElementById("prev-btn");
+document.getElementById("next-btn").onclick = () => {
+    if (currentQuestionIndex < filteredQuestions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion();
+    }
+};
 
-if(nextBtn) {
-    nextBtn.onclick = () => {
-        if (currentQuestionIndex < filteredQuestions.length - 1) {
-            currentQuestionIndex++;
-            displayQuestion();
-        }
-    };
-}
+document.getElementById("prev-btn").onclick = () => {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayQuestion();
+    }
+};
 
-if(prevBtn) {
-    prevBtn.onclick = () => {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            displayQuestion();
-        }
-    };
-}
 
 
