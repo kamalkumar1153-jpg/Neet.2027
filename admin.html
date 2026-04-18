@@ -1,47 +1,120 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBSE Admin Panel - Add Questions</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; display: flex; justify-content: center; }
+        .admin-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #2c3e50; }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 0.9rem; }
+        select, input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 5px; margin-top: 20px; font-weight: bold; cursor: pointer; }
+        button:active { background: #219150; }
+        .status { text-align: center; margin-top: 10px; font-size: 0.8rem; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+<div class="admin-box">
+    <h2>Add New Question</h2>
+    
+    <label>Subject Select Karein:</label>
+    <select id="sub">
+        <option value="Physics">Physics</option>
+        <option value="Chemistry">Chemistry</option>
+        <option value="Biology">Biology</option>
+    </select>
+
+    <label>Sawal (Question):</label>
+    <textarea id="ques" rows="3" placeholder="Yahan sawal likhein..."></textarea>
+
+    <label>Option 1:</label>
+    <input type="text" id="o1" placeholder="Pehla option">
+    
+    <label>Option 2:</label>
+    <input type="text" id="o2" placeholder="Dusra option">
+    
+    <label>Option 3:</label>
+    <input type="text" id="o3" placeholder="Tisra option">
+    
+    <label>Option 4:</label>
+    <input type="text" id="o4" placeholder="Chautha option">
+
+    <label>Sahi Jawab (Correct Answer):</label>
+    <input type="text" id="ans" placeholder="Sahi option yahan likhein (Exact match)">
+
+    <button onclick="uploadData()">Firebase mein Save Karein</button>
+    <div id="status" class="status">Ready to upload...</div>
+</div>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // APNA ASLI CONFIG YAHAN DALEIN
-  const firebaseConfig = {
-    apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
-  authDomain: "neet-2027-9792f.firebaseapp.com",
-  databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
-  projectId: "neet-2027-9792f",
-  storageBucket: "neet-2027-9792f.firebasestorage.app",
-  messagingSenderId: "946709283656",
-  appId: "1:946709283656:web:51a13d83e8f0a546b5697d",
-  measurementId: "G-YNHK9L90SQ"
-};
+    // --- AAPKA ASLI CONFIG ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
+        authDomain: "neet-2027-9792f.firebaseapp.com",
+        databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
+        projectId: "neet-2027-9792f",
+        storageBucket: "neet-2027-9792f.firebasestorage.app",
+        messagingSenderId: "946709283656",
+        appId: "1:946709283656:web:51a13d83e8f0a546b5697d"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-  
+    window.uploadData = function() {
+        const statusDiv = document.getElementById('status');
+        const sub = document.getElementById('sub').value;
+        const ques = document.getElementById('ques').value;
+        const o1 = document.getElementById('o1').value;
+        const o2 = document.getElementById('o2').value;
+        const o3 = document.getElementById('o3').value;
+        const o4 = document.getElementById('o4').value;
+        const ans = document.getElementById('ans').value;
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+        if(!ques || !o1 || !ans) {
+            alert("Kripya saari details bharein!");
+            return;
+        }
 
-  window.uploadData = function() {
-      const data = {
-          subject: document.getElementById('sub').value,
-          question: document.getElementById('ques').value,
-          options: [
-              document.getElementById('o1').value,
-              document.getElementById('o2').value,
-              document.getElementById('o3').value,
-              document.getElementById('o4').value
-          ],
-          answer: document.getElementById('ans').value
-      };
+        statusDiv.innerText = "Uploading...";
 
-      const questionsRef = ref(db, 'rbse_questions');
-      const newQuestionRef = push(questionsRef);
-      
-      set(newQuestionRef, data)
-          .then(() => alert("Sawal Save Ho Gaya!"))
-          .catch((err) => alert("Error: " + err.message));
-  };
+        const data = {
+            subject: sub,
+            question: ques,
+            options: [o1, o2, o3, o4],
+            answer: ans,
+            timestamp: Date.now()
+        };
+
+        const questionsRef = ref(db, 'rbse_questions');
+        const newQuestionRef = push(questionsRef);
+        
+        set(newQuestionRef, data)
+            .then(() => {
+                statusDiv.innerText = "Success! Sawal Save Ho Gaya.";
+                alert("Sawal Save Ho Gaya!");
+                // Form clear karna
+                document.getElementById('ques').value = "";
+                document.getElementById('o1').value = "";
+                document.getElementById('o2').value = "";
+                document.getElementById('o3').value = "";
+                document.getElementById('o4').value = "";
+                document.getElementById('ans').value = "";
+            })
+            .catch((err) => {
+                statusDiv.innerText = "Error: " + err.message;
+                alert("Galti hui: " + err.message);
+            });
+    };
 </script>
+
+</body>
+</html>
+
 
