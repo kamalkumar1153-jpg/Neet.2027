@@ -51,14 +51,24 @@
 
   // --- APNA FIREBASE CONFIG YAHAN REPLACE KAREIN ---
   const firebaseConfig = {
-  apiKey: "AIzaSy..." , // Ye aapko Firebase Project Settings (Gear icon) mein milega
+  apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
   authDomain: "neet-2027-9792f.firebaseapp.com",
   databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
   projectId: "neet-2027-9792f",
-  storageBucket: "neet-2027-9792f.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID", // Ye settings mein milega
-  appId: "YOUR_APP_ID" // Ye settings mein milega
+  storageBucket: "neet-2027-9792f.firebasestorage.app",
+  messagingSenderId: "946709283656",
+  appId: "1:946709283656:web:51a13d83e8f0a546b5697d",
+  measurementId: "G-YNHK9L90SQ"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+Note: This option uses the modular JavaScript SDK, which provides reduced SDK size.
+
+Learn more about Firebase for web: Get Started, Web SDK API Reference, Samples
+
+
     
     
 
