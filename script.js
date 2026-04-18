@@ -1,15 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// --- 1. FIREBASE CONFIG (Admin Panel wala hi use karein) ---
+// --- 1. FIREBASE CONFIG ---
 const firebaseConfig = {
-  apiKey: "AIzaSy..." , // Ye aapko Firebase Project Settings (Gear icon) mein milega
+  apiKey: "AIzaSy...", // Apni asli API Key yahan dalein
   authDomain: "neet-2027-9792f.firebaseapp.com",
   databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
   projectId: "neet-2027-9792f",
   storageBucket: "neet-2027-9792f.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID", // Ye settings mein milega
-  appId: "YOUR_APP_ID" // Ye settings mein milega
+  messagingSenderId: "YOUR_SENDER_ID", 
+  appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -26,7 +26,8 @@ function updateTimer() {
     const now = new Date().getTime();
     const diff = targetDate - now;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    document.getElementById("countdown").innerText = `${days} Din Baaki`;
+    const countdownEl = document.getElementById("countdown");
+    if(countdownEl) countdownEl.innerText = `${days} Din Baaki`;
 }
 setInterval(updateTimer, 60000);
 updateTimer();
@@ -36,22 +37,30 @@ const questionsRef = ref(db, 'rbse_questions');
 onValue(questionsRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
-        // Firebase object ko array mein convert karna
-        allQuestions = Object.keys(data).map(key => data[key]);
-        
-        // Progress load karna
+        // Object ko Array mein sahi tarike se badalna
+        allQuestions = Object.values(data);
         const savedSub = localStorage.getItem('rbse_last_sub') || 'All';
-        filterQuestions(savedSub, document.querySelector(`button[onclick*="'${savedSub}'"]`));
+        window.filterQuestions(savedSub); 
     } else {
-        document.getElementById("question-text").innerText = "Database mein koi sawal nahi mila!";
+        const qText = document.getElementById("question-text");
+        if(qText) qText.innerText = "Database khali hai! Admin panel se sawal dalein.";
     }
+}, (error) => {
+    console.error("Firebase Error:", error);
 });
 
 // --- 5. FILTER LOGIC ---
 window.filterQuestions = function(subject, btnElement) {
+    // UI Update
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // Agar btnElement manually nahi pass kiya, toh button dhoondein
+    if(!btnElement) {
+        btnElement = document.querySelector(`button[onclick*="'${subject}'"]`);
+    }
     if(btnElement) btnElement.classList.add('active');
 
+    // Filtering
     if (subject === 'All') {
         filteredQuestions = allQuestions;
         document.getElementById("subject-label").innerText = "All Subjects";
@@ -71,8 +80,9 @@ function displayQuestion() {
     const optionsContainer = document.getElementById("options-container");
     const qCounter = document.getElementById("q-counter");
 
-    if (filteredQuestions.length === 0) {
-        questionText.innerText = "Sawal load ho rahe hain...";
+    if (!filteredQuestions || filteredQuestions.length === 0) {
+        if(questionText) questionText.innerText = "Is subject mein sawal nahi hain.";
+        if(optionsContainer) optionsContainer.innerHTML = "";
         return;
     }
 
@@ -111,17 +121,25 @@ function checkAnswer(btn, selected, correct) {
 }
 
 // --- 8. NAVIGATION ---
-document.getElementById("next-btn").onclick = () => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-        currentQuestionIndex++;
-        displayQuestion();
-    }
-};
+const nextBtn = document.getElementById("next-btn");
+const prevBtn = document.getElementById("prev-btn");
 
-document.getElementById("prev-btn").onclick = () => {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        displayQuestion();
-    }
-};
+if(nextBtn) {
+    nextBtn.onclick = () => {
+        if (currentQuestionIndex < filteredQuestions.length - 1) {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+    };
+}
+
+if(prevBtn) {
+    prevBtn.onclick = () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            displayQuestion();
+        }
+    };
+}
+
 
