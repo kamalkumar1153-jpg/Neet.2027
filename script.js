@@ -67,7 +67,7 @@ function displayQuestion() {
         const q = filteredQuestions[currentQuestionIndex];
         questionText.innerText = q.question;
         qCounter.innerText = `Q: ${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
-        aiResult.style.display = 'none'; // Naya sawal aane par AI box chhupa do
+        if(aiResult) aiResult.style.display = 'none';
 
         optionsContainer.innerHTML = "";
         q.options.forEach(opt => {
@@ -97,35 +97,36 @@ function checkAnswer(btn, selected, correct) {
     }
 }
 
-// --- AI DOUBT SOLVER (GEMINI) ---
+// --- AI DOUBT SOLVER ---
 window.askAI = async function() {
-    const apiKey = "PASTE_YOUR_GEMINI_KEY_HERE"; // <-- Yahan apni Key dalein
+    const apiKey = "PASTE_YOUR_GEMINI_KEY_HERE"; 
     const aiResult = document.getElementById('ai-result');
     const q = filteredQuestions[currentQuestionIndex];
 
     aiResult.style.display = 'block';
-    aiResult.innerHTML = "<em>Thinking... 🤔</em>";
+    aiResult.innerHTML = "<em>AI Thinking... 🤔</em>";
 
     try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: `Explain this NEET science question in simple English and Hindi: ${q.question}. The correct answer is ${q.answer}. Explain why?` }] }]
+                contents: [{ parts: [{ text: `You are a NEET Science expert. Explain this question in simple English and Hindi. Question: ${q.question}. The correct answer is ${q.answer}. Please explain the scientific reason behind it.` }] }]
             })
         });
 
         const data = await response.json();
         const text = data.candidates[0].content.parts[0].text;
-        aiResult.innerHTML = `<strong>AI Explanation:</strong><br>${text.replace(/\n/g, '<br>')}`;
+        aiResult.innerHTML = `<strong>AI Guidance:</strong><br>${text.replace(/\n/g, '<br>')}`;
     } catch (e) {
-        aiResult.innerText = "Error: AI not responding. Check API Key.";
+        aiResult.innerText = "Error: API connection failed.";
     }
 };
 
 // --- NAVIGATION ---
 document.getElementById("next-btn").onclick = () => { if (currentQuestionIndex < filteredQuestions.length - 1) { currentQuestionIndex++; displayQuestion(); } };
 document.getElementById("prev-btn").onclick = () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; displayQuestion(); } };
+
 
 
 
