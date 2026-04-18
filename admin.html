@@ -1,57 +1,10 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RBSE Quiz Admin Panel</title>
-    <style>
-        :root { --primary: #1e90ff; --success: #2ed573; --dark: #2f3542; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f1f2f6; padding: 15px; display: flex; justify-content: center; }
-        .admin-card { background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: var(--dark); margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        label { font-size: 0.85rem; font-weight: bold; color: #555; display: block; margin-top: 10px; }
-        input, select { width: 100%; padding: 12px; margin: 5px 0 15px 0; border: 1.5px solid #eee; border-radius: 8px; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); }
-        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; background: var(--success); color: white; transition: 0.3s; }
-        button:active { transform: scale(0.98); }
-        #status-msg { text-align: center; margin-top: 15px; font-weight: bold; font-size: 0.9rem; }
-    </style>
-</head>
-<body>
-
-<div class="admin-card">
-    <h2>Add New Question</h2>
-    
-    <label>Subject Select Karein:</label>
-    <select id="sub">
-        <option value="Physics">Physics</option>
-        <option value="Chemistry">Chemistry</option>
-        <option value="Biology">Biology</option>
-    </select>
-
-    <label>Sawal (Question):</label>
-    <input type="text" id="ques" placeholder="Sawal likhein...">
-
-    <label>Options:</label>
-    <input type="text" id="o1" placeholder="Option A">
-    <input type="text" id="o2" placeholder="Option B">
-    <input type="text" id="o3" placeholder="Option C">
-    <input type="text" id="o4" placeholder="Option D">
-
-    <label>Sahi Jawab (Exact Text):</label>
-    <input type="text" id="ans" placeholder="Sahi jawab wala text copy karein">
-
-    <button id="submitBtn">Firebase mein Save Karein</button>
-    <div id="status-msg"></div>
-</div>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // --- APNA FIREBASE CONFIG YAHAN REPLACE KAREIN ---
+  // APNA ASLI CONFIG YAHAN DALEIN
   const firebaseConfig = {
-  apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
+    apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
   authDomain: "neet-2027-9792f.firebaseapp.com",
   databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
   projectId: "neet-2027-9792f",
@@ -64,22 +17,13 @@
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-Note: This option uses the modular JavaScript SDK, which provides reduced SDK size.
 
-Learn more about Firebase for web: Get Started, Web SDK API Reference, Samples
+  
 
-
-    
-    
-
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
   window.uploadData = function() {
-      const btn = document.getElementById('submitBtn');
-      const msg = document.getElementById('status-msg');
-
       const data = {
           subject: document.getElementById('sub').value,
           question: document.getElementById('ques').value,
@@ -89,5 +33,15 @@ Learn more about Firebase for web: Get Started, Web SDK API Reference, Samples
               document.getElementById('o3').value,
               document.getElementById('o4').value
           ],
-          answer: document.getElementById('ans').value,
-          timestamp:
+          answer: document.getElementById('ans').value
+      };
+
+      const questionsRef = ref(db, 'rbse_questions');
+      const newQuestionRef = push(questionsRef);
+      
+      set(newQuestionRef, data)
+          .then(() => alert("Sawal Save Ho Gaya!"))
+          .catch((err) => alert("Error: " + err.message));
+  };
+</script>
+
