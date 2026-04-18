@@ -39,18 +39,19 @@ const questionsRef = ref(db, 'rbse_questions');
 
 onValue(questionsRef, (snapshot) => {
     const data = snapshot.val();
+    console.log("Data loaded from Firebase:", data); // Check karne ke liye
     if (data) {
-        // Firebase object ko array mein badalna
         allQuestions = Object.values(data);
-        const savedSub = localStorage.getItem('rbse_last_sub') || 'All';
-        window.filterQuestions(savedSub);
+        
+        // Sabse zaroori line: 'All' filter ko refresh karein
+        window.filterQuestions('All'); 
     } else {
-        document.getElementById("question-text").innerText = "Database khali hai! Admin panel se sawal dalein.";
+        document.getElementById("question-text").innerText = "Database khali hai!";
     }
 }, (error) => {
-    console.error("Firebase Connection Error:", error);
-    document.getElementById("question-text").innerText = "Connection Error! Check Rules.";
+    console.error("Firebase error:", error);
 });
+
 
 // --- 5. FILTER LOGIC ---
 window.filterQuestions = function(subject, btnElement) {
