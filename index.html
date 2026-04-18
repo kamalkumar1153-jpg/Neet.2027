@@ -1,69 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET 2026 PRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RBSE Study Vault - P/C/B</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <h1>NEET 2026 Tracker</h1>
-            <div id="countdown" class="timer-badge">Connecting...</div>
+
+    <div class="container">
+        <header id="timer-box">
+            <h3 id="target-title">RBSE Board Exam 2027</h3>
+            <div id="countdown">Loading...</div>
         </header>
 
-        <nav class="tabs">
-            <button onclick="switchTab('dash')">Dashboard</button>
-            <button onclick="switchTab('test')">Mock Test</button>
-            <button onclick="switchTab('ai')">AI Search</button>
+        <nav class="filter-section">
+            <button class="filter-btn active" onclick="filterQuestions('All', this)">All</button>
+            <button class="filter-btn" onclick="filterQuestions('Physics', this)">Physics</button>
+            <button class="filter-btn" onclick="filterQuestions('Chemistry', this)">Chemistry</button>
+            <button class="filter-btn" onclick="filterQuestions('Biology', this)">Biology</button>
         </nav>
 
-        <section id="dash" class="tab-content active">
-            <div class="card">
-                <h3>Preparation Streak: 🔥 <span id="streak">1</span> Days</h3>
+        <main id="quiz-card">
+            <div class="quiz-header">
+                <span id="subject-label">Loading Subject...</span>
+                <span id="q-counter">Q: 0 / 0</span>
             </div>
-            <div class="card">
-                <h3>Subject Progress</h3>
-                <div class="p-group"><label>Bio</label><div class="b-cont"><div id="bio-bar" class="bar" style="width:85%"></div></div></div>
-                <div class="p-group"><label>Chem</label><div class="b-cont"><div id="chem-bar" class="bar" style="width:65%"></div></div></div>
-                <div class="p-group"><label>Phys</label><div class="b-cont"><div id="phys-bar" class="bar" style="width:45%"></div></div></div>
+            
+            <div class="question-container">
+                <h2 id="question-text">Firebase se sawal load ho rahe hain...</h2>
             </div>
-            <div class="card swipe-card" onclick="nextCard()">
-                <small id="card-cat">PHYSICS FORMULA</small>
-                <div id="card-content">$$V = IR$$</div>
-                <p style="font-size: 11px; color: #38bdf8;">Tap to Next Formula</p>
-            </div>
-        </section>
 
-        <section id="test" class="tab-content">
-            <div class="card">
-                <div style="display:flex; justify-content: space-between; align-items:center;">
-                    <h3 id="q-text">NEET Mock Test</h3>
-                    <div id="score-box" style="background:#0f172a; padding:5px 10px; border-radius:5px;">Score: <span id="live-score">0</span></div>
+            <div id="options-container">
                 </div>
-                <hr style="border:0.5px solid #334155; margin:15px 0;">
-                <div id="options-container"></div>
-                <button id="start-btn" class="primary-btn" onclick="startTest()">🚀 Start 150+ Questions</button>
-            </div>
-        </section>
 
-        <section id="ai" class="tab-content">
-            <div class="card" style="text-align: center;">
-                <h3 style="color: #38bdf8; margin-bottom: 10px;">🔍 Smart NCERT Search</h3>
-                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">Type any question to find Video & Text solutions</p>
-                <input type="text" id="ai-input" placeholder="Paste your doubt here..." 
-                       style="width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #38bdf8; background: #0f172a; color: white; margin-bottom: 15px; box-sizing: border-box; font-size: 16px;">
-                <button class="primary-btn" onclick="solveDoubt()" style="background: #22c55e; color: white;">Search on Google</button>
-            </div>
-        </section>
+            <footer class="controls">
+                <button id="prev-btn" class="nav-btn">← Peeche</button>
+                <button id="next-btn" class="nav-btn">Aage →</button>
+            </footer>
+        </main>
+
+        <div id="progress-status">
+            Connected to Firebase Realtime Database
+        </div>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
+
 
 
 
