@@ -75,18 +75,23 @@ window.filterQuestions = function(subject, btnElement) {
     displayQuestion();
 };
 
-// --- 6. DISPLAY QUESTION ---
-function displayQuestion() {
-    const questionText = document.getElementById("question-text");
-    const optionsContainer = document.getElementById("options-container");
-    const qCounter = document.getElementById("q-counter");
-
-    if (!filteredQuestions || filteredQuestions.length === 0) {
-        questionText.innerText = "Is subject mein koi sawal nahi hai.";
-        optionsContainer.innerHTML = "";
-        qCounter.innerText = "Q: 0 / 0";
-        return;
+function displayQuestion(index) {
+    const questionData = allQuestions[index]; // Firebase se aaya data
+    if (questionData) {
+        // 'question' ki jagah check karein ki data sahi key se call ho raha hai
+        document.getElementById('questionText').innerText = questionData.question; 
+        
+        // Options dikhane ke liye loop
+        const optionsHtml = questionData.options.map((opt, i) => 
+            `<button class="option-btn">${opt}</button>`
+        ).join('');
+        
+        document.getElementById('optionsContainer').innerHTML = optionsHtml;
+    } else {
+        document.getElementById('questionText').innerText = "Loading Questions...";
     }
+}
+
 
     const q = filteredQuestions[currentQuestionIndex];
     questionText.innerText = q.question;
