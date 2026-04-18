@@ -1,19 +1,140 @@
-:root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; }
-body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 10px; }
-.app-container { max-width: 500px; margin: auto; }
-.timer-badge { background: #ef4444; color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 20px; }
-.tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-.tabs button { flex: 1; padding: 12px; background: var(--card); color: white; border: 1px solid #334155; border-radius: 8px; cursor: pointer; }
-.card { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #334155; }
-.tab-content { display: none; }
-.active { display: block; }
-.p-group { margin-bottom: 10px; }
-.b-cont { background: #334155; height: 10px; border-radius: 5px; overflow: hidden; }
-.bar { height: 100%; width: 0%; transition: 1s ease-in-out; background: var(--accent); }
-#bio-bar { background: #22c55e; }
-#chem-bar { background: #f59e0b; }
-.swipe-card { height: 180px; text-align: center; display: flex; flex-direction: column; justify-content: center; border: 2px solid var(--accent); cursor: pointer; }
-#card-content { font-size: 1.5rem; margin: 15px 0; }
-.primary-btn { width: 100%; padding: 15px; background: var(--accent); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #000; }
-.option-btn { width: 100%; padding: 12px; margin: 5px 0; background: #334155; border: 1px solid #475569; color: white; border-radius: 8px; text-align: left; }
-.output-box { margin-top: 15px; padding: 10px; background: #0f172a; border-radius: 8px; min-height: 50px; }
+/* --- Global Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 10px;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px; /* Mobile width optimized */
+}
+
+/* --- Countdown Header --- */
+#timer-box {
+    background: linear-gradient(135deg, #e67e22, #d35400); /* Chemistry-style Orange */
+    color: white;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+#target-title { font-size: 0.9rem; opacity: 0.9; }
+#countdown { font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
+
+/* --- Navigation & Filters --- */
+.filter-section {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding: 5px 0;
+}
+
+.filter-btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    font-weight: bold;
+    color: #555;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.filter-btn.active {
+    background: #2c3e50;
+    color: white;
+}
+
+/* --- Quiz Card --- */
+#quiz-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #7f8c8d;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+#subject-label { color: #3498db; } /* Physics Blue */
+
+.question-container {
+    margin-bottom: 25px;
+}
+
+#question-text {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    color: #2c3e50;
+}
+
+/* --- Options Styling --- */
+.option-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 12px;
+    border: 2px solid #f1f2f6;
+    border-radius: 12px;
+    background: #fff;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.option-btn:hover { background: #f8f9fa; }
+
+/* --- Navigation Buttons --- */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.nav-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.nav-btn:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* --- Status Bar --- */
+#progress-status {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #95a5a6;
+    margin-top: 15px;
+}
