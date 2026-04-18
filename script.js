@@ -3,13 +3,13 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
 
 // --- 1. FIREBASE CONFIG (Admin Panel wala hi use karein) ---
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "YOUR_DATABASE_URL",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSy..." , // Ye aapko Firebase Project Settings (Gear icon) mein milega
+  authDomain: "neet-2027-9792f.firebaseapp.com",
+  databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
+  projectId: "neet-2027-9792f",
+  storageBucket: "neet-2027-9792f.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID", // Ye settings mein milega
+  appId: "YOUR_APP_ID" // Ye settings mein milega
 };
 
 const app = initializeApp(firebaseConfig);
