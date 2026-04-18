@@ -3,14 +3,24 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
 
 // --- 1. FIREBASE CONFIG ---
 const firebaseConfig = {
-  apiKey: "AIzaSy...", // Apni asli API Key yahan dalein
+    apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
   authDomain: "neet-2027-9792f.firebaseapp.com",
   databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
   projectId: "neet-2027-9792f",
-  storageBucket: "neet-2027-9792f.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID", 
-  appId: "YOUR_APP_ID"
+  storageBucket: "neet-2027-9792f.firebasestorage.app",
+  messagingSenderId: "946709283656",
+  appId: "1:946709283656:web:51a13d83e8f0a546b5697d",
+  measurementId: "G-YNHK9L90SQ"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+Note: This option uses the modular JavaScript SDK, which provides reduced SDK size.
+
+Learn more about Firebase for web: Get Started, Web SDK API Reference, Samples
+
+
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
