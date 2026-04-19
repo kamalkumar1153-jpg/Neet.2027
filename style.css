@@ -1,8 +1,17 @@
-.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-.menu-btn { padding: 30px 10px; font-size: 18px; border-radius: 15px; border: none; background: #6c5ce7; color: white; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
-.menu-btn:hover { transform: translateY(-5px); background: #5b4cc4; }
-.voice-btn { background: #ff7675; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-.image-box { width: 100%; max-height: 200px; object-fit: contain; margin-bottom: 15px; border-radius: 10px; }
-.badge-timer { text-align: center; margin-top: 20px; font-weight: bold; color: #d63031; }
+body { font-family: sans-serif; background: #f4f7fe; padding: 15px; }
+.container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+.menu-btn { padding: 20px; border-radius: 12px; border: none; background: #6c5ce7; color: white; font-weight: bold; cursor: pointer; }
+.badge { background: #eee; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+.countdown-box { text-align: center; color: #d63031; font-weight: bold; margin: 10px 0; }
+.progress-container { background: #eee; height: 8px; border-radius: 10px; margin: 15px 0; }
+.progress-bar { height: 100%; background: #00b894; width: 0%; border-radius: 10px; transition: 0.3s; }
+.options-grid { display: grid; gap: 10px; }
+.option-btn { padding: 15px; border: 1px solid #ddd; border-radius: 10px; background: #fff; text-align: left; cursor: pointer; }
+.option-btn:hover { background: #f0f0ff; }
+#report-btn { width: 100%; padding: 12px; border: none; background: #0984e3; color: white; border-radius: 10px; margin-top: 10px; cursor: pointer; }
+.stats-box { background: #e1f5fe; padding: 15px; border-radius: 10px; margin-top: 15px; line-height: 1.6; }
+.voice-btn { border: none; background: #fab1a0; padding: 5px 10px; border-radius: 5px; font-size: 12px; cursor: pointer; }
+
 
 
