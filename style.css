@@ -129,7 +129,27 @@ body {
 .nav-btn:disabled {
     background: #bdc3c7;
     cursor: not-allowed;
+}.search-section {
+    margin-bottom: 20px;
+    text-align: center;
 }
+
+#searchInput {
+    width: 100%;
+    padding: 12px 20px;
+    border: 2px solid var(--primary);
+    border-radius: 25px;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+#searchInput:focus {
+    box-shadow: 0 0 10px rgba(108, 92, 231, 0.3);
+    background-color: #fff;
+}
+
 
 /* --- Status Bar --- */
 #progress-status {
