@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+// --- 1. FIREBASE CONFIG ---
 const firebaseConfig = {
   apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
   authDomain: "neet-2027-9792f.firebaseapp.com",
@@ -15,12 +16,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// --- 2. GLOBAL VARIABLES ---
 const targetDate = new Date("April 15, 2027 00:00:00").getTime();
 let allQuestions = [];
 let filteredQuestions = [];
 let currentQuestionIndex = 0;
 
-// --- TIMER ---
+// --- 3. COUNTDOWN TIMER ---
 function updateTimer() {
     const now = new Date().getTime();
     const diff = targetDate - now;
@@ -31,32 +33,44 @@ function updateTimer() {
 setInterval(updateTimer, 60000);
 updateTimer();
 
-// --- FETCH DATA ---
+// --- 4. FETCH DATA FROM FIREBASE ---
 const questionsRef = ref(db, 'rbse_questions');
+
 onValue(questionsRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
+        // Firebase object ko array mein badalna
         allQuestions = Object.values(data);
         window.filterQuestions('All'); 
     } else {
         document.getElementById("questionText").innerText = "Database khali hai!";
     }
+}, (error) => {
+    console.error("Firebase error:", error);
 });
 
-// --- FILTER LOGIC ---
+// --- 5. FILTER LOGIC ---
 window.filterQuestions = function(subject, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    if(!btnElement) btnElement = document.querySelector(`button[onclick*="'${subject}'"]`);
+    
+    if(!btnElement) {
+        btnElement = document.querySelector(`button[onclick*="'${subject}'"]`);
+    }
     if(btnElement) btnElement.classList.add('active');
 
-    filteredQuestions = (subject === 'All') ? allQuestions : allQuestions.filter(q => q.subject === subject);
-    document.getElementById("subject-label").innerText = subject === 'All' ? "All Subjects" : subject;
+    if (subject === 'All') {
+        filteredQuestions = allQuestions;
+        document.getElementById("subject-label").innerText = "All Subjects";
+    } else {
+        filteredQuestions = allQuestions.filter(q => q.subject === subject);
+        document.getElementById("subject-label").innerText = subject;
+    }
 
     currentQuestionIndex = 0;
     displayQuestion();
 };
 
-// --- DISPLAY LOGIC (FIXED) ---
+// --- 6. DISPLAY QUESTION (FIXED) ---
 function displayQuestion() {
     const questionText = document.getElementById('questionText');
     const optionsContainer = document.getElementById('optionsContainer');
@@ -65,10 +79,18 @@ function displayQuestion() {
 
     if (filteredQuestions.length > 0) {
         const q = filteredQuestions[currentQuestionIndex];
+        
+        // Text set karna
         questionText.innerText = q.question;
         qCounter.innerText = `Q: ${currentQuestionIndex + 1} / ${filteredQuestions.length}`;
-        if(aiResult) aiResult.style.display = 'none';
+        
+        // AI result ko naye sawal par chhupana
+        if(aiResult) {
+            aiResult.style.display = 'none';
+            aiResult.innerHTML = "";
+        }
 
+        // Options create karna
         optionsContainer.innerHTML = "";
         q.options.forEach(opt => {
             const btn = document.createElement("button");
@@ -78,54 +100,74 @@ function displayQuestion() {
             optionsContainer.appendChild(btn);
         });
 
+        // Buttons enable/disable karna
         document.getElementById("prev-btn").disabled = (currentQuestionIndex === 0);
         document.getElementById("next-btn").disabled = (currentQuestionIndex === filteredQuestions.length - 1);
     }
 }
 
-// --- ANSWER CHECK ---
+// --- 7. ANSWER CHECK ---
 function checkAnswer(btn, selected, correct) {
     const allBtns = document.querySelectorAll('.option-btn');
     allBtns.forEach(b => b.style.pointerEvents = "none");
+
     if (selected === correct) {
         btn.style.background = "#2ed573";
         btn.style.color = "white";
     } else {
         btn.style.background = "#ff4757";
         btn.style.color = "white";
-        allBtns.forEach(b => { if(b.innerText === correct) b.style.border = "2px solid #2ed573"; });
+        allBtns.forEach(b => {
+            if(b.innerText === correct) b.style.border = "2px solid #2ed573";
+        });
     }
 }
 
-// --- AI DOUBT SOLVER ---
+// --- 8. AI DOUBT SOLVER (GEMINI) ---
 window.askAI = async function() {
-    const apiKey = "PASTE_YOUR_GEMINI_KEY_HERE"; 
+    const apiKey = "PASTE_YOUR_GEMINI_KEY_HERE"; // <-- Yahan apni Gemini API Key dalein
     const aiResult = document.getElementById('ai-result');
     const q = filteredQuestions[currentQuestionIndex];
 
+    if(!aiResult) return;
+
     aiResult.style.display = 'block';
-    aiResult.innerHTML = "<em>AI Thinking... 🤔</em>";
+    aiResult.innerHTML = "<div class='loader'>AI Soch raha hai... 🤔</div>";
 
     try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: `You are a NEET Science expert. Explain this question in simple English and Hindi. Question: ${q.question}. The correct answer is ${q.answer}. Please explain the scientific reason behind it.` }] }]
+                contents: [{ parts: [{ text: `Explain this NEET question in simple English and Hindi. Question: ${q.question}. The correct answer is ${q.answer}. Please provide a clear scientific explanation.` }] }]
             })
         });
 
         const data = await response.json();
         const text = data.candidates[0].content.parts[0].text;
-        aiResult.innerHTML = `<strong>AI Guidance:</strong><br>${text.replace(/\n/g, '<br>')}`;
+        
+        // Markdown formatting ko simple HTML mein badalna
+        aiResult.innerHTML = `<strong>AI Explanation:</strong><br>${text.replace(/\n/g, '<br>')}`;
     } catch (e) {
-        aiResult.innerText = "Error: API connection failed.";
+        aiResult.innerText = "Error: AI se sampark nahi ho saka. Key check karein.";
     }
 };
 
-// --- NAVIGATION ---
-document.getElementById("next-btn").onclick = () => { if (currentQuestionIndex < filteredQuestions.length - 1) { currentQuestionIndex++; displayQuestion(); } };
-document.getElementById("prev-btn").onclick = () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; displayQuestion(); } };
+// --- 9. NAVIGATION ---
+document.getElementById("next-btn").onclick = () => {
+    if (currentQuestionIndex < filteredQuestions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion();
+    }
+};
+
+document.getElementById("prev-btn").onclick = () => {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayQuestion();
+    }
+};
+
 
 
 
