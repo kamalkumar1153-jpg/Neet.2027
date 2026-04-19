@@ -1,195 +1,103 @@
-// --- 1. CONFIG & TARGET DATE ---
-const targetDate = new Date("April 15, 2027 00:00:00").getTime();
-
-// --- 2. THE 100 QUESTIONS DATA ---
 const allQuestions = [
-    { "subject": "Biology", "question": "Who proposed the Five-Kingdom Classification?", "options": ["Linnaeus", "Whittaker", "Aristotle", "Mendel"], "answer": "Whittaker" },
-    { "subject": "Physics", "question": "Light year is a unit of which physical quantity?", "options": ["Time", "Distance", "Velocity", "Intensity"], "answer": "Distance" },
-    { "subject": "Chemistry", "question": "Which is the most electronegative element?", "options": ["Oxygen", "Fluorine", "Chlorine", "Nitrogen"], "answer": "Fluorine" },
-    { "subject": "Biology", "question": "Which organelle is known as the Power House of the cell?", "options": ["Ribosome", "Mitochondria", "Lysosome", "Golgi Body"], "answer": "Mitochondria" },
-    { "subject": "Physics", "question": "What is the dimension of Surface Tension?", "options": ["M1 L1 T-2", "M1 L0 T-2", "M1 L2 T-1", "M0 L1 T-2"], "answer": "M1 L0 T-2" },
-    { "subject": "Chemistry", "question": "What is the chemical formula of Heavy Water?", "options": ["H2O", "D2O", "T2O", "H2O2"], "answer": "D2O" },
-    { "subject": "Biology", "question": "Who proposed the double helix model of DNA?", "options": ["Watson & Crick", "Mendel", "Morgan", "Darwin"], "answer": "Watson & Crick" },
-    { "subject": "Physics", "question": "Where is the value of 'g' maximum?", "options": ["Equator", "Poles", "Center of Earth", "Space"], "answer": "Poles" },
-    { "subject": "Chemistry", "question": "Dalton's Law is related to which of the following?", "options": ["Partial Pressure", "Volume", "Mass", "Temperature"], "answer": "Partial Pressure" },
-    { "subject": "Biology", "question": "Who discovered the cell for the first time?", "options": ["Robert Hooke", "Robert Brown", "Leeuwenhoek", "Virchow"], "answer": "Robert Hooke" },
-    { "subject": "Biology", "question": "Who is known as the Father of Genetics?", "options": ["Darwin", "Lamarck", "Gregor Mendel", "Morgan"], "answer": "Gregor Mendel" },
-    { "subject": "Physics", "question": "What is the unit of Capacitance?", "options": ["Farad", "Coulomb", "Volt", "Ohm"], "answer": "Farad" },
-    { "subject": "Chemistry", "question": "What is the Ideal Gas Equation?", "options": ["PV=nRT", "P=VRT", "V=nRT", "PV=kT"], "answer": "PV=nRT" },
-    { "subject": "Biology", "question": "Which is the largest gland in the human body?", "options": ["Pancreas", "Thyroid", "Liver", "Pituitary"], "answer": "Liver" },
-    { "subject": "Physics", "question": "According to Gauss Law, total electric flux is?", "options": ["q/e0", "q*e0", "e0/q", "Zero"], "answer": "q/e0" },
-    { "subject": "Chemistry", "question": "What is the molarity of pure water?", "options": ["18", "50", "55.5", "100"], "answer": "55.5" },
-    { "subject": "Biology", "question": "What happens during the S-phase of the cell cycle?", "options": ["Protein Synthesis", "DNA replication", "Cell Division", "Cell Growth"], "answer": "DNA replication" },
-    { "subject": "Physics", "question": "What is the unit of Electric Field Intensity?", "options": ["N/C", "J/C", "V/m", "Both A & C"], "answer": "Both A & C" },
-    { "subject": "Chemistry", "question": "What is the monomer of Teflon?", "options": ["Ethene", "Vinyl chloride", "Tetrafluoroethene", "Styrene"], "answer": "Tetrafluoroethene" },
-    { "subject": "Biology", "question": "The process of making RNA from DNA is called?", "options": ["Replication", "Transcription", "Translation", "Mutation"], "answer": "Transcription" },
-    { "subject": "Physics", "question": "What is the unit of Inductive Reactance (XL)?", "options": ["Henry", "Farad", "Ohm", "Tesla"], "answer": "Ohm" },
-    { "subject": "Chemistry", "question": "Which is an example of an Ideal Solution?", "options": ["Ethanol+Water", "Benzene+Toluene", "HCl+Water", "None"], "answer": "Benzene+Toluene" },
-    { "subject": "Biology", "question": "Blood Group AB shows which type of inheritance?", "options": ["Dominance", "Co-dominance", "Recessive", "Incomplete"], "answer": "Co-dominance" },
-    { "subject": "Physics", "question": "Radius (r) of a circular path is proportional to?", "options": ["Mass", "Velocity", "Charge", "Field"], "answer": "Velocity" },
-    { "subject": "Chemistry", "question": "Which is the lightest element in the periodic table?", "options": ["Helium", "Hydrogen", "Lithium", "Oxygen"], "answer": "Hydrogen" },
-    { "subject": "Biology", "question": "Which cycle occurs in the Mitochondria?", "options": ["Calvin Cycle", "Krebs Cycle", "Glycolysis", "EMB Pathway"], "answer": "Krebs Cycle" },
-    { "subject": "Physics", "question": "What is the SI unit of Resistance?", "options": ["Watt", "Ampere", "Ohm", "Volt"], "answer": "Ohm" },
-    { "subject": "Chemistry", "question": "Who proposed the Modern Periodic Table?", "options": ["Mendeleev", "Henry Moseley", "Dobereiner", "Newland"], "answer": "Henry Moseley" },
-    { "subject": "Biology", "question": "Which component helps in blood clotting?", "options": ["RBC", "WBC", "Platelets", "Plasma"], "answer": "Platelets" },
-    { "subject": "Physics", "question": "Velocity of light is maximum in?", "options": ["Water", "Glass", "Vacuum", "Air"], "answer": "Vacuum" },
-    { "subject": "Chemistry", "question": "Who discovered the pH scale?", "options": ["Sorenson", "Lewis", "Arrhenius", "Boyle"], "answer": "Sorenson" },
-    { "subject": "Biology", "question": "Where is Insulin produced in the human body?", "options": ["Liver", "Pancreas", "Spleen", "Kidney"], "answer": "Pancreas" },
-    { "subject": "Physics", "question": "Newton's first law of motion defines?", "options": ["Inertia", "Force", "Action-Reaction", "Energy"], "answer": "Inertia" },
-    { "subject": "Chemistry", "question": "What is the formula for Laughing Gas?", "options": ["NO", "N2O", "NO2", "N2O5"], "answer": "N2O" },
-    { "subject": "Biology", "question": "Which metal is present in Chlorophyll?", "options": ["Iron", "Magnesium", "Copper", "Zinc"], "answer": "Magnesium" },
-    { "subject": "Physics", "question": "On which principle does a Transformer work?", "options": ["Mutual Induction", "Self Induction", "Eddy Current", "None"], "answer": "Mutual Induction" },
-    { "subject": "Chemistry", "question": "What is the chemical name of Baking Soda?", "options": ["Sodium Carbonate", "Sodium Bicarbonate", "NaOH", "KOH"], "answer": "Sodium Bicarbonate" },
-    { "subject": "Biology", "question": "Which blood group is the Universal Donor?", "options": ["A", "B", "AB", "O"], "answer": "O" },
-    { "subject": "Physics", "question": "What is the unit of Sound Intensity?", "options": ["Hertz", "Decibel", "Watt", "Tesla"], "answer": "Decibel" },
-    { "subject": "Chemistry", "question": "Which is the hardest natural substance?", "options": ["Gold", "Iron", "Diamond", "Platinum"], "answer": "Diamond" },
-    { "subject": "Biology", "question": "Which organelle is called the Suicidal Bag?", "options": ["Ribosome", "Lysosome", "Centrosome", "Nucleus"], "answer": "Lysosome" },
-    { "subject": "Physics", "question": "The filament of an electric bulb is made of?", "options": ["Copper", "Iron", "Tungsten", "Silver"], "answer": "Tungsten" },
-    { "subject": "Chemistry", "question": "What is Dry Ice?", "options": ["Solid H2O", "Solid CO2", "Solid N2", "Solid O2"], "answer": "Solid CO2" },
-    { "subject": "Biology", "question": "What is the functional unit of the Kidney?", "options": ["Neuron", "Nephron", "Alveoli", "Cell"], "answer": "Nephron" },
-    { "subject": "Physics", "question": "What is the Escape Velocity for Earth?", "options": ["9.8 km/s", "11.2 km/s", "42 km/s", "1.1 km/s"], "answer": "11.2 km/s" },
-    { "subject": "Chemistry", "question": "Which acid is found in Vinegar?", "options": ["Citric Acid", "Formic Acid", "Acetic Acid", "Lactic Acid"], "answer": "Acetic Acid" },
-    { "subject": "Biology", "question": "Which is the largest flower in the world?", "options": ["Rose", "Rafflesia", "Wolfia", "Lotus"], "answer": "Rafflesia" },
-    { "subject": "Physics", "question": "Sparkling of diamond is due to?", "options": ["Reflection", "Refraction", "TIR", "Scattering"], "answer": "TIR" },
-    { "subject": "Chemistry", "question": "Methane is also known as?", "options": ["Marsh Gas", "Tear Gas", "Mustard Gas", "Noble Gas"], "answer": "Marsh Gas" },
-    { "subject": "Biology", "question": "Where does protein synthesis occur?", "options": ["Golgi", "Ribosome", "Vacuole", "Nucleus"], "answer": "Ribosome" },
-    { "subject": "Physics", "question": "What is the velocity of light?", "options": ["3x10^8 m/s", "2x10^8 m/s", "3x10^10 m/s", "1x10^8 m/s"], "answer": "3x10^8 m/s" },
-    { "subject": "Chemistry", "question": "What is the main cause of Acid Rain?", "options": ["CO2", "SO2 & NO2", "CO", "CH4"], "answer": "SO2 & NO2" },
-    { "subject": "Biology", "question": "What is the unit of Heredity?", "options": ["Chromosome", "DNA", "Gene", "Nucleus"], "answer": "Gene" },
-    { "subject": "Physics", "question": "What is the unit of Power of Lens?", "options": ["Watt", "Diopter", "Candela", "Meter"], "answer": "Diopter" },
-    { "subject": "Chemistry", "question": "Which is the lightest metal?", "options": ["Hydrogen", "Lithium", "Sodium", "Magnesium"], "answer": "Lithium" },
-    { "subject": "Biology", "question": "Which Vitamin helps in blood clotting?", "options": ["Vit A", "Vit C", "Vit K", "Vit E"], "answer": "Vit K" },
-    { "subject": "Physics", "question": "1 HP equals how many watts?", "options": ["500", "746", "1000", "700"], "answer": "746" },
-    { "subject": "Chemistry", "question": "What is the geometry of CH4?", "options": ["Linear", "Planar", "Tetrahedral", "Circular"], "answer": "Tetrahedral" },
-    { "subject": "Biology", "question": "Which sugar is present in DNA?", "options": ["Ribose", "Deoxyribose", "Glucose", "Fructose"], "answer": "Deoxyribose" },
-    { "subject": "Physics", "question": "Water density is maximum at?", "options": ["0C", "4C", "100C", "-4C"], "answer": "4C" },
-    { "subject": "Chemistry", "question": "Which non-metal is liquid at room temperature?", "options": ["Mercury", "Bromine", "Iodine", "Chlorine"], "answer": "Bromine" },
-    { "subject": "Biology", "question": "How many chambers are in the human heart?", "options": ["2", "3", "4", "1"], "answer": "4" },
-    { "subject": "Physics", "question": "Sound intensity is measured in?", "options": ["Hertz", "Decibel", "Watt", "Pascal"], "answer": "Decibel" },
-    { "subject": "Chemistry", "question": "Which is the lightest gas?", "options": ["Oxygen", "Hydrogen", "Helium", "Nitrogen"], "answer": "Hydrogen" },
-    { "subject": "Biology", "question": "Full form of DNA is?", "options": ["Deoxyribose Nucleic Acid", "Ribose Nucleic Acid", "Double Acid", "None"], "answer": "Deoxyribose Nucleic Acid" },
-    { "subject": "Physics", "question": "Instrument to measure electric current?", "options": ["Voltmeter", "Ammeter", "Galvanometer", "Wattmeter"], "answer": "Ammeter" },
-    { "subject": "Chemistry", "question": "Symbol of Gold?", "options": ["Ag", "Au", "Fe", "Cu"], "answer": "Au" },
-    { "subject": "Biology", "question": "Lifespan of RBC?", "options": ["10 days", "50 days", "120 days", "200 days"], "answer": "120 days" },
-    { "subject": "Physics", "question": "Unit of Magnetic Flux?", "options": ["Tesla", "Weber", "Ohm", "Faraday"], "answer": "Weber" },
-    { "subject": "Chemistry", "question": "pH value of pure water?", "options": ["5", "6", "7", "8"], "answer": "7" }
-    // ... isi tarah 100 tak sawal hain
+    { "subject": "Biology", "question": "Which hormone is known as the 'Emergency Hormone'?", "options": ["Insulin", "Adrenaline", "Thyroxine", "Estrogen"], "answer": "Adrenaline" },
+    { "subject": "Physics", "question": "What is the unit of Luminous Intensity?", "options": ["Mole", "Ampere", "Candela", "Kelvin"], "answer": "Candela" },
+    { "subject": "Chemistry", "question": "Which gas is filled in balloons for flying?", "options": ["Hydrogen", "Helium", "Nitrogen", "Argon"], "answer": "Helium" },
+    { "subject": "Biology", "question": "Study of fruits is called?", "options": ["Pomology", "Mycology", "Phycology", "Anthology"], "answer": "Pomology" },
+    { "subject": "Physics", "question": "Which lens is used to correct Myopia?", "options": ["Convex", "Concave", "Cylindrical", "Bifocal"], "answer": "Concave" },
+    { "subject": "Chemistry", "question": "What is the chemical name of Vitamin C?", "options": ["Citric Acid", "Ascorbic Acid", "Oxalic Acid", "Nitric Acid"], "answer": "Ascorbic Acid" },
+    { "subject": "Biology", "question": "Number of chromosomes in a normal human cell?", "options": ["23", "44", "46", "48"], "answer": "46" },
+    { "subject": "Physics", "question": "The sky appears blue due to which phenomenon?", "options": ["Reflection", "Refraction", "Scattering", "Dispersion"], "answer": "Scattering" },
+    { "subject": "Chemistry", "question": "Which is the purest form of Iron?", "options": ["Cast Iron", "Pig Iron", "Wrought Iron", "Steel"], "answer": "Wrought Iron" },
+    { "subject": "Biology", "question": "Xylem in plants is responsible for transport of?", "options": ["Food", "Water", "Oxygen", "Amino acids"], "answer": "Water" },
+    { "subject": "Physics", "question": "Resistance of an ideal ammeter is?", "options": ["Zero", "Infinite", "High", "Low"], "answer": "Zero" },
+    { "subject": "Chemistry", "question": "Which gas is responsible for the swelling of bread?", "options": ["Oxygen", "CO2", "Nitrogen", "Ammonia"], "answer": "CO2" },
+    { "subject": "Biology", "question": "Double fertilization is a unique feature of?", "options": ["Algae", "Bryophytes", "Angiosperms", "Gymnosperms"], "answer": "Angiosperms" },
+    { "subject": "Physics", "question": "Energy of the Sun is produced by?", "options": ["Nuclear Fission", "Nuclear Fusion", "Oxidation", "Reduction"], "answer": "Nuclear Fusion" },
+    { "subject": "Chemistry", "question": "Which metal is kept in Kerosene oil?", "options": ["Sodium", "Iron", "Gold", "Silver"], "answer": "Sodium" },
+    { "subject": "Biology", "question": "Which vitamin deficiency causes Night Blindness?", "options": ["Vit B", "Vit C", "Vit A", "Vit K"], "answer": "Vit A" },
+    { "subject": "Physics", "question": "What is the frequency of AC in India?", "options": ["50 Hz", "60 Hz", "100 Hz", "220 Hz"], "answer": "50 Hz" },
+    { "subject": "Chemistry", "question": "Which is the king of chemicals?", "options": ["HCl", "HNO3", "H2SO4", "NaOH"], "answer": "H2SO4" },
+    { "subject": "Biology", "question": "Penicillin was discovered by?", "options": ["Alexander Fleming", "Pasteur", "Koch", "Lister"], "answer": "Alexander Fleming" },
+    { "subject": "Physics", "question": "Universal Law of Gravitation was given by?", "options": ["Einstein", "Newton", "Kepler", "Coulomb"], "answer": "Newton" },
+    { "subject": "Chemistry", "question": "What is the pH of Milk?", "options": ["6.6", "7.4", "2.4", "10.0"], "answer": "6.6" },
+    { "subject": "Biology", "question": "Smallest unit of life?", "options": ["Tissue", "Organ", "Cell", "DNA"], "answer": "Cell" },
+    { "subject": "Physics", "question": "A transformer works on?", "options": ["DC only", "AC only", "Both AC/DC", "None"], "answer": "AC only" },
+    { "subject": "Chemistry", "question": "Which gas is known as 'Stranger Gas'?", "options": ["Argon", "Xenon", "Neon", "Helium"], "answer": "Xenon" },
+    { "subject": "Biology", "question": "How many bones are in a newborn baby?", "options": ["206", "270", "300", "250"], "answer": "300" },
+    { "subject": "Physics", "question": "Unit of Viscosity?", "options": ["Poise", "Pascal", "Newton", "Watt"], "answer": "Poise" },
+    { "subject": "Chemistry", "question": "Hardness of water is due to salts of?", "options": ["Na & K", "Ca & Mg", "Fe & Al", "Cu & Zn"], "answer": "Ca & Mg" },
+    { "subject": "Biology", "question": "Which hormone controls blood sugar?", "options": ["Glucagon", "Insulin", "Thyroxine", "Oxytocin"], "answer": "Insulin" },
+    { "subject": "Physics", "question": "Ohm's law is valid for?", "options": ["Diodes", "Metals", "Transistors", "Insulators"], "answer": "Metals" },
+    { "subject": "Chemistry", "question": "What is the main component of Bio-gas?", "options": ["Ethane", "Methane", "Propane", "Butane"], "answer": "Methane" },
+    { "subject": "Biology", "question": "Universal recipient blood group is?", "options": ["A", "B", "O", "AB"], "answer": "AB" },
+    { "subject": "Physics", "question": "One light year is approximately?", "options": ["9.46 x 10^15 m", "3 x 10^8 m", "1.5 x 10^11 m", "10^12 m"], "answer": "9.46 x 10^15 m" },
+    { "subject": "Chemistry", "question": "The chemical used in matchsticks is?", "options": ["Red Phosphorus", "White Phosphorus", "Sodium", "Potassium"], "answer": "Red Phosphorus" },
+    { "subject": "Biology", "question": "Which part of human brain controls body balance?", "options": ["Cerebrum", "Cerebellum", "Medulla", "Thalamus"], "answer": "Cerebellum" },
+    { "subject": "Physics", "question": "Weight of a body at the center of Earth is?", "options": ["Infinite", "Zero", "Same as surface", "Half"], "answer": "Zero" },
+    { "subject": "Chemistry", "question": "Which fuel has the highest calorific value?", "options": ["LPG", "Hydrogen", "Petrol", "Coal"], "answer": "Hydrogen" },
+    { "subject": "Biology", "question": "Total number of muscles in humans?", "options": ["206", "312", "639", "500"], "answer": "639" },
+    { "subject": "Physics", "question": "Optical fiber works on the principle of?", "options": ["Refraction", "Interference", "TIR", "Diffraction"], "answer": "TIR" },
+    { "subject": "Chemistry", "question": "Ozone layer protects us from?", "options": ["X-rays", "UV rays", "Gamma rays", "Infrared"], "answer": "UV rays" },
+    { "subject": "Biology", "question": "Which acid is present in Ant sting?", "options": ["Citric", "Methanoic", "Acetic", "Oxalic"], "answer": "Methanoic" },
+    { "subject": "Physics", "question": "Sound travels fastest in?", "options": ["Air", "Water", "Steel", "Vacuum"], "answer": "Steel" },
+    { "subject": "Chemistry", "question": "What is the chemical formula of Quartz?", "options": ["SiO2", "Al2O3", "CaO", "MgO"], "answer": "SiO2" },
+    { "subject": "Biology", "question": "Powerhouse of the cell?", "options": ["Nucleus", "Mitochondria", "Ribosome", "Golgi"], "answer": "Mitochondria" },
+    { "subject": "Physics", "question": "Unit of Radioactivity?", "options": ["Curie", "Becquerel", "Rutherford", "All of these"], "answer": "All of these" },
+    { "subject": "Chemistry", "question": "Which non-metal is a good conductor of electricity?", "options": ["Sulphur", "Graphite", "Iodine", "Diamond"], "answer": "Graphite" },
+    { "subject": "Biology", "question": "Who is the Father of Biology?", "options": ["Aristotle", "Darwin", "Theophrastus", "Linnaeus"], "answer": "Aristotle" },
+    { "subject": "Physics", "question": "Kilowatt-hour is the unit of?", "options": ["Power", "Force", "Energy", "Momentum"], "answer": "Energy" },
+    { "subject": "Chemistry", "question": "Percentage of Nitrogen in Urea?", "options": ["26%", "46%", "60%", "15%"], "answer": "46%" },
+    { "subject": "Biology", "question": "Which plant hormone helps in fruit ripening?", "options": ["Auxin", "Ethylene", "Gibberellin", "Cytokinin"], "answer": "Ethylene" },
+    { "subject": "Physics", "question": "What is the value of G (Universal Gravitational Constant)?", "options": ["6.67x10^-11", "9.8", "6.62x10^-34", "3x10^8"], "answer": "6.67x10^-11" },
+    { "subject": "Chemistry", "question": "Which element is common to all acids?", "options": ["Oxygen", "Hydrogen", "Sulphur", "Chlorine"], "answer": "Hydrogen" },
+    { "subject": "Biology", "question": "Bile juice is stored in?", "options": ["Liver", "Gall Bladder", "Pancreas", "Stomach"], "answer": "Gall Bladder" },
+    { "subject": "Physics", "question": "Lens formula is?", "options": ["1/f = 1/v - 1/u", "1/f = 1/v + 1/u", "f = v + u", "f = v/u"], "answer": "1/f = 1/v - 1/u" },
+    { "subject": "Chemistry", "question": "Which is the strongest acid?", "options": ["HCl", "H2SO4", "HClO4", "HNO3"], "answer": "HClO4" },
+    { "subject": "Biology", "question": "Study of tissues is called?", "options": ["Cytology", "Histology", "Ecology", "Genetics"], "answer": "Histology" },
+    { "subject": "Physics", "question": "Escape velocity of Earth?", "options": ["11.2 km/s", "8.0 km/s", "9.8 km/s", "42 km/s"], "answer": "11.2 km/s" },
+    { "subject": "Chemistry", "question": "What is the formula of Plaster of Paris?", "options": ["CaSO4.2H2O", "CaSO4.1/2H2O", "CaCO3", "CaO"], "answer": "CaSO4.1/2H2O" },
+    { "subject": "Biology", "question": "Life span of WBC?", "options": ["120 days", "2-15 days", "1 year", "1 month"], "answer": "2-15 days" },
+    { "subject": "Physics", "question": "The working of Rocket is based on?", "options": ["Newton's 1st Law", "Newton's 3rd Law", "Pascal's Law", "Bernoulli's Law"], "answer": "Newton's 3rd Law" },
+    { "subject": "Chemistry", "question": "Common salt is?", "options": ["NaCl", "KCl", "MgCl2", "CaCl2"], "answer": "NaCl" },
+    { "subject": "Biology", "question": "Which metal is present in Hemoglobin?", "options": ["Mg", "Fe", "Cu", "Zn"], "answer": "Fe" },
+    { "subject": "Physics", "question": "Unit of Magnetic Field?", "options": ["Tesla", "Weber", "Henry", "Farad"], "answer": "Tesla" },
+    { "subject": "Chemistry", "question": "Main constituent of natural gas?", "options": ["Ethane", "Methane", "Butane", "Propane"], "answer": "Methane" },
+    { "subject": "Biology", "question": "Largest part of the human brain?", "options": ["Cerebellum", "Medulla", "Cerebrum", "Pons"], "answer": "Cerebrum" },
+    { "subject": "Physics", "question": "Refractive index of diamond?", "options": ["1.33", "1.50", "2.42", "1.00"], "answer": "2.42" },
+    { "subject": "Chemistry", "question": "Gas used in soda water?", "options": ["O2", "CO2", "N2", "H2"], "answer": "CO2" },
+    { "subject": "Biology", "question": "Which vitamin is water soluble?", "options": ["Vit A", "Vit D", "Vit C", "Vit K"], "answer": "Vit C" },
+    { "subject": "Physics", "question": "Faraday's Law is related to?", "options": ["Electrolysis", "Pressure", "Heat", "Momentum"], "answer": "Electrolysis" },
+    { "subject": "Chemistry", "question": "Percentage of Oxygen in air?", "options": ["78%", "21%", "0.03%", "1%"], "answer": "21%" },
+    { "subject": "Biology", "question": "Who discovered Blood Groups?", "options": ["Landsteiner", "Harvey", "Mendel", "Darwin"], "answer": "Landsteiner" },
+    { "subject": "Physics", "question": "Nuclear reactor works on?", "options": ["Controlled Fission", "Uncontrolled Fission", "Fusion", "Spallation"], "answer": "Controlled Fission" },
+    { "subject": "Chemistry", "question": "Solid Carbon dioxide is?", "options": ["Dry Ice", "Black Ice", "Soft Ice", "Cold Ice"], "answer": "Dry Ice" },
+    { "subject": "Biology", "question": "Which gland is both Exocrine and Endocrine?", "options": ["Liver", "Pancreas", "Thyroid", "Adrenal"], "answer": "Pancreas" },
+    { "subject": "Physics", "question": "Velocity of sound in air (approx)?", "options": ["332 m/s", "3x10^8 m/s", "1500 m/s", "5000 m/s"], "answer": "332 m/s" },
+    { "subject": "Chemistry", "question": "Which coal has highest carbon content?", "options": ["Peat", "Lignite", "Bituminous", "Anthracite"], "answer": "Anthracite" },
+    { "subject": "Biology", "question": "Scientific name of Humans?", "options": ["Homo erectus", "Homo sapiens", "Homo habilis", "Rana tigrina"], "answer": "Homo sapiens" },
+    { "subject": "Physics", "question": "Which mirror is used in car headlights?", "options": ["Plane", "Convex", "Concave", "Cylindrical"], "answer": "Concave" },
+    { "subject": "Chemistry", "question": "Rusting of iron is a?", "options": ["Physical change", "Chemical change", "No change", "Reversible change"], "answer": "Chemical change" },
+    { "subject": "Biology", "question": "RBCs are formed in?", "options": ["Liver", "Spleen", "Bone Marrow", "Kidney"], "answer": "Bone Marrow" },
+    { "subject": "Physics", "question": "Acceleration due to gravity (g) is?", "options": ["9.8 m/s^2", "6.67 m/s^2", "11.2 m/s^2", "1.6 m/s^2"], "answer": "9.8 m/s^2" },
+    { "subject": "Chemistry", "question": "Symbol of Silver?", "options": ["Si", "Ag", "Au", "Pb"], "answer": "Ag" },
+    { "subject": "Biology", "question": "The gas taken in by plants in photosynthesis?", "options": ["O2", "CO2", "N2", "CO"], "answer": "CO2" },
+    { "subject": "Physics", "question": "Instrument to measure atmospheric pressure?", "options": ["Ammeter", "Barometer", "Thermometer", "Hydrometer"], "answer": "Barometer" },
+    { "subject": "Chemistry", "question": "Which gas is used for artificial ripening of fruits?", "options": ["Ethane", "Acetylene", "Methane", "Propane"], "answer": "Acetylene" },
+    { "subject": "Biology", "question": "Which is the longest cell in human body?", "options": ["RBC", "WBC", "Nerve Cell", "Muscle Cell"], "answer": "Nerve Cell" },
+    { "subject": "Physics", "question": "Unit of work?", "options": ["Newton", "Joule", "Watt", "Pascal"], "answer": "Joule" },
+    { "subject": "Chemistry", "question": "Brass is an alloy of?", "options": ["Cu & Zn", "Cu & Sn", "Fe & Cr", "Pb & Sn"], "answer": "Cu & Zn" },
+    { "subject": "Biology", "question": "Largest bone in human body?", "options": ["Stapes", "Femur", "Humerus", "Tibia"], "answer": "Femur" },
+    { "subject": "Physics", "question": "Power of a convex lens is?", "options": ["Positive", "Negative", "Zero", "Infinite"], "answer": "Positive" },
+    { "subject": "Chemistry", "question": "Which gas is found in cigarette lighters?", "options": ["Butane", "Methane", "Propane", "Ethane"], "answer": "Butane" },
+    { "subject": "Biology", "question": "Which organ secretes Insulin?", "options": ["Liver", "Pancreas", "Gall Bladder", "Spleen"], "answer": "Pancreas" },
+    { "subject": "Physics", "question": "Unit of Frequency?", "options": ["Meter", "Second", "Hertz", "Watt"], "answer": "Hertz" },
+    { "subject": "Chemistry", "question": "Laughing gas is?", "options": ["N2O", "NO2", "NO", "N2O5"], "answer": "N2O" },
+    { "subject": "Biology", "question": "Father of Genetics?", "options": ["Mendel", "Darwin", "Morgan", "Lamarck"], "answer": "Mendel" },
+    { "subject": "Physics", "question": "The color of danger signals is red because?", "options": ["Red scatters most", "Red scatters least", "Red is bright", "Eye likes red"], "answer": "Red scatters least" },
+    { "subject": "Chemistry", "question": "pH of pure water?", "options": ["5", "6", "7", "8"], "answer": "7" },
+    { "subject": "Biology", "question": "Total bones in adult human?", "options": ["206", "300", "208", "210"], "answer": "206" },
+    { "subject": "Physics", "question": "Current is measured by?", "options": ["Voltmeter", "Ammeter", "Galvanometer", "Ohmmeter"], "answer": "Ammeter" },
+    { "subject": "Chemistry", "question": "Pencil lead is made of?", "options": ["Graphite", "Charcoal", "Lead", "Coal"], "answer": "Graphite" },
+    { "subject": "Biology", "question": "Which part of brain is center for thirst/hunger?", "options": ["Thalamus", "Hypothalamus", "Pons", "Medulla"], "answer": "Hypothalamus" }
 ];
-
-let filteredQuestions = allQuestions;
-let currentIndex = 0;
-let score = 0;
-let wrongQuestions = [];
-let timeLeft = 30;
-let timerInterval;
-
-// --- 3. TIMER SYSTEM ---
-function startTimer() {
-    clearInterval(timerInterval);
-    timeLeft = 30;
-    document.getElementById('timer').innerText = timeLeft;
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').innerText = timeLeft;
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            handleTimeout();
-        }
-    }, 1000);
-}
-
-function handleTimeout() {
-    const q = filteredQuestions[currentIndex];
-    wrongQuestions.push({ q: q.question, correct: q.answer, user: "Time Out" });
-    moveToNext();
-}
-
-// --- 4. DISPLAY LOGIC ---
-function displayQuestion() {
-    const qText = document.getElementById('questionText');
-    const optCont = document.getElementById('optionsContainer');
-    const qCount = document.getElementById('q-counter');
-
-    if (currentIndex >= filteredQuestions.length) {
-        showResults();
-        return;
-    }
-
-    const q = filteredQuestions[currentIndex];
-    qText.innerText = q.question;
-    qCount.innerText = `Q: ${currentIndex + 1} / ${filteredQuestions.length}`;
-    document.getElementById('subject-label').innerText = q.subject;
-
-    optCont.innerHTML = "";
-    q.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.innerText = opt;
-        btn.className = "option-btn";
-        btn.onclick = () => checkAnswer(opt, q.answer, q.question);
-        optCont.appendChild(btn);
-    });
-    startTimer();
-}
-
-function checkAnswer(selected, correct, questionText) {
-    clearInterval(timerInterval);
-    if (selected === correct) {
-        score++;
-    } else {
-        wrongQuestions.push({ q: questionText, correct: correct, user: selected });
-    }
-    document.getElementById('score-card').innerText = `⭐ Score: ${score}`;
-    moveToNext();
-}
-
-function moveToNext() {
-    currentIndex++;
-    if (currentIndex < filteredQuestions.length) {
-        setTimeout(displayQuestion, 500);
-    } else {
-        showResults();
-    }
-}
-
-function showResults() {
-    document.getElementById('quiz-box').style.display = "none";
-    document.getElementById('nav-btns').style.display = "none";
-    document.getElementById('timer-box').style.display = "none";
-    document.getElementById('review-section').style.display = "block";
-    
-    const listCont = document.getElementById('wrong-questions-list');
-    listCont.innerHTML = "";
-    wrongQuestions.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'wrong-item';
-        div.innerHTML = `<b>Q:</b> ${item.q}<br><span style="color:red">Aapka: ${item.user}</span> | <span style="color:green">Sahi: ${item.correct}</span>`;
-        listCont.appendChild(div);
-    });
-}
-
-// --- 5. SEARCH & FILTER ---
-window.searchQuestions = function() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
-    filteredQuestions = allQuestions.filter(q => q.question.toLowerCase().includes(input));
-    currentIndex = 0; displayQuestion();
-};
-
-window.filterQuestions = function(subject, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-    filteredQuestions = (subject === 'All') ? allQuestions : allQuestions.filter(q => q.subject === subject);
-    currentIndex = 0; displayQuestion();
-};
-
-// Target countdown
-setInterval(() => {
-    const diff = targetDate - new Date().getTime();
-    document.getElementById("countdown").innerText = `${Math.floor(diff / (1000 * 60 * 60 * 24))} Din Baaki`;
-}, 60000);
-
-displayQuestion();
-
-
-
-
 
