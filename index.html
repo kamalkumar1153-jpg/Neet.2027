@@ -3,53 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET 2027 Study Vault</title>
+    <title>NEET Study Vault - Bitiya</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>NEET 2027 Prep</h1>
-            <div id="countdown">Loading Days...</div>
+            <h1>NEET Study Vault 📚</h1>
+            <div id="countdown" class="badge">Loading...</div>
         </header>
 
-        <div class="search-section">
-            <input type="text" id="searchInput" placeholder="Sawal dhoondhein (DNA, Force)..." onkeyup="searchQuestions()">
-        </div>
-
         <div class="status-bar">
-            <div id="timer-box">⏰ Time: <span id="timer">30</span>s</div>
-            <div id="score-card">⭐ Score: 0</div>
+            <span id="subject-label" class="subject-tag">Subject</span>
+            <span id="q-counter">Q: 0 / 100</span>
+            <div id="timer-box">⏱️ <span id="timer">30</span>s</div>
         </div>
 
-        <div class="filter-section">
-            <button class="filter-btn active" onclick="filterQuestions('All', this)">All</button>
-            <button class="filter-btn" onclick="filterQuestions('Physics', this)">Physics</button>
-            <button class="filter-btn" onclick="filterQuestions('Chemistry', this)">Chemistry</button>
-            <button class="filter-btn" onclick="filterQuestions('Biology', this)">Biology</button>
+        <div class="progress-container">
+            <div class="progress-bar" id="myBar"></div>
         </div>
 
-        <div class="question-card" id="quiz-box">
-            <div id="subject-label" class="subject-tag">Subject</div>
-            <div id="q-counter">Q: 0 / 100</div>
+        <div id="quiz-box">
             <h2 id="questionText">Sawal load ho rahe hain...</h2>
             <div id="optionsContainer" class="options-grid"></div>
         </div>
 
-        <div id="review-section" style="display:none;">
-            <h3>❌ Galat Sawal (Review)</h3>
+        <div id="review-section" style="display: none;">
+            <div id="score-card" class="final-score">⭐ Score: 0</div>
+            <h3>Exam Review</h3>
             <div id="wrong-questions-list"></div>
-            <button onclick="location.reload()" class="retry-btn">Test Dobara Shuru Karein</button>
-        </div>
-
-        <div class="nav-controls" id="nav-btns">
-            <button id="prev-btn" disabled>Previous</button>
-            <button id="next-btn">Next</button>
+            <button onclick="location.reload()" class="retry-btn">Dubara Test Dein</button>
         </div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
