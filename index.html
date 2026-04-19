@@ -3,43 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Pro Terminal - Study Vault</title>
+    <title>Study Vault Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div id="home-screen">
             <header>
-                <h1>Bitiya's Study Vault 🎓</h1>
+                <h1>Bitiya's Vault 🎓</h1>
                 <div id="streak-badge" class="badge">🔥 Streak: 0</div>
             </header>
+            
+            <div id="countdown" class="countdown-box">Loading...</div>
+
             <div class="menu-grid">
                 <button class="menu-btn" onclick="startQuiz('Physics')">⚛️ Physics</button>
                 <button class="menu-btn" onclick="startQuiz('Chemistry')">🧪 Chemistry</button>
                 <button class="menu-btn" onclick="startQuiz('Biology')">🧬 Biology</button>
-                <button class="menu-btn" onclick="startQuiz('All')">📝 Full Mock Test</button>
+                <button class="menu-btn" onclick="startQuiz('All')">📝 Full Test</button>
             </div>
-            <div id="countdown" class="badge-timer">Loading...</div>
+
+            <button id="report-btn" onclick="showWeeklyReport()">📊 Weekly Report Dekhein</button>
+            <div id="weekly-stats" class="stats-box" style="display:none;"></div>
         </div>
 
         <div id="quiz-screen" style="display:none;">
             <div class="status-bar">
-                <span id="subject-label">Subject</span>
+                <span id="subject-label" class="badge">Subject</span>
                 <button class="voice-btn" onclick="speakQuestion()">🔊 Bol Kar Sunao</button>
                 <div id="timer-box">⏱️ <span id="timer">30</span>s</div>
             </div>
             <div class="progress-container"><div class="progress-bar" id="myBar"></div></div>
-            
             <div id="quiz-box">
-                <div id="image-container"></div> <h2 id="questionText">Sawal load ho rahe hain...</h2>
+                <h2 id="questionText">Loading...</h2>
                 <div id="optionsContainer" class="options-grid"></div>
             </div>
         </div>
 
         <div id="result-screen" style="display:none;">
-            <h2 class="final-score" id="final-score-text">Score: 0</h2>
+            <h2 id="final-score-text">Score: 0</h2>
             <div id="review-list"></div>
-            <button class="retry-btn" onclick="location.reload()">Wapas Home Par Jayein</button>
+            <button class="retry-btn" onclick="location.reload()">Wapas Jayein</button>
         </div>
     </div>
 
@@ -48,6 +52,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
