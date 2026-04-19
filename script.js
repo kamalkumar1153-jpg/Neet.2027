@@ -1,3 +1,7 @@
+ // --- 1. DATA & CONFIG ---
+const targetDate = new Date("April 15, 2027 00:00:00").getTime();
+
+// AGLE 100 QUESTIONS (101-200)
 const allQuestions = [
     { "subject": "Biology", "question": "Which hormone is known as the 'Emergency Hormone'?", "options": ["Insulin", "Adrenaline", "Thyroxine", "Estrogen"], "answer": "Adrenaline" },
     { "subject": "Physics", "question": "What is the unit of Luminous Intensity?", "options": ["Mole", "Ampere", "Candela", "Kelvin"], "answer": "Candela" },
@@ -100,4 +104,148 @@ const allQuestions = [
     { "subject": "Chemistry", "question": "Pencil lead is made of?", "options": ["Graphite", "Charcoal", "Lead", "Coal"], "answer": "Graphite" },
     { "subject": "Biology", "question": "Which part of brain is center for thirst/hunger?", "options": ["Thalamus", "Hypothalamus", "Pons", "Medulla"], "answer": "Hypothalamus" }
 ];
+
+// --- 2. LOGIC STATE ---
+let filteredQuestions = allQuestions;
+let currentIndex = 0;
+let score = 0;
+let wrongQuestions = [];
+let timeLeft = 30;
+let timerInterval;
+
+// --- 3. TIMER SYSTEM ---
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 30;
+    const timerElement = document.getElementById('timer');
+    if (timerElement) timerElement.innerText = timeLeft;
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timerElement) timerElement.innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimeout();
+        }
+    }, 1000);
+}
+
+function handleTimeout() {
+    const q = filteredQuestions[currentIndex];
+    wrongQuestions.push({ q: q.question, correct: q.answer, user: "Time Out ⏰" });
+    moveToNext();
+}
+
+// --- 4. DISPLAY FUNCTIONS ---
+function displayQuestion() {
+    const qText = document.getElementById('questionText');
+    const optCont = document.getElementById('optionsContainer');
+    const qCount = document.getElementById('q-counter');
+    const subjectLabel = document.getElementById('subject-label');
+
+    if (currentIndex >= filteredQuestions.length) {
+        showResults();
+        return;
+    }
+
+    const q = filteredQuestions[currentIndex];
+    if (qText) qText.innerText = q.question;
+    if (qCount) qCount.innerText = `Q: ${currentIndex + 1} / ${filteredQuestions.length}`;
+    if (subjectLabel) subjectLabel.innerText = q.subject;
+
+    if (optCont) {
+        optCont.innerHTML = "";
+        q.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.innerText = opt;
+            btn.className = "option-btn";
+            btn.onclick = () => checkAnswer(opt, q.answer, q.question);
+            optCont.appendChild(btn);
+        });
+    }
+    startTimer();
+}
+
+function checkAnswer(selected, correct, questionText) {
+    clearInterval(timerInterval);
+    if (selected === correct) {
+        score++;
+    } else {
+        wrongQuestions.push({ q: questionText, correct: correct, user: selected });
+    }
+    const scoreCard = document.getElementById('score-card');
+    if (scoreCard) scoreCard.innerText = `⭐ Score: ${score}`;
+    moveToNext();
+}
+
+function moveToNext() {
+    currentIndex++;
+    if (currentIndex < filteredQuestions.length) {
+        setTimeout(displayQuestion, 400); 
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    clearInterval(timerInterval);
+    const quizBox = document.getElementById('quiz-box');
+    const navBtns = document.getElementById('nav-btns');
+    const timerBox = document.getElementById('timer-box');
+    const reviewSec = document.getElementById('review-section');
+    
+    if (quizBox) quizBox.style.display = "none";
+    if (navBtns) navBtns.style.display = "none";
+    if (timerBox) timerBox.style.display = "none";
+    if (reviewSec) {
+        reviewSec.style.display = "block";
+        const listCont = document.getElementById('wrong-questions-list');
+        listCont.innerHTML = "";
+        
+        if(wrongQuestions.length === 0) {
+            listCont.innerHTML = "<h2 style='color:green; text-align:center;'>Excellent! Bitiya ne kamaal kar diya! 🎉</h2>";
+        } else {
+            wrongQuestions.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'wrong-item';
+                div.innerHTML = `<b>Q:</b> ${item.q}<br><span style="color:red">Aapka: ${item.user}</span> | <span style="color:green">Sahi: ${item.correct}</span>`;
+                listCont.appendChild(div);
+            });
+        }
+    }
+}
+
+// --- 5. SEARCH & FILTER ---
+window.searchQuestions = function() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    filteredQuestions = allQuestions.filter(q => q.question.toLowerCase().includes(input));
+    currentIndex = 0; 
+    displayQuestion();
+};
+
+window.filterQuestions = function(subject, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    filteredQuestions = (subject === 'All') ? allQuestions : allQuestions.filter(q => q.subject === subject);
+    currentIndex = 0; 
+    displayQuestion();
+};
+
+// Countdown Timer
+setInterval(() => {
+    const countdownEl = document.getElementById("countdown");
+    if (countdownEl) {
+        const diff = targetDate - new Date().getTime();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        countdownEl.innerText = `${days} Din Baaki`;
+    }
+}, 60000);
+
+// START APP
+window.onload = displayQuestion;
+
+
+
+
+    
 
