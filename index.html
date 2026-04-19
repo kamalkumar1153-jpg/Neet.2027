@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET Study Vault - Bitiya</title>
+    <title>AI Pro Terminal - Study Vault</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>NEET Study Vault 📚</h1>
-            <div id="countdown" class="badge">Loading...</div>
-        </header>
-
-        <div class="status-bar">
-            <span id="subject-label" class="subject-tag">Subject</span>
-            <span id="q-counter">Q: 0 / 100</span>
-            <div id="timer-box">⏱️ <span id="timer">30</span>s</div>
+        <div id="home-screen">
+            <header>
+                <h1>Bitiya's Study Vault 🎓</h1>
+                <div id="streak-badge" class="badge">🔥 Streak: 0</div>
+            </header>
+            <div class="menu-grid">
+                <button class="menu-btn" onclick="startQuiz('Physics')">⚛️ Physics</button>
+                <button class="menu-btn" onclick="startQuiz('Chemistry')">🧪 Chemistry</button>
+                <button class="menu-btn" onclick="startQuiz('Biology')">🧬 Biology</button>
+                <button class="menu-btn" onclick="startQuiz('All')">📝 Full Mock Test</button>
+            </div>
+            <div id="countdown" class="badge-timer">Loading...</div>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="myBar"></div>
+        <div id="quiz-screen" style="display:none;">
+            <div class="status-bar">
+                <span id="subject-label">Subject</span>
+                <button class="voice-btn" onclick="speakQuestion()">🔊 Bol Kar Sunao</button>
+                <div id="timer-box">⏱️ <span id="timer">30</span>s</div>
+            </div>
+            <div class="progress-container"><div class="progress-bar" id="myBar"></div></div>
+            
+            <div id="quiz-box">
+                <div id="image-container"></div> <h2 id="questionText">Sawal load ho rahe hain...</h2>
+                <div id="optionsContainer" class="options-grid"></div>
+            </div>
         </div>
 
-        <div id="quiz-box">
-            <h2 id="questionText">Sawal load ho rahe hain...</h2>
-            <div id="optionsContainer" class="options-grid"></div>
-        </div>
-
-        <div id="review-section" style="display: none;">
-            <div id="score-card" class="final-score">⭐ Score: 0</div>
-            <h3>Exam Review</h3>
-            <div id="wrong-questions-list"></div>
-            <button onclick="location.reload()" class="retry-btn">Dubara Test Dein</button>
+        <div id="result-screen" style="display:none;">
+            <h2 class="final-score" id="final-score-text">Score: 0</h2>
+            <div id="review-list"></div>
+            <button class="retry-btn" onclick="location.reload()">Wapas Home Par Jayein</button>
         </div>
     </div>
 
@@ -41,6 +48,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
