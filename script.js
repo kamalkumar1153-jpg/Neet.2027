@@ -1,135 +1,125 @@
-// --- 1. FIREBASE CONFIG ---
+// --- CONFIG & FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyDjupm9cCz_o2ZTeOu3tp8yt3-taXdtpYU",
-    authDomain: "neet-study-vault-e9732.firebaseapp.com",
     databaseURL: "https://neet-study-vault-e9732-default-rtdb.firebaseio.com",
-    projectId: "neet-study-vault-e9732",
-    storageBucket: "neet-study-vault-e9732.firebasestorage.app",
-    messagingSenderId: "313605620817",
-    appId: "1:313605620817:web:6aad55179b39c5710ea470",
+    projectId: "neet-study-vault-e9732"
 };
-
-// Initialize Firebase
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const database = firebase.database();
 
-// --- 2. DATA ---
-const targetDate = new Date("April 15, 2027 00:00:00").getTime();
 const allQuestions = [
-    { "subject": "Biology", "question": "Emergency Hormone kise kehte hain?", "options": ["Insulin", "Adrenaline", "Thyroxine", "Estrogen"], "answer": "Adrenaline" },
-    { "subject": "Physics", "question": "Luminous Intensity ki unit kya hai?", "options": ["Mole", "Ampere", "Candela", "Kelvin"], "answer": "Candela" },
-    { "subject": "Chemistry", "question": "Gubbaron mein kaunsi gas bhari jati hai?", "options": ["Hydrogen", "Helium", "Nitrogen", "Argon"], "answer": "Helium" },
-    { "subject": "Biology", "question": "Phalon ke adhyayan (study) ko kya kehte hain?", "options": ["Pomology", "Mycology", "Phycology", "Anthology"], "answer": "Pomology" },
-    { "subject": "Physics", "question": "Myopia ko thik karne ke liye kaunsa lens chahiye?", "options": ["Convex", "Concave", "Cylindrical", "Bifocal"], "answer": "Concave" },
-    { "subject": "Chemistry", "question": "Vitamin C ka chemical naam kya hai?", "options": ["Citric Acid", "Ascorbic Acid", "Oxalic Acid", "Nitric Acid"], "answer": "Ascorbic Acid" },
-    { "subject": "Biology", "question": "Manushya mein kitne chromosomes hote hain?", "options": ["23", "44", "46", "48"], "answer": "46" },
-    { "subject": "Physics", "question": "Aakash neela kyun dikhta hai?", "options": ["Reflection", "Refraction", "Scattering", "Dispersion"], "answer": "Scattering" },
-    { "subject": "Chemistry", "question": "Loha (Iron) ka sabse shuddh roop kaunsa hai?", "options": ["Cast Iron", "Pig Iron", "Wrought Iron", "Steel"], "answer": "Wrought Iron" },
-    { "subject": "Biology", "question": "Plants mein Xylem kya le jata hai?", "options": ["Food", "Water", "Oxygen", "Amino acids"], "answer": "Water" },
-    // ... baaki sawal loop mein load honge
+    { subject: "Physics", question: "Optics: Concave lens ka use kisme hota hai?", options: ["Myopia", "Hypermetropia", "Astigmatism", "Presbyopia"], answer: "Myopia", explanation: "Concave lens light ko diverge karta hai, jo Myopia ko thik karta hai." },
+    { subject: "Chemistry", question: "Ideal Gas Equation kya hai?", options: ["PV=nRT", "P=VRT", "V=nRT", "PV=kT"], answer: "PV=nRT", explanation: "PV=nRT is the equation of state of a hypothetical ideal gas." },
+    // Yahan aur sawal jodein...
 ];
 
-// Sawalon ko 100 tak pura karne ke liye (Dummy sample as space is limited, but logic remains)
-while(allQuestions.length < 100) {
-    allQuestions.push({ "subject": "Revision", "question": "Sample Revision Q " + allQuestions.length, "options": ["A","B","C","D"], "answer": "A" });
-}
-
-// --- 3. APP LOGIC ---
+let currentSet = [];
 let currentIndex = 0;
 let score = 0;
-let wrongQuestions = [];
-let timeLeft = 30;
-let timerInterval;
+let wrongQs = [];
+let timer;
 
-function startTimer() {
-    clearInterval(timerInterval);
-    timeLeft = 30;
-    document.getElementById('timer').innerText = timeLeft;
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').innerText = timeLeft;
-        if (timeLeft <= 0) { handleTimeout(); }
-    }, 1000);
+// --- STREAK LOGIC ---
+function handleStreak() {
+    let streak = localStorage.getItem('studyStreak') || 0;
+    let lastDate = localStorage.getItem('lastDate');
+    let today = new Date().toDateString();
+
+    if (lastDate !== today) {
+        streak = (lastDate === new Date(Date.now() - 86400000).toDateString()) ? parseInt(streak) + 1 : 1;
+        localStorage.setItem('studyStreak', streak);
+        localStorage.setItem('lastDate', today);
+    }
+    document.getElementById('streak-badge').innerText = `🔥 Streak: ${streak} Din`;
 }
 
-function handleTimeout() {
-    const q = allQuestions[currentIndex];
-    wrongQuestions.push({ q: q.question, correct: q.answer, user: "Time Out ⏰" });
-    moveToNext();
+// --- VOICE ASSISTANT ---
+function speakQuestion() {
+    const text = document.getElementById('questionText').innerText;
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = 'hi-IN'; // Hindi-English Mixed Accent
+    window.speechSynthesis.speak(speech);
 }
 
-function displayQuestion() {
-    if (currentIndex >= allQuestions.length) { showResults(); return; }
+// --- QUIZ LOGIC ---
+function startQuiz(mode) {
+    currentSet = (mode === 'All') ? allQuestions : allQuestions.filter(q => q.subject === mode);
+    if(currentSet.length === 0) { alert("Sawal jald hi jode jayenge!"); return; }
+    
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    currentIndex = 0; score = 0; wrongQs = [];
+    showQuestion();
+}
 
-    const q = allQuestions[currentIndex];
+function showQuestion() {
+    if (currentIndex >= currentSet.length) { finishQuiz(); return; }
+    
+    const q = currentSet[currentIndex];
     document.getElementById('questionText').innerText = q.question;
-    document.getElementById('q-counter').innerText = `Q: ${currentIndex + 1} / ${allQuestions.length}`;
     document.getElementById('subject-label').innerText = q.subject;
     
-    // Progress Bar
-    let progress = ((currentIndex) / allQuestions.length) * 100;
-    document.getElementById("myBar").style.width = progress + "%";
+    // Progress update
+    document.getElementById('myBar').style.width = ((currentIndex / currentSet.length) * 100) + "%";
 
-    const optCont = document.getElementById('optionsContainer');
-    optCont.innerHTML = "";
+    const cont = document.getElementById('optionsContainer');
+    cont.innerHTML = "";
     q.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.innerText = opt;
+        const btn = document.createElement('button');
         btn.className = "option-btn";
-        btn.onclick = () => checkAnswer(opt, q.answer, q.question);
-        optCont.appendChild(btn);
+        btn.innerText = opt;
+        btn.onclick = () => checkAns(opt, q.answer, q.explanation);
+        cont.appendChild(btn);
     });
     startTimer();
 }
 
-function checkAnswer(selected, correct, qText) {
-    clearInterval(timerInterval);
-    if (selected === correct) { score++; } 
-    else { wrongQuestions.push({ q: qText, correct: correct, user: selected }); }
-    moveToNext();
-}
-
-function moveToNext() {
+function checkAns(sel, corr, expl) {
+    clearInterval(timer);
+    if (sel === corr) {
+        score++;
+        alert("Sahi! ✅");
+    } else {
+        wrongQs.push({q: currentSet[currentIndex].question, c: corr, u: sel});
+        alert(`Galat! ❌\nSahi Jawab: ${corr}\nLogic: ${expl}`);
+    }
     currentIndex++;
-    displayQuestion();
+    showQuestion();
 }
 
-function saveScoreToCloud(name, s, t) {
-    const resultRef = database.ref('results').push();
-    resultRef.set({
-        studentName: name,
-        score: s,
-        total: t,
-        percentage: Math.round((s/t)*100) + "%",
+function startTimer() {
+    let sec = 30;
+    document.getElementById('timer').innerText = sec;
+    clearInterval(timer);
+    timer = setInterval(() => {
+        sec--;
+        document.getElementById('timer').innerText = sec;
+        if(sec <= 0) { clearInterval(timer); currentIndex++; showQuestion(); }
+    }, 1000);
+}
+
+function finishQuiz() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+    document.getElementById('final-score-text').innerText = `⭐ Result: ${score} / ${currentSet.length}`;
+    
+    // Save to Firebase
+    database.ref('results').push({
+        score: score,
+        total: currentSet.length,
         timestamp: firebase.database.ServerValue.TIMESTAMP
     });
 }
 
-function showResults() {
-    clearInterval(timerInterval);
-    document.getElementById('quiz-box').style.display = "none";
-    document.getElementById('review-section').style.display = "block";
-    document.getElementById('score-card').innerText = `⭐ Final Score: ${score} / ${allQuestions.length}`;
-    
-    saveScoreToCloud("Kamal Bitiya", score, allQuestions.length);
-
-    const listCont = document.getElementById('wrong-questions-list');
-    wrongQuestions.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'wrong-item';
-        div.innerHTML = `<b>Q:</b> ${item.q}<br><span style="color:red">Aapka: ${item.user}</span> | <span style="color:green">Sahi: ${item.correct}</span>`;
-        listCont.appendChild(div);
-    });
-}
-
-// Countdown update
+// Countdown for Board Exams
 setInterval(() => {
-    const diff = targetDate - new Date().getTime();
+    const diff = new Date("April 15, 2027").getTime() - new Date().getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    document.getElementById("countdown").innerText = `${days} Din Baaki`;
+    document.getElementById('countdown').innerText = `${days} Din Baaki (Board Exam 2027)`;
 }, 1000);
 
-window.onload = displayQuestion;
+window.onload = handleStreak;
+
 
 
 
