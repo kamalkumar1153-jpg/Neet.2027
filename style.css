@@ -1,14 +1,8 @@
-body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-.container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.badge { background: #6c5ce7; color: white; padding: 5px 12px; border-radius: 50px; font-size: 14px; }
-.status-bar { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; color: #444; }
-.progress-container { width: 100%; background: #eee; height: 10px; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-.progress-bar { height: 100%; background: linear-gradient(90deg, #6c5ce7, #a29bfe); width: 0%; transition: 0.3s; }
-.options-grid { display: grid; gap: 10px; margin-top: 20px; }
-.option-btn { padding: 15px; border: 2px solid #eee; border-radius: 12px; background: white; cursor: pointer; transition: 0.2s; font-size: 16px; text-align: left; }
-.option-btn:hover { background: #f8f9ff; border-color: #6c5ce7; }
-.final-score { font-size: 24px; text-align: center; color: #6c5ce7; font-weight: bold; margin: 20px 0; }
-.wrong-item { background: #fff5f5; padding: 15px; border-left: 5px solid #ff7675; margin-bottom: 10px; border-radius: 8px; }
-.retry-btn { width: 100%; padding: 15px; background: #00b894; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+.menu-btn { padding: 30px 10px; font-size: 18px; border-radius: 15px; border: none; background: #6c5ce7; color: white; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); }
+.menu-btn:hover { transform: translateY(-5px); background: #5b4cc4; }
+.voice-btn { background: #ff7675; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+.image-box { width: 100%; max-height: 200px; object-fit: contain; margin-bottom: 15px; border-radius: 10px; }
+.badge-timer { text-align: center; margin-top: 20px; font-weight: bold; color: #d63031; }
+
 
