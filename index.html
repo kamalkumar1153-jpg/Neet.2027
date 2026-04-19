@@ -7,12 +7,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
         <header>
             <h1>NEET 2027 Prep</h1>
             <div id="countdown">Loading Days...</div>
         </header>
+
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Sawal dhoondhein (DNA, Force)..." onkeyup="searchQuestions()">
+        </div>
+
+        <div class="status-bar">
+            <div id="timer-box">⏰ Time: <span id="timer">30</span>s</div>
+            <div id="score-card">⭐ Score: 0</div>
+        </div>
 
         <div class="filter-section">
             <button class="filter-btn active" onclick="filterQuestions('All', this)">All</button>
@@ -21,34 +29,28 @@
             <button class="filter-btn" onclick="filterQuestions('Biology', this)">Biology</button>
         </div>
 
-        <div class="question-card">
-            <div id="subject-label" class="subject-tag">All Subjects</div>
-            <div id="q-counter">Q: 0 / 0</div>
-            
+        <div class="question-card" id="quiz-box">
+            <div id="subject-label" class="subject-tag">Subject</div>
+            <div id="q-counter">Q: 0 / 100</div>
             <h2 id="questionText">Sawal load ho rahe hain...</h2>
-            
-            <div id="optionsContainer" class="options-grid">
-                </div>
+            <div id="optionsContainer" class="options-grid"></div>
         </div>
 
-        <div class="nav-controls">
+        <div id="review-section" style="display:none;">
+            <h3>❌ Galat Sawal (Review)</h3>
+            <div id="wrong-questions-list"></div>
+            <button onclick="location.reload()" class="retry-btn">Test Dobara Shuru Karein</button>
+        </div>
+
+        <div class="nav-controls" id="nav-btns">
             <button id="prev-btn" disabled>Previous</button>
             <button id="next-btn">Next</button>
         </div>
-
-    <div class="search-section">
-    <input type="text" id="searchInput" placeholder="Sawal dhoondhein (e.g. DNA, Force)..." onkeyup="searchQuestions()">
-</div>
-
-<div class="question-card">
-    <div id="subject-label" class="subject-tag">All Subjects</div>
-    ...
-</div>
-        
-
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
