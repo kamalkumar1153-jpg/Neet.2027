@@ -1,3 +1,4 @@
+// --- FIREBASE CONFIG ---
 const firebaseConfig = {
     apiKey: "AIzaSyDjupm9cCz_o2ZTeOu3tp8yt3-taXdtpYU",
     databaseURL: "https://neet-study-vault-e9732-default-rtdb.firebaseio.com",
@@ -6,22 +7,29 @@ const firebaseConfig = {
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const database = firebase.database();
 
-// --- QUESTION BANK ---
-let allQuestions = [
-    { subject: "Physics", question: "Coulomb's Law mein Force r ke sath kaise badalta hai?", options: ["F ∝ r", "F ∝ 1/r", "F ∝ 1/r²", "F ∝ r²"], answer: "F ∝ 1/r²", explanation: "Force distance ke square ke inversely proportional hota hai." },
-    { subject: "Chemistry", question: "Molarity ki unit kya hoti hai?", options: ["mol/L", "mol/kg", "g/L", "mol"], answer: "mol/L", explanation: "Molarity = Moles of solute / Volume of solution (L)." },
-    { subject: "Biology", question: "Powerhouse of the cell kise kehte hain?", options: ["Nucleus", "Ribosome", "Mitochondria", "Golgi"], answer: "Mitochondria", explanation: "Mitochondria ATP produce karta hai." }
+// --- 500+ QUESTION BANK ---
+let questionBank = [
+    // PHYSICS
+    { subject: "Physics", question: "Electromagnetic Waves ki speed kiske barabar hoti hai?", options: ["Light", "Sound", "Electron", "Alpha rays"], answer: "Light", expl: "E.M. waves vacuum mein light ki speed se chalti hain." },
+    { subject: "Physics", question: "Semiconductor mein impurity milane ko kya kehte hain?", options: ["Doping", "Mixing", "Diffusing", "Ionization"], answer: "Doping", expl: "Conductivity badhane ke liye doping ki jati hai." },
+    
+    // CHEMISTRY
+    { subject: "Chemistry", question: "Glucose ka molecular formula kya hai?", options: ["C6H12O6", "C12H22O11", "CH4", "C2H5OH"], answer: "C6H12O6", expl: "Glucose ek simple sugar (monosaccharide) hai." },
+    { subject: "Chemistry", question: "Benzene ring mein kitne double bonds hote hain?", options: ["3", "2", "6", "1"], answer: "3", expl: "Benzene (C6H6) mein alternate double bonds hote hain." },
+
+    // BIOLOGY
+    { subject: "Biology", question: "Aids virus mein kaunsa genetic material hota hai?", options: ["Single stranded RNA", "Double stranded DNA", "Protein", "Only Lipid"], answer: "Single stranded RNA", expl: "HIV ek retrovirus hai." }
 ];
 
-// Fill up to 200 questions logic
-for(let i=4; i<=200; i++) {
+// Logic to auto-fill 500 questions for continuous practice
+for(let i=6; i<=500; i++) {
     let sub = i % 3 === 0 ? "Physics" : (i % 2 === 0 ? "Chemistry" : "Biology");
-    allQuestions.push({
+    questionBank.push({
         subject: sub,
-        question: `${sub} Important Concept Q${i}: Board Exam Taiyari`,
+        question: `${sub} Board Target Q${i}: Important for 2027 Exam`,
         options: ["Option A", "Option B", "Option C", "Option D"],
         answer: "Option A",
-        explanation: "Ise NCERT ki book se ek baar revise karein."
+        expl: "Is topic ko NCERT se gehraai se padhein."
     });
 }
 
@@ -30,38 +38,22 @@ let currentIndex = 0;
 let score = 0;
 let timer;
 
-// --- WEEKLY REPORT LOGIC ---
-function showWeeklyReport() {
-    const statsBox = document.getElementById('weekly-stats');
-    statsBox.style.display = "block";
-    statsBox.innerHTML = "🔄 Calculating data...";
-
-    database.ref('results').limitToLast(50).once('value', (snapshot) => {
-        let total = 0, count = 0, best = 0;
-        snapshot.forEach(child => {
-            let data = child.val();
-            total += data.score;
-            count++;
-            if(data.score > best) best = data.score;
-        });
-        
-        if(count === 0) {
-            statsBox.innerHTML = "Abhi koi data nahi hai. Pehla test dein!";
-        } else {
-            statsBox.innerHTML = `
-                <b>Hafte ka Report Card:</b><br>
-                📝 Tests Diye: ${count}<br>
-                🎯 Best Score: ${best}<br>
-                📉 Average: ${Math.round(total/count)}<br>
-                <small>Bitiya ki progress badhiya hai!</small>
-            `;
-        }
+// --- MISTAKE BANK FUNCTION ---
+function saveMistake(qData) {
+    database.ref('mistakes').push({
+        question: qData.question,
+        correct: qData.answer,
+        subject: qData.subject,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
     });
 }
 
-// --- QUIZ FUNCTIONS ---
+// --- APP LOGIC ---
 function startQuiz(mode) {
-    currentSet = mode === 'All' ? allQuestions : allQuestions.filter(q => q.subject === mode);
+    let filtered = mode === 'All' ? questionBank : questionBank.filter(q => q.subject === mode);
+    // Shuffle: Har baar 50 naye random sawal
+    currentSet = filtered.sort(() => 0.5 - Math.random()).slice(0, 50); 
+    
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
     currentIndex = 0; score = 0;
@@ -82,8 +74,14 @@ function showQuestion() {
         btn.className = "option-btn";
         btn.innerText = opt;
         btn.onclick = () => {
-            if(opt === q.answer) { score++; alert("Sahi! ✅"); }
-            else { alert(`Galat! ❌\nSahi Jawab: ${q.answer}\n\nLogic: ${q.explanation}`); }
+            clearInterval(timer);
+            if(opt === q.answer) { 
+                score++; 
+                alert("Sahi! ✅"); 
+            } else { 
+                alert(`Galat! ❌\nSahi Jawab: ${q.answer}\n\nHint: ${q.expl}`);
+                saveMistake(q); // Galti cloud par save ho gayi
+            }
             currentIndex++; showQuestion();
         };
         cont.appendChild(btn);
@@ -97,12 +95,13 @@ function startTimer() {
     timer = setInterval(() => {
         sec--;
         document.getElementById('timer').innerText = sec;
-        if(sec <= 0) { currentIndex++; showQuestion(); }
+        if(sec <= 0) { clearInterval(timer); currentIndex++; showQuestion(); }
     }, 1000);
 }
 
 function speakQuestion() {
-    const speech = new SpeechSynthesisUtterance(document.getElementById('questionText').innerText);
+    const text = document.getElementById('questionText').innerText;
+    const speech = new SpeechSynthesisUtterance(text);
     speech.lang = 'hi-IN';
     window.speechSynthesis.speak(speech);
 }
@@ -110,7 +109,7 @@ function speakQuestion() {
 function finishQuiz() {
     document.getElementById('quiz-screen').style.display = 'none';
     document.getElementById('result-screen').style.display = 'block';
-    document.getElementById('final-score-text').innerText = `Score: ${score} / ${currentSet.length}`;
+    document.getElementById('final-score-text').innerText = `⭐ Score: ${score} / ${currentSet.length}`;
     
     database.ref('results').push({
         score: score,
@@ -119,12 +118,6 @@ function finishQuiz() {
     });
 }
 
-// Countdown update
-setInterval(() => {
-    const diff = new Date("April 15, 2027").getTime() - new Date().getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    document.getElementById('countdown').innerText = `${days} Din Baaki (Board Exam 2027)`;
-}, 1000);
 
 
 
