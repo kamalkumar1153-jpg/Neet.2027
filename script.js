@@ -20,17 +20,7 @@ let questionBank = [
     { subject: "Biology", question: "Mendel ne anuvanshikta ke niyam ke liye kis paudhe ko chuna?", options: ["Matar (Pea)", "Gulab", "Gehun", "Aam"], answer: "Matar (Pea)", expl: "Pisum sativum par 7 saal prayog kiye gaye." }
 ];
 
-// Fill remaining to 500 with meaningful revision tasks
-for(let i=6; i<=500; i++) {
-    let sub = i % 3 === 0 ? "Physics" : (i % 2 === 0 ? "Chemistry" : "Biology");
-    questionBank.push({
-        subject: sub,
-        question: `${sub} Topic Revision Q${i}: Is chapter ke pichle saal ke board numericals dhyan se solve karein.`,
-        options: ["Sahi Jawab", "Galat 1", "Galat 2", "Galat 3"],
-        answer: "Sahi Jawab",
-        expl: "Detailed explanation ke liye NCERT book page no. 45 dekhein."
-    });
-}
+
 
 let currentSet = [];
 let currentIndex = 0;
