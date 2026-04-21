@@ -1,5 +1,5 @@
 const bank = [
-    // --- PHYSICS (40 QUESTIONS) ---
+    // PHYSICS (40)
     {s:"Physics", q:"Two charges +1μC and +5μC are separated by a distance. Ratio of forces acting on them is?", o:["1:1","1:5","5:1","1:25"], a:"1:1"},
     {s:"Physics", q:"Electric field inside a hollow spherical conductor is?", o:["Zero","Constant","Infinite","Variable"], a:"Zero"},
     {s:"Physics", q:"If the distance between two plates of a capacitor is doubled, its capacitance?", o:["Doubles","Becomes half","Remains same","Quintuples"], a:"Becomes half"},
@@ -41,7 +41,7 @@ const bank = [
     {s:"Physics", q:"The device that converts AC to DC?", o:["Amplifier","Rectifier","Oscillator","None"], a:"Rectifier"},
     {s:"Physics", q:"Sky appears black to an astronaut because?", o:["No atmosphere","No scattering","Both","None"], a:"Both"},
 
-    // --- CHEMISTRY (40 QUESTIONS) ---
+    // CHEMISTRY (40)
     {s:"Chemistry", q:"Number of atoms in a simple cubic unit cell?", o:["1","2","4","8"], a:"1"},
     {s:"Chemistry", q:"Which defect decreases the density of a crystal?", o:["Schottky","Frenkel","Metal excess","None"], a:"Schottky"},
     {s:"Chemistry", q:"Unit of rate constant for a first order reaction is?", o:["s⁻¹","mol L⁻¹ s⁻¹","L mol⁻¹ s⁻¹","None"], a:"s⁻¹"},
@@ -83,7 +83,7 @@ const bank = [
     {s:"Chemistry", q:"Half life of a zero order reaction is?", o:["[A]₀/2k","0.693/k","[A]₀/k","None"], a:"[A]₀/2k"},
     {s:"Chemistry", q:"Formula of washing soda is?", o:["Na2CO3.10H2O","NaHCO3","NaOH","Na2CO3"], a:"Na2CO3.10H2O"},
 
-    // --- BIOLOGY (40 QUESTIONS) ---
+    // BIOLOGY (40)
     {s:"Biology", q:"Who is known as Father of Biology?", o:["Aristotle","Darwin","Lamarck","Mendel"], a:"Aristotle"},
     {s:"Biology", q:"Structural unit of life is?", o:["Cell","Tissue","Organ","Atom"], a:"Cell"},
     {s:"Biology", q:"Which organelle is called Powerhouse?", o:["Mitochondria","Nucleus","Golgi","Ribosome"], a:"Mitochondria"},
@@ -127,21 +127,24 @@ const bank = [
 ];
 
 let testSet = [], idx = 0, score = 0, useNeg = false;
+let userAnswers = [];
 
 function start(mode) {
     useNeg = document.getElementById('neg-toggle').checked;
     testSet = mode === 'All' ? bank : bank.filter(x => x.s === mode);
     testSet = testSet.sort(() => 0.5 - Math.random());
+    
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
-    idx = 0; score = 0; showQ();
+    document.getElementById('result-screen').style.display = 'none';
+    
+    idx = 0; score = 0; userAnswers = [];
+    showQ();
 }
 
 function showQ() {
     if(idx >= testSet.length) {
-        document.getElementById('quiz-screen').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'block';
-        document.getElementById('final-score').innerText = score.toFixed(2);
+        showFinal();
         return;
     }
     const q = testSet[idx];
@@ -158,6 +161,7 @@ function showQ() {
         b.className = "opt";
         b.innerText = opt;
         b.onclick = () => {
+            userAnswers.push({ q: q.q, sel: opt, ans: q.a, ok: (opt === q.a) });
             if(opt === q.a) score += 1;
             else if(useNeg) score -= 0.25;
             idx++; showQ();
@@ -165,6 +169,27 @@ function showQ() {
         box.appendChild(b);
     });
 }
+
+function showFinal() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+    document.getElementById('final-score').innerText = score.toFixed(2);
+    
+    let html = "<h3>Mistakes Report:</h3>";
+    let bad = userAnswers.filter(a => !a.ok);
+    if(bad.length === 0) html += "<p style='color:green'>Amazing! No mistakes.</p>";
+    else {
+        bad.forEach(m => {
+            html += `<div class="mistake-card">
+                <b>Q:</b> ${m.q}<br>
+                <span style="color:red">❌ Yours: ${m.sel}</span><br>
+                <span style="color:green">✅ Correct: ${m.ans}</span>
+            </div>`;
+        });
+    }
+    document.getElementById('review-box').innerHTML = html;
+}
+
 
 
 
