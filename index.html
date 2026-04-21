@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Vault Pro | Advance Level</title>
+    <title>Study Vault Pro | Chapter Analysis</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,13 +12,13 @@
     <div id="home-screen">
         <div class="header-section">
             <h1>Study Vault Pro 🎓</h1>
-            <p>Class 12th Advance Practice</p>
+            <p>RBSE Class 12th Master Prep</p>
         </div>
         
         <div class="setting-row">
-            <span>⚠️ Negative Marking (-0.25)</span>
+            <span>⚠️ Negative Marking ON (-0.25)</span>
             <label class="switch">
-                <input type="checkbox" id="neg-toggle">
+                <input type="checkbox" id="neg-toggle" checked>
                 <span class="slider"></span>
             </label>
         </div>
@@ -40,24 +40,23 @@
         <div class="progress-container">
             <div id="progress-bar"></div>
         </div>
-        <div class="q-text" id="question">Loading Question...</div>
+        <div class="q-text" id="question">Loading...</div>
         <div id="options-box"></div>
     </div>
 
     <div id="result-screen" style="text-align: center;">
-        <div class="icon-result">✅</div>
-        <h2>Test Completed!</h2>
+        <div class="icon-result">📊</div>
+        <h2>Analysis Report</h2>
         <h1 id="final-score">0.00</h1>
-        
-        <div id="review-box" style="margin-top: 20px; max-height: 300px; overflow-y: auto;"></div>
-        
-        <button class="btn btn-full" style="margin-top:20px;" onclick="location.reload()">Restart Practice</button>
+        <div id="review-box" style="margin-top: 20px; text-align: left; max-height: 450px; overflow-y: auto; background: #fdfdfd; padding: 15px; border-radius: 20px; border: 1px solid #eee;"></div>
+        <button class="btn btn-full" style="margin-top:20px;" onclick="location.reload()">Take Another Test</button>
     </div>
 </div>
 
 <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
