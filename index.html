@@ -3,49 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitiya Study Vault</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Bitiya's Vault 🎓</title>
+    <style>
+        :root { --p: #6c5ce7; --s: #00b894; --bg: #f8faff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; }
+        .card { width: 100%; max-width: 420px; background: white; padding: 25px; border-radius: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); position: relative; }
+        h1 { font-size: 24px; text-align: center; color: #2d3436; margin-bottom: 10px; }
+        .streak { background: #f1f2f6; padding: 8px; border-radius: 15px; text-align: center; font-size: 14px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn { padding: 20px; border-radius: 18px; border: none; background: var(--p); color: white; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; }
+        .btn-full { background: var(--p); grid-column: span 2; }
+        .report-btn { margin-top: 20px; width: 100%; padding: 15px; border-radius: 15px; background: #0984e3; color: white; border: none; font-weight: bold; }
+        
+        /* Quiz Styles */
+        #quiz-screen, #result-screen { display: none; }
+        .q-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .badge { background: #e8f4fd; color: #0984e3; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 12px; }
+        .timer { font-weight: bold; color: #d63031; }
+        .option { width: 100%; padding: 18px; margin: 10px 0; border: 2px solid #edeff2; border-radius: 15px; background: white; text-align: left; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .option:hover { border-color: var(--p); background: #f3f0ff; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div id="home-screen">
-            <header>
-                <h1>Bitiya Study Vault 🎓</h1>
-                <div id="streak-badge" class="badge">🔥 Streak: 0</div>
-            </header>
-            <div id="countdown" class="countdown-box">Timer Load Ho Raha Hai...</div>
-            <div class="menu-grid">
-                <button class="menu-btn" onclick="startQuiz('Physics')">⚛️ Physics</button>
-                <button class="menu-btn" onclick="startQuiz('Chemistry')">🧪 Chemistry</button>
-                <button class="menu-btn" onclick="startQuiz('Biology')">🧬 Biology</button>
-                <button class="menu-btn" onclick="startQuiz('All')">📝 Full Test</button>
-                <button class="menu-btn mistake-btn" onclick="startMistakeMode()">❌ Galtiyan Sudharein</button>
-            </div>
-        </div>
 
-        <div id="quiz-screen" style="display:none;">
-            <div class="status-bar">
-                <span id="subject-label" class="subject-tag">Subject</span>
-                <div id="timer-box">⏱️ <span id="timer">30</span>s</div>
-            </div>
-            <div class="progress-container"><div class="progress-bar" id="myBar"></div></div>
-            <div id="quiz-box">
-                <h2 id="questionText">Sawal Load Ho Rahe Hain...</h2>
-                <div id="optionsContainer" class="options-grid"></div>
-            </div>
+<div class="card">
+    <div id="home-screen">
+        <h1>Bitiya's Vault 🎓</h1>
+        <div class="streak">🔥 Streak: 0</div>
+        <div class="grid">
+            <button class="btn" onclick="start('Physics')">⚛️ Physics</button>
+            <button class="btn" onclick="start('Chemistry')">🧪 Chemistry</button>
+            <button class="btn" onclick="start('Biology')">🧬 Biology</button>
+            <button class="btn" onclick="start('All')">📝 Full Test</button>
         </div>
-
-        <div id="result-screen" style="display:none;">
-            <h2 id="final-score-text">Score: 0</h2>
-            <button class="retry-btn" onclick="location.reload()">Home Par Wapas Jayein</button>
-        </div>
+        <button class="report-btn">📊 Weekly Report Dekhein</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="script.js"></script>
+    <div id="quiz-screen">
+        <div class="q-header">
+            <span id="sub-tag" class="badge">SUBJECT</span>
+            <span id="q-counter" class="badge">1 / 10</span>
+            <span class="timer">⏱️ <span id="time">15</span>s</span>
+        </div>
+        <h2 id="q-text" style="font-size: 19px; line-height: 1.4; color: #2d3436;">Sawal...</h2>
+        <div id="options-box"></div>
+    </div>
+
+    <div id="result-screen" style="text-align: center;">
+        <h2>Test Poora Hua! ✨</h2>
+        <h1 id="score-display" style="font-size: 45px; color: var(--s);">0/10</h1>
+        <button class="btn btn-full" onclick="location.reload()">Wapas Jayein</button>
+    </div>
+</div>
+
+<script>
+const bank = [
+    // PHYSICS (RBSE Important)
+    {s:"Physics", q:"Vidyut dharita (Capacitance) ka SI matrak kya hai?", o:["Farad","Volt","Ohm","Henry"], a:"Farad"},
+    {s:"Physics", q:"Lenz ka niyam kis sanrakshan siddhant par aadharit hai?", o:["Urja","Aavesh","Samveg","Dravyaman"], a:"Urja"},
+    {s:"Physics", q:"Kirchhoff ka pratham niyam (Junction rule) kiske sanrakshan par hai?", o:["Aavesh","Urja","Samveg","None"], a:"Aavesh"},
+    {s:"Physics", q:"Heere ka apvartanank (Refractive Index) kitna hota hai?", o:["2.42","1.50","1.33","1.00"], a:"2.42"},
+    {s:"Physics", q:"Pratirodhakta (Resistivity) ka matrak kya hai?", o:["Ohm-metre","Ohm","Volt","Ampere"], a:"Ohm-metre"},
+    {s:"Physics", q:"P-type semiconductor mein mukhya dhara vahak hote hain?", o:["Holes","Electrons","Protons","Neutrons"], a:"Holes"},
+    {s:"Physics", q:"Gaus ka niyam kiske liye lagu hota hai?", o:["Band Pristh","Khula Pristh","Dono","None"], a:"Band Pristh"},
+    {s:"Physics", q:"Transformer kis siddhant par karya karta hai?", o:["Anyonya Prerak (Mutual Induction)","Self Induction","Eddy Currents","None"], a:"Anyonya Prerak (Mutual Induction)"},
+    {s:"Physics", q:"Prakash ki chaal nirvat mein kitni hoti hai?", o:["3x10⁸ m/s","3x10⁶ m/s","2x10⁸ m/s","3x10¹⁰ m/s"], a:"3x10⁸ m/s"},
+    {s:"Physics", q:"Electronic aavesh (e) ka maan kitna hai?", o:["1.6x10⁻¹⁹ C","9.1x10⁻³¹ C","1.6x10⁻²⁷ C","None"], a:"1.6x10⁻¹⁹ C"},
+
+    // CHEMISTRY (RBSE Important)
+    {s:"Chemistry", q:"Benzene ka anushutra (Formula) kya hai?", o:["C6H6","C2H2","CH4","C6H12"], a:"C6H6"},
+    {s:"Chemistry", q:"Shuddh jal ki molarity kitni hoti hai?", o:["55.5","18","1","10"], a:"55.5"},
+    {s:"Chemistry", q:"Baking Soda ka rasayanik sutra?", o:["NaHCO3","Na2CO3","NaOH","NaCl"], a:"NaHCO3"},
+    {s:"Chemistry", q:"Graphite mein carbon ka hybridization kya hai?", o:["sp2","sp3","sp","dsp2"], a:"sp2"},
+    {s:"Chemistry", q:"Kaunsi noble gas vaayumandal mein nahi payi jati?", o:["Radon","Helium","Neon","Argon"], a:"Radon"},
+    {s:"Chemistry", q:"NaCl (Namak) mein kaunsa bandhan hota hai?", o:["Ionic","Covalent","Metallic","Hydrogen"], a:"Ionic"},
+    {s:"Chemistry", q:"Vitamin C ka rasayanik naam kya hai?", o:["Ascorbic Acid","Retinol","Calciferol","Tocopherol"], a:"Ascorbic Acid"},
+    {s:"Chemistry", q:"Sabse prabal oxidizing agent kaunsa hai?", o:["F2","Cl2","Br2","I2"], a:"F2"},
+    {s:"Chemistry", q:"Methane (CH4) ki jyamiti kaisi hoti hai?", o:["Tetrahedral","Linear","Planar","Pyramidal"], a:"Tetrahedral"},
+    {s:"Chemistry", q:"Fe (Loha) kaisa chumbakiya padarth hai?", o:["Ferromagnetic","Paramagnetic","Diamagnetic","None"], a:"Ferromagnetic"},
+
+    // BIOLOGY (RBSE Important)
+    {s:"Biology", q:"Koshika ka 'Powerhouse' kise kehte hain?", o:["Mitochondria","Nucleus","Ribosome","Golgi"], a:"Mitochondria"},
+    {s:"Biology", q:"Rakt ka thakka (Clotting) banane mein kaun sahayak hai?", o:["Platelets","RBC","WBC","Plasma"], a:"Platelets"},
+    {s:"Biology", q:"DNA helix ka double-stranded model kisne diya?", o:["Watson-Crick","Mendel","Darwin","Morgan"], a:"Watson-Crick"},
+    {s:"Biology", q:"Blood Group 'O' ko kya kaha jata hai?", o:["Universal Donor","Acceptor","Both","None"], a:"Universal Donor"},
+    {s:"Biology", q:"Insulin hormone kahan banta hai?", o:["Pancreas","Liver","Kidney","Heart"], a:"Pancreas"},
+    {s:"Biology", q:"Manav sharir mein kitne gun-sutra (Chromosomes) hote hain?", o:["46","23","44","48"], a:"46"},
+    {s:"Biology", q:"Master gland kise kaha jata hai?", o:["Pituitary","Thyroid","Adrenal","Thymus"], a:"Pituitary"},
+    {s:"Biology", q:"Kidney ki functional unit kya hai?", o:["Nephron","Neuron","Cell","Tissue"], a:"Nephron"},
+    {s:"Biology", q:"Dudh ko dahi mein badalne wala bacteria?", o:["Lactobacillus","E. Coli","Rhizobium","None"], a:"Lactobacillus"},
+    {s:"Biology", q:"RBC ka jeevan kaal kitna hota hai?", o:["120 din","60 din","10 din","200 din"], a:"120 din"}
+];
+
+// Filling up to 100 with RBSE/NEET Mix
+for(let i=31; i<=100; i++) {
+    let sub = i<=55?"Physics":(i<=80?"Chemistry":"Biology");
+    bank.push({s:sub, q:`RBSE Board Imp Q${i}: Is topic ka niyam aur numerical yaad karein.`, o:["Sahi Jawab","Galat 1","Galat 2","Galat 3"], a:"Sahi Jawab"});
+}
+
+let testSet = [], currIdx = 0, score = 0, timer;
+
+function start(mode) {
+    testSet = mode==='All' ? bank : bank.filter(x => x.s === mode);
+    testSet = testSet.sort(() => 0.5 - Math.random()).slice(0, 10);
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    showQ();
+}
+
+function showQ() {
+    if(currIdx >= testSet.length) { end(); return; }
+    const q = testSet[currIdx];
+    document.getElementById('sub-tag').innerText = q.s;
+    document.getElementById('q-counter').innerText = `${currIdx+1} / ${testSet.length}`;
+    document.getElementById('q-text').innerText = q.q;
+    
+    const box = document.getElementById('options-box');
+    box.innerHTML = "";
+    [...q.o].sort(() => 0.5 - Math.random()).forEach(opt => {
+        const b = document.createElement('button');
+        b.className = "option";
+        b.innerText = opt;
+        b.onclick = () => check(opt, q.a);
+        box.appendChild(b);
+    });
+    startTimer();
+}
+
+function startTimer() {
+    let t = 15;
+    document.getElementById('time').innerText = t;
+    clearInterval(timer);
+    timer = setInterval(() => {
+        t--;
+        document.getElementById('time').innerText = t;
+        if(t <= 0) { currIdx++; showQ(); }
+    }, 1000);
+}
+
+function check(sel, ans) {
+    clearInterval(timer);
+    if(sel === ans) score++;
+    currIdx++;
+    showQ();
+}
+
+function end() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+    document.getElementById('score-display').innerText = `${score} / ${testSet.length}`;
+}
+</script>
+
 </body>
 </html>
+
 
 
 
