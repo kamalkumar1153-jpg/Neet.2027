@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Vault Pro | Chapter Analysis</title>
+    <title>Study Vault Pro | Fixed</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,58 +15,44 @@
             <p>RBSE Class 12th Master Prep</p>
         </div>
         
-        <div class="setting-row">
-            <span>⚠️ Negative Marking ON (-0.25)</span>
-            <label class="switch">
-                <input type="checkbox" id="neg-toggle" checked>
-                <span class="slider"></span>
-            </label>
+        <div class="search-box" style="margin-bottom: 20px;">
+            <input type="text" id="search-input" onkeyup="liveSearch()" placeholder="🔍 Search (e.g. Optics, Solid, Genetics)..." 
+                   style="width: 100%; padding: 15px; border-radius: 30px; border: 1px solid #dfe1e5; outline: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
         </div>
 
         <div class="grid">
             <button class="btn physics" onclick="start('Physics')">⚛️ Physics</button>
             <button class="btn chemistry" onclick="start('Chemistry')">🧪 Chemistry</button>
             <button class="btn biology" onclick="start('Biology')">🧬 Biology</button>
-            <button class="btn btn-full" onclick="start('All')">🚀 Start Full Test (120 Qs)</button>
+            <button class="btn btn-full" id="start-btn" onclick="start('All')">🚀 Start Full Test (120 Qs)</button>
         </div>
     </div>
 
-    <div id="quiz-screen">
+    <div id="quiz-screen" style="display:none;">
         <div class="status-bar">
             <span id="sub-tag">SUBJECT</span>
             <div class="score-pill">Score: <span id="live-score">0.00</span></div>
-            <span id="counter">0 / 120</span>
+            <span id="counter">0 / 0</span>
         </div>
         <div class="progress-container">
-            <div id="progress-bar"></div>
+            <div id="progress-bar" style="width: 0%; height: 100%; background: #6c5ce7;"></div>
         </div>
-        <div class="q-text" id="question">Loading...</div>
-        <div id="options-box"></div>
+        <div class="q-text" id="question" style="margin: 20px 0; font-weight: bold; font-size: 1.2rem;">Loading...</div>
+        <div id="options-box" class="grid"></div>
     </div>
 
-    <div id="result-screen" style="text-align: center;">
+    <div id="result-screen" style="display:none;">
         <div class="icon-result">📊</div>
-        <h2>Analysis Report</h2>
+        <h2>Test Report</h2>
         <h1 id="final-score">0.00</h1>
-        <div id="review-box" style="margin-top: 20px; text-align: left; max-height: 450px; overflow-y: auto; background: #fdfdfd; padding: 15px; border-radius: 20px; border: 1px solid #eee;"></div>
-        <button class="btn btn-full" style="margin-top:20px;" onclick="location.reload()">Take Another Test</button>
+        <div id="review-box" style="margin-top:20px;"></div>
+        <button class="btn btn-full" onclick="location.reload()">Return Home</button>
     </div>
 </div>
 
 <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
 
 
 
