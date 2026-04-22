@@ -7,106 +7,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
-        :root { --primary: #2575fc; --bg: #f8faff; --card: #ffffff; --text: #1a1c1e; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        
-        .header { padding: 25px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
-        
-        .container { padding: 0 20px; }
-        
-        /* Feature Grid */
-        .feat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
-        .feat-item { background: var(--card); padding: 15px 5px; border-radius: 18px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; }
-        .feat-item span { display: block; font-size: 10px; font-weight: 700; margin-top: 6px; }
-        .feat-item i { font-size: 24px; }
-
-        /* Subject Cards */
-        .subj-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 10px; }
-        .subj-card { background: var(--card); padding: 20px; border-radius: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); position: relative; overflow: hidden; }
-        .subj-card h3 { margin: 10px 0 5px; font-size: 16px; }
-        .subj-card p { margin: 0; font-size: 12px; opacity: 0.6; }
-        .progress-bar { width: 100%; height: 6px; background: #eee; border-radius: 10px; margin-top: 12px; }
-        .progress-fill { height: 100%; border-radius: 10px; }
-
-        /* Full Screen Pages */
-        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; padding: 20px; overflow-y: auto; }
-        .close-btn { position: sticky; top: 0; float: right; font-size: 32px; color: #ff4757; background: white; border-radius: 50%; z-index: 10; }
-        
-        .note-item { background: #f0f7ff; padding: 15px; border-radius: 16px; margin-bottom: 12px; border-left: 5px solid var(--primary); }
+        :root { --p: #2575fc; --bg: #f8faff; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); padding-bottom: 20px; }
+        .container { padding: 20px; }
+        .feat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 25px 0; }
+        .feat-btn { background: white; padding: 15px 5px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; }
+        .feat-btn span { display: block; font-size: 10px; font-weight: 700; margin-top: 5px; }
+        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; padding: 20px; overflow-y: auto; }
+        .close-btn { float: right; font-size: 30px; color: #ff4757; cursor: pointer; }
+        .opt-btn { width:100%; padding:15px; margin-bottom:10px; border-radius:12px; border:1px solid #eee; background:white; text-align:left; font-size:15px; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Study Vault Pro 🎓</h1>
-    <i class="material-icons-round">notifications_none</i>
-</div>
-
 <div class="container">
-    <div class="feat-grid">
-        <div class="feat-item" onclick="openNotes('All')">
-            <i class="material-icons-round" style="color: #2575fc;">description</i>
-            <span>Notes</span>
-        </div>
-        <div class="feat-item" onclick="startTest('All')">
-            <i class="material-icons-round" style="color: #6c5ce7;">assignment</i>
-            <span>MCQs</span>
-        </div>
-        <div class="feat-item" onclick="openPage('diagrams-page')">
-            <i class="material-icons-round" style="color: #ff9f43;">brush</i>
-            <span>Diagrams</span>
-        </div>
-        <div class="feat-item" onclick="alert('Bookmarks coming soon!')">
-            <i class="material-icons-round" style="color: #10ac84;">bookmark</i>
-            <span>Saved</span>
-        </div>
+    <h2 style="font-weight:800;">Study Vault Pro 🎓</h2>
+
+    <div class="feat-row">
+        <div class="feat-btn" onclick="openNotes('All')"><span class="material-icons-round" style="color:#2575fc">description</span><span>Notes</span></div>
+        <div class="feat-btn" onclick="startTest('All')"><span class="material-icons-round" style="color:#6c5ce7">assignment</span><span>MCQs</span></div>
+        <div class="feat-btn" onclick="openPage('diagrams-page')"><span class="material-icons-round" style="color:#ff9f43">brush</span><span>Diagrams</span></div>
+        <div class="feat-btn" onclick="alert('No bookmarks')"><span class="material-icons-round" style="color:#10ac84">bookmark</span><span>Saved</span></div>
     </div>
 
-    <h3>Subjects</h3>
-    <div class="subj-grid">
-        <div class="subj-card" onclick="openNotes('Physics')">
-            <i class="material-icons-round" style="color:#2575fc">atom</i>
-            <h3>Physics</h3>
-            <p>25 Chapters</p>
-            <div class="progress-bar"><div class="progress-fill" style="width: 60%; background: #2575fc;"></div></div>
-        </div>
-        <div class="subj-card" onclick="openNotes('Chemistry')">
-            <i class="material-icons-round" style="color:#ff9f43">science</i>
-            <h3>Chemistry</h3>
-            <p>28 Chapters</p>
-            <div class="progress-bar"><div class="progress-fill" style="width: 45%; background: #ff9f43;"></div></div>
-        </div>
+    <div style="background:linear-gradient(135deg, #6a11cb, #2575fc); color:white; padding:25px; border-radius:25px; box-shadow:0 10px 20px rgba(37,117,252,0.2);" onclick="startTest('All')">
+        <h3 style="margin:0">Start Full Mock Test</h3>
+        <p style="margin:5px 0 0; opacity:0.8;">Physics • Chemistry • Biology</p>
     </div>
 </div>
 
-<div id="notes-page" class="page">
-    <i class="material-icons-round close-btn" onclick="closePage('notes-page')">cancel</i>
-    <h2 id="notes-title" style="margin-top: 40px;">Notes</h2>
-    <div id="notes-content"></div>
-</div>
-
-<div id="quiz-page" class="page">
-    <i class="material-icons-round close-btn" onclick="closePage('quiz-page')">cancel</i>
-    <h3 style="margin-top: 40px;">Quiz Practice</h3>
-    <div id="quiz-area">
-        <p id="q-text" style="font-size: 18px; font-weight: 600;"></p>
-        <div id="options-list"></div>
-    </div>
-</div>
-
-<div id="diagrams-page" class="page">
-    <i class="material-icons-round close-btn" onclick="closePage('diagrams-page')">cancel</i>
-    <h2 style="margin-top: 40px;">RBSE Diagrams</h2>
-    <div style="background: #fdf2f2; padding: 20px; border-radius: 20px; text-align: center; border: 2px dashed #ff4757;">
-        Physics & Chemistry Diagrams 2027
-    </div>
-</div>
+<div id="notes-page" class="page"><span class="material-icons-round close-btn" onclick="closePage('notes-page')">cancel</span><h2 id="notes-title" style="margin-top:40px;">Notes</h2><div id="notes-content"></div></div>
+<div id="quiz-page" class="page"><span class="material-icons-round close-btn" onclick="closePage('quiz-page')">cancel</span><h3 style="margin-top:40px;">Live Quiz</h3><p id="q-text" style="font-size:18px; font-weight:600;"></p><div id="options-list"></div></div>
+<div id="diagrams-page" class="page"><span class="material-icons-round close-btn" onclick="closePage('diagrams-page')">cancel</span><h2 style="margin-top:40px;">Important Diagrams</h2><div style="padding:20px; border:2px dashed #ddd; text-align:center; border-radius:20px;">Diagram Gallery Coming Soon</div></div>
 
 <script src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
