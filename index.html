@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Vault Pro</title>
+<title>Study Vault Ultra Pro</title>
 
-<!-- ✅ Firebase (COMPAT VERSION - IMPORTANT) -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -16,23 +16,26 @@ body {margin:0;font-family:Arial;background:#eef1f5;}
 .orange{background:#ff5e62;}
 .green{background:#56ab2f;}
 .quiz{display:none;padding:20px;}
-.option{display:block;margin:10px 0;padding:10px;background:white;border:none;border-radius:10px;}
+.option{display:block;margin:10px 0;padding:12px;background:white;border:none;border-radius:10px;}
+.timer{color:red;font-weight:bold;}
 </style>
 </head>
 
 <body>
 
 <div class="container" id="home">
-<h2>Study Vault Pro 🎓</h2>
+<h2>Study Vault Ultra Pro 🎓</h2>
 
-<div class="card blue" onclick="startQuiz('physics')">Physics Test</div>
-<div class="card orange" onclick="startQuiz('chem')">Chemistry Test</div>
-<div class="card green" onclick="startQuiz('bio')">Biology Test</div>
+<input id="username" placeholder="Enter Name" style="padding:10px;width:100%;border-radius:10px">
+
+<div class="card blue" onclick="startQuiz('physics')">Physics</div>
+<div class="card orange" onclick="startQuiz('chem')">Chemistry</div>
+<div class="card green" onclick="startQuiz('bio')">Biology</div>
 
 </div>
 
 <div class="quiz" id="quiz">
-<h3 id="timer"></h3>
+<h3 class="timer" id="timer"></h3>
 <h2 id="q"></h2>
 
 <button class="option" onclick="check(0)" id="op0"></button>
@@ -45,22 +48,16 @@ body {margin:0;font-family:Arial;background:#eef1f5;}
 
 <script>
 
-// ✅ YOUR FIREBASE CONFIG (FIXED)
+// Firebase config (tumhara)
 const firebaseConfig = {
   apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
   authDomain: "neet-2027-9792f.firebaseapp.com",
   databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
-  projectId: "neet-2027-9792f",
-  storageBucket: "neet-2027-9792f.firebasestorage.app",
-  messagingSenderId: "946709283656",
-  appId: "1:946709283656:web:51a13d83e8f0a546b5697d",
-  measurementId: "G-YNHK9L90SQ"
+  projectId: "neet-2027-9792f"
 };
 
-// ✅ INIT (COMPAT WAY)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
 
 // Questions
 const data = {
@@ -76,27 +73,47 @@ bio:[
 ]
 };
 
-let quiz=[],index=0,score=0,time=30,timer;
+let quiz=[],index=0,score=0,time=10,timer,user="";
 
-// Start Quiz
+// Start
 function startQuiz(sub){
+user = document.getElementById("username").value;
+if(!user){ alert("Enter name"); return; }
+
 quiz = data[sub];
-index=0;score=0;time=30;
+index=0;score=0;
 
 document.getElementById("home").style.display="none";
 document.getElementById("quiz").style.display="block";
 
 loadQ();
+startTimer();
+}
 
-timer=setInterval(()=>{
+// Timer per question
+function startTimer(){
+time = 10;
+timer = setInterval(()=>{
 time--;
 document.getElementById("timer").innerText="Time: "+time;
-if(time==0) endQuiz();
+
+if(time==0){
+index++;
+if(index<quiz.length){
+loadQ();
+startTimer();
+}else{
+endQuiz();
+}
+}
 },1000);
 }
 
-// Load Question
+// Load Q
 function loadQ(){
+clearInterval(timer);
+startTimer();
+
 let q=quiz[index];
 document.getElementById("q").innerText=q.q;
 q.o.forEach((opt,i)=>{
@@ -104,9 +121,16 @@ document.getElementById("op"+i).innerText=opt;
 });
 }
 
-// Check Answer
+// Check
 function check(ans){
-if(ans==quiz[index].a) score++;
+clearInterval(timer);
+
+if(ans==quiz[index].a){
+score++;
+}else{
+score--; // ❌ negative marking
+}
+
 index++;
 if(index<quiz.length){
 loadQ();
@@ -115,35 +139,40 @@ endQuiz();
 }
 }
 
-// End Quiz
+// End
 function endQuiz(){
 clearInterval(timer);
 document.getElementById("quiz").style.display="none";
 
-let name = prompt("Enter Name");
-
 document.getElementById("result").innerHTML=
 "<h2>Score: "+score+"</h2>";
 
-// Save Score
+// Save
 db.ref("leaderboard").push({
-name:name,
+name:user,
 score:score
 });
 
-// Load Leaderboard
 loadLeaderboard();
 }
 
-// Show Leaderboard
+// Top 10 Leaderboard
 function loadLeaderboard(){
-db.ref("leaderboard").on("value",snap=>{
+db.ref("leaderboard").orderByChild("score").limitToLast(10)
+.on("value",snap=>{
 let data=snap.val();
-let html="<h3>🏆 Leaderboard</h3>";
+let arr=[];
 
 for(let k in data){
-html+=`<p>${data[k].name} - ${data[k].score}</p>`;
+arr.push(data[k]);
 }
+
+arr.sort((a,b)=>b.score-a.score);
+
+let html="<h3>🏆 Top 10 Rank</h3>";
+arr.forEach((d,i)=>{
+html+=`<p>${i+1}. ${d.name} - ${d.score}</p>`;
+});
 
 document.getElementById("result").innerHTML+=html;
 });
