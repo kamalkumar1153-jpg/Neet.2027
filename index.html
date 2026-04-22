@@ -1,166 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study Vault Pro</title>
 
+<!-- ✅ Firebase (COMPAT VERSION - IMPORTANT) -->
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #eef1f5;
-}
-
-/* Container */
-.container {
-  padding: 20px;
-}
-
-/* Header */
-.header {
-  text-align: center;
-}
-
-.header h1 {
-  margin: 0;
-}
-
-.sub {
-  color: gray;
-}
-
-/* Search */
-.search {
-  margin-top: 15px;
-  padding: 12px;
-  border-radius: 25px;
-  border: none;
-  width: 100%;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-}
-
-/* Cards */
-.cards {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.card {
-  flex: 1;
-  padding: 15px;
-  border-radius: 15px;
-  color: white;
-  text-align: center;
-}
-
-/* Colors */
-.blue { background: linear-gradient(135deg, #5f9cff, #3a7bd5); }
-.orange { background: linear-gradient(135deg, #ff9966, #ff5e62); }
-.green { background: linear-gradient(135deg, #56ab2f, #a8e063); }
-
-/* Features */
-.features {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.feature {
-  background: white;
-  padding: 10px;
-  border-radius: 15px;
-  width: 22%;
-  text-align: center;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-}
-
-/* Button */
-.test-btn {
-  margin-top: 20px;
-  padding: 15px;
-  text-align: center;
-  border-radius: 25px;
-  color: white;
-  font-size: 18px;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-}
-
-/* Bottom Nav */
-.nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: white;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-}
+body {margin:0;font-family:Arial;background:#eef1f5;}
+.container {padding:20px;}
+.card {padding:15px;border-radius:15px;color:white;margin:10px 0;}
+.blue{background:#3a7bd5;}
+.orange{background:#ff5e62;}
+.green{background:#56ab2f;}
+.quiz{display:none;padding:20px;}
+.option{display:block;margin:10px 0;padding:10px;background:white;border:none;border-radius:10px;}
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="container" id="home">
+<h2>Study Vault Pro 🎓</h2>
 
-  <!-- Header -->
-  <div class="header">
-    <h1>Study Vault Pro 🎓</h1>
-    <p class="sub">RBSE Class 12th Master Prep</p>
-  </div>
-
-  <!-- Search -->
-  <input type="text" class="search" placeholder="🔍 Search (Optics, Genetics...)">
-
-  <!-- Subjects -->
-  <div class="cards">
-    <div class="card blue">
-      <h3>Physics</h3>
-      <p>25 Chapters</p>
-      <small>60% Complete</small>
-    </div>
-
-    <div class="card orange">
-      <h3>Chemistry</h3>
-      <p>28 Chapters</p>
-      <small>45% Complete</small>
-    </div>
-
-    <div class="card green">
-      <h3>Biology</h3>
-      <p>22 Chapters</p>
-      <small>70% Complete</small>
-    </div>
-  </div>
-
-  <!-- Features -->
-  <div class="features">
-    <div class="feature">📄 Notes</div>
-    <div class="feature">📝 MCQs</div>
-    <div class="feature">📊 Progress</div>
-    <div class="feature">🔖 Save</div>
-  </div>
-
-  <!-- Test Button -->
-  <div class="test-btn">
-    🚀 Start Full Test (120 Qs)
-    <br>
-    <small>Improve your rank</small>
-  </div>
+<div class="card blue" onclick="startQuiz('physics')">Physics Test</div>
+<div class="card orange" onclick="startQuiz('chem')">Chemistry Test</div>
+<div class="card green" onclick="startQuiz('bio')">Biology Test</div>
 
 </div>
 
-<!-- Bottom Navigation -->
-<div class="nav">
-  <div>🏠 Home</div>
-  <div>📚 Subjects</div>
-  <div>📝 Tests</div>
-  <div>🔖 Saved</div>
-  <div>👤 Profile</div>
+<div class="quiz" id="quiz">
+<h3 id="timer"></h3>
+<h2 id="q"></h2>
+
+<button class="option" onclick="check(0)" id="op0"></button>
+<button class="option" onclick="check(1)" id="op1"></button>
+<button class="option" onclick="check(2)" id="op2"></button>
+<button class="option" onclick="check(3)" id="op3"></button>
 </div>
+
+<div id="result"></div>
+
+<script>
+
+// ✅ YOUR FIREBASE CONFIG (FIXED)
+const firebaseConfig = {
+  apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
+  authDomain: "neet-2027-9792f.firebaseapp.com",
+  databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
+  projectId: "neet-2027-9792f",
+  storageBucket: "neet-2027-9792f.firebasestorage.app",
+  messagingSenderId: "946709283656",
+  appId: "1:946709283656:web:51a13d83e8f0a546b5697d",
+  measurementId: "G-YNHK9L90SQ"
+};
+
+// ✅ INIT (COMPAT WAY)
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+
+// Questions
+const data = {
+physics:[
+{q:"Speed unit?",o:["m/s","kg","sec","amp"],a:0},
+{q:"Force unit?",o:["Newton","Joule","Watt","Volt"],a:0}
+],
+chem:[
+{q:"H2O is?",o:["Water","Oxygen","Hydrogen","Salt"],a:0}
+],
+bio:[
+{q:"Heart chambers?",o:["2","3","4","5"],a:2}
+]
+};
+
+let quiz=[],index=0,score=0,time=30,timer;
+
+// Start Quiz
+function startQuiz(sub){
+quiz = data[sub];
+index=0;score=0;time=30;
+
+document.getElementById("home").style.display="none";
+document.getElementById("quiz").style.display="block";
+
+loadQ();
+
+timer=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText="Time: "+time;
+if(time==0) endQuiz();
+},1000);
+}
+
+// Load Question
+function loadQ(){
+let q=quiz[index];
+document.getElementById("q").innerText=q.q;
+q.o.forEach((opt,i)=>{
+document.getElementById("op"+i).innerText=opt;
+});
+}
+
+// Check Answer
+function check(ans){
+if(ans==quiz[index].a) score++;
+index++;
+if(index<quiz.length){
+loadQ();
+}else{
+endQuiz();
+}
+}
+
+// End Quiz
+function endQuiz(){
+clearInterval(timer);
+document.getElementById("quiz").style.display="none";
+
+let name = prompt("Enter Name");
+
+document.getElementById("result").innerHTML=
+"<h2>Score: "+score+"</h2>";
+
+// Save Score
+db.ref("leaderboard").push({
+name:name,
+score:score
+});
+
+// Load Leaderboard
+loadLeaderboard();
+}
+
+// Show Leaderboard
+function loadLeaderboard(){
+db.ref("leaderboard").on("value",snap=>{
+let data=snap.val();
+let html="<h3>🏆 Leaderboard</h3>";
+
+for(let k in data){
+html+=`<p>${data[k].name} - ${data[k].score}</p>`;
+}
+
+document.getElementById("result").innerHTML+=html;
+});
+}
+
+</script>
 
 </body>
 </html>
