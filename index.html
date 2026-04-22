@@ -1,122 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Vault Pro</title>
-
-<style>
-  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #eef1f5; padding-bottom: 70px; }
-  .container { padding: 20px; }
-  .header { text-align: center; margin-bottom: 20px; }
-  .header h1 { margin: 0; color: #2d3436; }
-  .sub { color: #636e72; font-size: 14px; }
-
-  /* Search */
-  .search { margin-top: 15px; padding: 15px 20px; border-radius: 30px; border: 1px solid #dfe1e5; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.08); outline: none; box-sizing: border-box; font-size: 16px; transition: 0.3s; }
-  .search:focus { box-shadow: 0 4px 15px rgba(106, 17, 203, 0.2); border-color: #6a11cb; }
-
-  /* Subject Cards */
-  .cards { display: flex; gap: 10px; margin-top: 20px; }
-  .card { flex: 1; padding: 15px; border-radius: 20px; color: white; text-align: center; cursor: pointer; transition: transform 0.2s; }
-  .card:active { transform: scale(0.95); }
-  .blue { background: linear-gradient(135deg, #5f9cff, #3a7bd5); }
-  .orange { background: linear-gradient(135deg, #ff9966, #ff5e62); }
-  .green { background: linear-gradient(135deg, #56ab2f, #a8e063); }
-  .card h3 { margin: 5px 0; font-size: 16px; }
-
-  /* Features */
-  .features { display: flex; justify-content: space-between; margin-top: 25px; }
-  .feature { background: white; padding: 12px 5px; border-radius: 15px; width: 22%; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.05); font-size: 12px; font-weight: bold; }
-
-  /* Test Button */
-  .test-btn { margin-top: 25px; padding: 18px; text-align: center; border-radius: 25px; color: white; font-size: 18px; background: linear-gradient(135deg, #6a11cb, #2575fc); cursor: pointer; box-shadow: 0 6px 15px rgba(37, 117, 252, 0.3); }
-  .test-btn:active { transform: translateY(2px); }
-
-  /* Quiz Area Styles */
-  #quiz-screen, #result-screen { display: none; background: white; border-radius: 25px; padding: 20px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-  .opt { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 15px; border: 1px solid #eee; background: #f9f9f9; text-align: left; font-size: 16px; cursor: pointer; }
-  .opt:active { background: #6a11cb; color: white; }
-  
-  /* Result Specific */
-  .mistake-card { background: #fff5f5; border-left: 5px solid #ff7675; padding: 10px; border-radius: 10px; margin-top: 10px; text-align: left; }
-
-  /* Bottom Nav */
-  .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -2px 15px rgba(0,0,0,0.1); font-size: 12px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Vault Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root { --p: #2575fc; --bg: #f8faff; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); padding-bottom: 20px; }
+        .container { padding: 20px; }
+        .feat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 25px 0; }
+        .feat-btn { background: white; padding: 15px 5px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; }
+        .feat-btn span { display: block; font-size: 10px; font-weight: 700; margin-top: 5px; }
+        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 30px; color: #ff4757; cursor: pointer; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
-  <div id="home-screen">
-    <div class="header">
-      <h1>Study Vault Pro 🎓</h1>
-      <p class="sub">RBSE Class 12th Master Prep</p>
+    <h2>Study Vault Pro 🎓</h2>
+
+    <div class="feat-row">
+        <div class="feat-btn" onclick="openNotes('All')">
+            <span class="material-icons-round" style="color: #2575fc;">description</span>
+            <span>Notes</span>
+        </div>
+        <div class="feat-btn" onclick="startTest('All')">
+            <span class="material-icons-round" style="color: #6c5ce7;">assignment</span>
+            <span>MCQs</span>
+        </div>
+        <div class="feat-btn" onclick="openPage('diagrams-page')">
+            <span class="material-icons-round" style="color: #ff9f43;">trending_up</span>
+            <span>Diagrams</span>
+        </div>
+        <div class="feat-btn" onclick="alert('No bookmarks saved')">
+            <span class="material-icons-round" style="color: #10ac84;">bookmark</span>
+            <span>Saved</span>
+        </div>
     </div>
-
-    <input type="text" id="search-input" class="search" onkeyup="liveSearch()" placeholder="🔍 Search (Optics, Genetics...)">
-
-    <div class="cards">
-      <div class="card blue" onclick="start('Physics')">
-        <h3>Physics</h3>
-        <p>40 Qs</p>
-        <small>Available</small>
-      </div>
-      <div class="card orange" onclick="start('Chemistry')">
-        <h3>Chemistry</h3>
-        <p>40 Qs</p>
-        <small>Available</small>
-      </div>
-      <div class="card green" onclick="start('Biology')">
-        <h3>Biology</h3>
-        <p>40 Qs</p>
-        <small>Available</small>
-      </div>
-    </div>
-
-    <div class="features">
-      <div class="feature">📄 Notes</div>
-      <div class="feature">📝 MCQs</div>
-      <div class="feature">📊 Progress</div>
-      <div class="feature">🔖 Save</div>
-    </div>
-
-    <div class="test-btn" id="start-btn" onclick="start('All')">
-      🚀 Start Full Test (120 Qs)
-      <br><small>Improve your rank</small>
-    </div>
-  </div>
-
-  <div id="quiz-screen">
-    <div style="display:flex; justify-content: space-between; align-items: center;">
-        <span id="sub-tag" style="background:#6a11cb; color:white; padding:5px 12px; border-radius:15px; font-size:12px;">SUBJECT</span>
-        <span id="counter" style="font-weight:bold;">1 / 120</span>
-    </div>
-    <div id="question" style="font-size: 1.2rem; font-weight:bold; margin: 25px 0;">Question loading...</div>
-    <div id="options-box"></div>
-  </div>
-
-  <div id="result-screen">
-    <h2 style="color:#6a11cb;">Final Result</h2>
-    <h1 id="final-score" style="font-size: 3rem; margin: 10px 0;">0.00</h1>
-    <div id="review-box"></div>
-    <button class="test-btn" style="width:100%; border:none;" onclick="location.reload()">Return Home</button>
-  </div>
-
 </div>
 
-<div class="nav">
-  <div onclick="location.reload()">🏠 Home</div>
-  <div>📚 Subjects</div>
-  <div>📝 Tests</div>
-  <div>🔖 Saved</div>
-  <div>👤 Profile</div>
+<div id="notes-page" class="page">
+    <span class="material-icons-round close-btn" onclick="closePage('notes-page')">cancel</span>
+    <h2 id="notes-title">Notes</h2>
+    <div id="notes-content"></div>
+</div>
+
+<div id="quiz-page" class="page">
+    <span class="material-icons-round close-btn" onclick="closePage('quiz-page')">cancel</span>
+    <h3>Quiz Mode</h3>
+    <p id="q-text" style="font-size: 18px;"></p>
+    <div id="options-list"></div>
+</div>
+
+<div id="diagrams-page" class="page">
+    <span class="material-icons-round close-btn" onclick="closePage('diagrams-page')">cancel</span>
+    <h2>Diagram Gallery</h2>
+    <p>Physics & Chemistry Diagrams for Board 2027</p>
+    <div style="background:#f0f7ff; padding:20px; border-radius:15px; text-align:center; margin-top:20px; border: 2px dashed #2575fc;">
+        [Diagrams will appear here]
+    </div>
 </div>
 
 <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
