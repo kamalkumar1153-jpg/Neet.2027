@@ -1,172 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Study Vault Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2575fc;
-            --physics: #eef2ff; --physics-text: #4338ca;
-            --chemistry: #fff7ed; --chemistry-text: #c2410c;
-            --biology: #f0fdf4; --biology-text: #15803d;
-            --bg: #f8faff; --card: #ffffff;
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #1a1c1e; padding-bottom: 90px; }
-        
-        /* Header */
-        .header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .header .title-area h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-        .header .title-area p { margin: 2px 0 0; font-size: 14px; opacity: 0.6; font-weight: 500; }
-        .bell-icon { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; }
-        .dot { position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; background: #ff4757; border-radius: 50%; border: 2px solid white; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Vault Pro</title>
 
-        /* Search */
-        .search-container { padding: 20px; }
-        .search-bar { background: white; border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
-        .search-bar input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 14px; font-family: inherit; }
-        
-        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-top: 10px; }
-        .section-header h3 { font-size: 18px; font-weight: 700; }
-        .section-header span { color: var(--primary); font-size: 13px; font-weight: 600; }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #eef1f5;
+}
 
-        /* Subject Cards */
-        .subject-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 10px 20px; scrollbar-width: none; }
-        .subject-scroll::-webkit-scrollbar { display: none; }
-        .sub-card { min-width: 140px; padding: 20px; border-radius: 24px; position: relative; }
-        .sub-card i { font-size: 32px; margin-bottom: 15px; display: block; }
-        .sub-card h4 { margin: 0; font-size: 16px; }
-        .sub-card p { margin: 4px 0 12px; font-size: 11px; opacity: 0.7; }
-        .prog-bg { width: 100%; height: 5px; background: rgba(0,0,0,0.05); border-radius: 10px; }
-        .prog-fill { height: 100%; border-radius: 10px; }
+/* Container */
+.container {
+  padding: 20px;
+}
 
-        /* Quick Actions Grid */
-        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 20px; }
-        .action-item { background: white; padding: 15px 5px; border-radius: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .action-item .icon-box { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
-        .action-item span { font-size: 11px; font-weight: 700; display: block; }
-        .action-item small { font-size: 9px; opacity: 0.5; }
+/* Header */
+.header {
+  text-align: center;
+}
 
-        /* Full Test Banner */
-        .test-banner { margin: 10px 20px; background: linear-gradient(135deg, #6366f1, #2575fc); border-radius: 25px; padding: 25px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 15px 30px rgba(37,117,252,0.2); }
-        .test-info h2 { margin: 0; font-size: 20px; font-weight: 800; }
-        .test-info p { margin: 5px 0 0; font-size: 12px; opacity: 0.9; }
-        .arrow-btn { background: white; color: var(--primary); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.header h1 {
+  margin: 0;
+}
 
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 10px; border-top: 1px solid #eee; z-index: 1000; }
-        .nav-item { text-align: center; color: #94a3b8; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { display: block; font-size: 24px; }
-        .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; display: block; }
+.sub {
+  color: gray;
+}
 
-        /* Pages */
-        .page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; padding: 20px; overflow-y: auto; }
-        .close-page { position: fixed; top: 20px; right: 20px; font-size: 30px; color: #ff4757; }
-    </style>
+/* Search */
+.search {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  width: 100%;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* Cards */
+.cards {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.card {
+  flex: 1;
+  padding: 15px;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+}
+
+/* Colors */
+.blue { background: linear-gradient(135deg, #5f9cff, #3a7bd5); }
+.orange { background: linear-gradient(135deg, #ff9966, #ff5e62); }
+.green { background: linear-gradient(135deg, #56ab2f, #a8e063); }
+
+/* Features */
+.features {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.feature {
+  background: white;
+  padding: 10px;
+  border-radius: 15px;
+  width: 22%;
+  text-align: center;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* Button */
+.test-btn {
+  margin-top: 20px;
+  padding: 15px;
+  text-align: center;
+  border-radius: 25px;
+  color: white;
+  font-size: 18px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+}
+
+/* Bottom Nav */
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+</style>
+
 </head>
+
 <body>
 
-    <div class="header">
-        <div class="title-area">
-            <h1>Study Vault Pro 🎓</h1>
-            <p>RBSE Class 12th Master Prep</p>
-        </div>
-        <div class="bell-icon">
-            <i class="material-icons-round">notifications_none</i>
-            <div class="dot"></div>
-        </div>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Study Vault Pro 🎓</h1>
+    <p class="sub">RBSE Class 12th Master Prep</p>
+  </div>
+
+  <!-- Search -->
+  <input type="text" class="search" placeholder="🔍 Search (Optics, Genetics...)">
+
+  <!-- Subjects -->
+  <div class="cards">
+    <div class="card blue">
+      <h3>Physics</h3>
+      <p>25 Chapters</p>
+      <small>60% Complete</small>
     </div>
 
-    <div class="search-container">
-        <div class="search-bar">
-            <i class="material-icons-round" style="color:#94a3b8">search</i>
-            <input type="text" placeholder="Search (e.g. Optics, Solid, Genetics)...">
-            <i class="material-icons-round" style="color:#94a3b8">tune</i>
-        </div>
+    <div class="card orange">
+      <h3>Chemistry</h3>
+      <p>28 Chapters</p>
+      <small>45% Complete</small>
     </div>
 
-    <div class="section-header">
-        <h3>Subjects</h3>
-        <span>View all <i class="material-icons-round" style="font-size:14px; vertical-align:middle">chevron_right</i></span>
+    <div class="card green">
+      <h3>Biology</h3>
+      <p>22 Chapters</p>
+      <small>70% Complete</small>
     </div>
+  </div>
 
-    <div class="subject-scroll">
-        <div class="sub-card" style="background: var(--physics);" onclick="openNotes('Physics')">
-            <i class="material-icons-round" style="color: var(--physics-text)">atom</i>
-            <h4 style="color: var(--physics-text)">Physics</h4>
-            <p>25 Chapters</p>
-            <div class="prog-bg"><div class="prog-fill" style="width:60%; background:var(--physics-text)"></div></div>
-        </div>
-        <div class="sub-card" style="background: var(--chemistry);" onclick="openNotes('Chemistry')">
-            <i class="material-icons-round" style="color: var(--chemistry-text)">science</i>
-            <h4 style="color: var(--chemistry-text)">Chemistry</h4>
-            <p>28 Chapters</p>
-            <div class="prog-bg"><div class="prog-fill" style="width:45%; background:var(--chemistry-text)"></div></div>
-        </div>
-        <div class="sub-card" style="background: var(--biology);" onclick="openNotes('Biology')">
-            <i class="material-icons-round" style="color: var(--biology-text)">dna</i>
-            <h4 style="color: var(--biology-text)">Biology</h4>
-            <p>22 Chapters</p>
-            <div class="prog-bg"><div class="prog-fill" style="width:70%; background:var(--biology-text)"></div></div>
-        </div>
-    </div>
+  <!-- Features -->
+  <div class="features">
+    <div class="feature">📄 Notes</div>
+    <div class="feature">📝 MCQs</div>
+    <div class="feature">📊 Progress</div>
+    <div class="feature">🔖 Save</div>
+  </div>
 
-    <div class="action-grid">
-        <div class="action-item" onclick="openNotes('All')">
-            <div class="icon-box" style="background:#eff6ff"><i class="material-icons-round" style="color:#2575fc">description</i></div>
-            <span>Notes</span>
-            <small>Quick revision</small>
-        </div>
-        <div class="action-item" onclick="startTest('All')">
-            <div class="icon-box" style="background:#f5f3ff"><i class="material-icons-round" style="color:#6c5ce7">assignment</i></div>
-            <span>MCQs</span>
-            <small>Practice more</small>
-        </div>
-        <div class="action-item">
-            <div class="icon-box" style="background:#fff7ed"><i class="material-icons-round" style="color:#ff9f43">trending_up</i></div>
-            <span>Performance</span>
-            <small>Track progress</small>
-        </div>
-        <div class="action-item">
-            <div class="icon-box" style="background:#f0fdf4"><i class="material-icons-round" style="color:#10ac84">bookmark_border</i></div>
-            <span>Bookmarks</span>
-            <small>Saved topics</small>
-        </div>
-    </div>
+  <!-- Test Button -->
+  <div class="test-btn">
+    🚀 Start Full Test (120 Qs)
+    <br>
+    <small>Improve your rank</small>
+  </div>
 
-    <div class="test-banner" onclick="startTest('All')">
-        <div class="test-info">
-            <h2>Start Full Test (120 Qs)</h2>
-            <p>Simulate real exam. Improve your rank.</p>
-        </div>
-        <div class="arrow-btn"><i class="material-icons-round">arrow_forward</i></div>
-    </div>
+</div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active"><i class="material-icons-round">home</i><span>Home</span></div>
-        <div class="nav-item"><i class="material-icons-round">auto_stories</i><span>Subjects</span></div>
-        <div class="nav-item"><i class="material-icons-round">fact_check</i><span>Tests</span></div>
-        <div class="nav-item"><i class="material-icons-round">turned_in_not</i><span>Bookmarks</span></div>
-        <div class="nav-item"><i class="material-icons-round">person_outline</i><span>Profile</span></div>
-    </div>
+<!-- Bottom Navigation -->
+<div class="nav">
+  <div>🏠 Home</div>
+  <div>📚 Subjects</div>
+  <div>📝 Tests</div>
+  <div>🔖 Saved</div>
+  <div>👤 Profile</div>
+</div>
 
-    <div id="notes-page" class="page"><i class="material-icons-round close-page" onclick="closePage('notes-page')">cancel</i><h2 id="notes-title" style="margin-top:40px;">Notes</h2><div id="notes-cont"></div></div>
-    <div id="quiz-page" class="page"><i class="material-icons-round close-page" onclick="closePage('quiz-page')">cancel</i><h3 style="margin-top:40px;">Mock Test</h3><p id="q-txt" style="font-size:18px; font-weight:600;"></p><div id="opt-list"></div></div>
-
-    <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
 
 
 
