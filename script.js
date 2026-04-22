@@ -1,27 +1,36 @@
 const appData = {
     notes: {
-        'Physics': [{t: 'Electrostatics', c: 'Electric field inside a conductor is zero.'}],
-        'Chemistry': [{t: 'Solutions', c: 'Molarity = Moles of solute / Volume of solution (L).'}]
+        'Physics': [
+            {t: 'Electrostatics', c: 'Coulomb Force: F = kq1q2/r². Electric field is vector.'},
+            {t: 'Optics', c: 'Mirror Formula: 1/f = 1/v + 1/u.'}
+        ],
+        'Chemistry': [
+            {t: 'Solutions', c: 'Molarity = n/V. Raoult Law: P = P0 * X.'}
+        ]
     },
     mcqs: [
-        {s: "Physics", q: "What is the unit of resistance?", o: ["Ohm", "Volt", "Ampere", "Watt"], a: "Ohm"},
-        {s: "Chemistry", q: "Symbol for Silver?", o: ["Ag", "Au", "Si", "Fe"], a: "Ag"}
+        {s: "Physics", q: "Unit of Electric Flux?", o: ["V-m", "N/C", "W", "T"], a: "V-m"},
+        {s: "Chemistry", q: "Hybridization in Methane?", o: ["sp3", "sp2", "sp", "dsp2"], a: "sp3"}
     ]
 };
 
-console.log("Script loaded and ready!");
+console.log("Vault Engine Ready!");
 
 function openPage(id) {
-    const page = document.getElementById(id);
-    if(page) {
-        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-        page.style.display = 'block';
+    const p = document.getElementById(id);
+    if(p) {
+        document.querySelectorAll('.page').forEach(page => page.style.display = 'none');
+        p.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Stop scrolling background
     }
 }
 
 function closePage(id) {
-    const page = document.getElementById(id);
-    if(page) page.style.display = 'none';
+    const p = document.getElementById(id);
+    if(p) {
+        p.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
 }
 
 function openNotes(subject) {
@@ -32,10 +41,14 @@ function openNotes(subject) {
     content.innerHTML = "";
     
     let data = (subject === 'All') ? [...appData.notes.Physics, ...appData.notes.Chemistry] : (appData.notes[subject] || []);
+    
+    if(data.length === 0) content.innerHTML = "<p>Data jald hi update hoga Bitiya!</p>";
+
     data.forEach(n => {
         content.innerHTML += `
-            <div style="background:#f0f7ff; padding:15px; border-radius:15px; margin-bottom:10px; border-left: 5px solid #2575fc;">
-                <b>${n.t}</b><br><small>${n.c}</small>
+            <div class="note-item">
+                <h4 style="margin:0 0 5px 0; color:#2575fc">${n.t}</h4>
+                <p style="margin:0; font-size:14px; line-height:1.4;">${n.c}</p>
             </div>`;
     });
 }
@@ -43,7 +56,7 @@ function openNotes(subject) {
 let currentQ = 0, score = 0, activeQuiz = [];
 function startTest(subject) {
     activeQuiz = (subject === 'All') ? appData.mcqs : appData.mcqs.filter(x => x.s === subject);
-    if(activeQuiz.length === 0) return alert("Coming soon!");
+    if(activeQuiz.length === 0) return alert("Tests are coming soon!");
     currentQ = 0; score = 0;
     openPage('quiz-page');
     showQuestion();
@@ -51,7 +64,7 @@ function startTest(subject) {
 
 function showQuestion() {
     if(currentQ >= activeQuiz.length) {
-        alert("Test Complete! Score: " + score + "/" + activeQuiz.length);
+        alert("Awesome! Score: " + score + "/" + activeQuiz.length);
         closePage('quiz-page');
         return;
     }
@@ -61,12 +74,13 @@ function showQuestion() {
     list.innerHTML = "";
     q.o.forEach(opt => {
         const b = document.createElement('button');
-        b.style = "width:100%; padding:15px; margin-bottom:10px; border-radius:12px; border:1px solid #ddd; background:white; text-align:left;";
+        b.style = "width:100%; padding:16px; margin-bottom:12px; border-radius:16px; border:1.5px solid #eee; background:white; text-align:left; font-size:15px; font-family:inherit;";
         b.innerText = opt;
         b.onclick = () => { if(opt === q.a) score++; currentQ++; showQuestion(); };
         list.appendChild(b);
     });
 }
+
 
 
 
