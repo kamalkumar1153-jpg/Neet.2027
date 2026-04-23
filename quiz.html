@@ -1,16 +1,22 @@
-<h2 id="timer">Time: 180</h2>
+<h2 id="timer">Time: 10800</h2> <!-- 3 hours -->
 
+<h3 id="qno"></h3>
 <div id="question"></div>
 <div id="options"></div>
 
-<button onclick="next()">Next</button>
+<br>
 
-<!-- ✅ Firebase pehle load hoga -->
+<button onclick="prev()">Previous</button>
+<button onclick="next()">Next</button>
+<button onclick="markReview()">Mark for Review</button>
+<button onclick="submitTest()">Submit</button>
+
+<hr>
+
+<div id="palette"></div>
+
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
-<!-- ✅ Config -->
 <script src="firebase.js"></script>
-
-<!-- ✅ LAST me quiz.js -->
 <script src="quiz.js"></script>
