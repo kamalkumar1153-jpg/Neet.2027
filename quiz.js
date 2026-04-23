@@ -1,78 +1,115 @@
-let subject = localStorage.getItem("subject");
-
 let questions = [];
 let index = 0;
-let score = 0;
-let time = 180;
+let answers = [];
+let review = [];
+let time = 10800; // 3 hours
 let timer;
 
-// ⏳ Timer start
-function startTimer() {
-  timer = setInterval(() => {
-    time--;
-    document.getElementById("timer").innerText = "Time: " + time;
+// ⏳ Timer
+timer = setInterval(()=>{
+  time--;
+  document.getElementById("timer").innerText = "Time: " + time;
 
-    if (time <= 0) {
-      finish();
-    }
-  }, 1000);
-}
+  if(time<=0){
+    submitTest();
+  }
+},1000);
 
-// 📥 Firebase se questions load
-function loadQuestions() {
-  db.ref("questions/" + subject).once("value", snap => {
-    let data = snap.val();
+// 📥 Load from Firebase
+db.ref("questions/full").once("value", snap=>{
+  questions = Object.values(snap.val());
+  answers = new Array(questions.length).fill(null);
+  review = new Array(questions.length).fill(false);
 
-    if (!data) {
-      document.getElementById("question").innerText = "No Questions Found!";
-      return;
-    }
+  loadQuestion();
+  loadPalette();
+});
 
-    questions = Object.values(data);
-    loadQuestion();
-    startTimer();
-  });
-}
-
-// 📄 Question show
-function loadQuestion() {
+// 📄 Show Question
+function loadQuestion(){
   let q = questions[index];
+
+  document.getElementById("qno").innerText = 
+    "Q " + (index+1) + "/" + questions.length;
+
   document.getElementById("question").innerText = q.q;
 
-  let html = "";
-  q.options.forEach((opt, i) => {
-    html += `<button onclick="checkAnswer(${i})">${opt}</button><br>`;
+  let html="";
+  q.options.forEach((opt,i)=>{
+    let selected = answers[index]===i ? "style='background:lightgreen'" : "";
+    html += `<button ${selected} onclick="select(${i})">${opt}</button><br>`;
   });
 
   document.getElementById("options").innerHTML = html;
 }
 
-// ✅ Answer check
-function checkAnswer(i) {
-  if (i === questions[index].answer) {
-    score += 4;
-  } else {
-    score -= 1; // ❌ negative marking
-  }
+// ✅ Select answer
+function select(i){
+  answers[index]=i;
+  loadPalette();
+  loadQuestion();
 }
 
-// ⏭ Next question
-function next() {
-  index++;
-
-  if (index < questions.length) {
+// ⏭ Next / Prev
+function next(){
+  if(index<questions.length-1){
+    index++;
     loadQuestion();
-  } else {
-    finish();
   }
 }
 
-// 🏁 Finish quiz
-function finish() {
-  clearInterval(timer);
-  localStorage.setItem("score", score);
-  window.location = "result.html";
+function prev(){
+  if(index>0){
+    index--;
+    loadQuestion();
+  }
 }
 
-// 🚀 Start
-loadQuestions();
+// ⭐ Mark for review
+function markReview(){
+  review[index]=true;
+  loadPalette();
+}
+
+// 🎯 Palette (important)
+function loadPalette(){
+  let html="";
+  answers.forEach((a,i)=>{
+    let color = "white";
+
+    if(review[i]) color="orange";
+    else if(a!==null) color="lightgreen";
+
+    html += `<button style="background:${color}" onclick="go(${i})">${i+1}</button>`;
+  });
+
+  document.getElementById("palette").innerHTML = html;
+}
+
+function go(i){
+  index=i;
+  loadQuestion();
+}
+
+// 🏁 Submit + Result
+function submitTest(){
+  clearInterval(timer);
+
+  let score=0;
+  let correct=0;
+
+  questions.forEach((q,i)=>{
+    if(answers[i]===q.answer){
+      score+=4;
+      correct++;
+    } else if(answers[i]!==null){
+      score-=1;
+    }
+  });
+
+  localStorage.setItem("score", score);
+  localStorage.setItem("correct", correct);
+  localStorage.setItem("total", questions.length);
+
+  window.location="result.html";
+}
