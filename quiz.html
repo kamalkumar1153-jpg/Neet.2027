@@ -1,22 +1,18 @@
-<h2 id="timer">Time: 10800</h2> <!-- 3 hours -->
+<div class="quiz-container">
+    <div id="quiz-header">
+        <span id="current-subject">Biology</span>
+        <span id="level-indicator"></span>
+    </div>
+    
+    <div id="question-box">
+        <p id="q-text">Loading question...</p>
+        <div id="image-container"></div> </div>
 
-<h3 id="qno"></h3>
-<div id="question"></div>
-<div id="options"></div>
+    <div id="options-list">
+        </div>
 
-<br>
+    <div class="controls">
+        <button id="next-btn" onclick="nextQuestion()">Next Question ➡️</button>
+    </div>
+</div>
 
-<button onclick="prev()">Previous</button>
-<button onclick="next()">Next</button>
-<button onclick="markReview()">Mark for Review</button>
-<button onclick="submitTest()">Submit</button>
-
-<hr>
-
-<div id="palette"></div>
-
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
-<script src="firebase.js"></script>
-<script src="quiz.js"></script>
