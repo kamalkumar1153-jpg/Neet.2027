@@ -1,14 +1,33 @@
-<h2>Add Question</h2>
+<h2>🛠 Admin Panel (NEET App)</h2>
 
-<input id="q" placeholder="Question">
-<input id="o1" placeholder="Option 1">
-<input id="o2" placeholder="Option 2">
-<input id="o3" placeholder="Option 3">
-<input id="o4" placeholder="Option 4">
-<input id="ans" placeholder="Answer index (0-3)">
-<input id="sub" placeholder="bio/chem/phy">
+<select id="subject">
+  <option value="bio">Biology</option>
+  <option value="chem">Chemistry</option>
+  <option value="phy">Physics</option>
+  <option value="full">Full Test</option>
+</select>
 
-<button onclick="add()">Add</button>
+<br><br>
+
+<input id="q" placeholder="Enter Question"><br><br>
+
+<input id="o1" placeholder="Option 1"><br>
+<input id="o2" placeholder="Option 2"><br>
+<input id="o3" placeholder="Option 3"><br>
+<input id="o4" placeholder="Option 4"><br><br>
+
+<input id="ans" placeholder="Correct Answer (0-3)"><br><br>
+
+<button onclick="add()">➕ Add Question</button>
+
+<hr>
+
+<h3>📋 All Questions</h3>
+<div id="list"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
 <script src="firebase.js"></script>
 <script src="admin.js"></script>
