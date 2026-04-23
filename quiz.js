@@ -1,115 +1,61 @@
-let questions = [];
-let index = 0;
-let answers = [];
-let review = [];
-let time = 10800; // 3 hours
-let timer;
+let currentQuestions = [];
+let currentIndex = 0;
 
-// ⏳ Timer
-timer = setInterval(()=>{
-  time--;
-  document.getElementById("timer").innerText = "Time: " + time;
-
-  if(time<=0){
-    submitTest();
-  }
-},1000);
-
-// 📥 Load from Firebase
-db.ref("questions/full").once("value", snap=>{
-  questions = Object.values(snap.val());
-  answers = new Array(questions.length).fill(null);
-  review = new Array(questions.length).fill(false);
-
-  loadQuestion();
-  loadPalette();
-});
-
-// 📄 Show Question
-function loadQuestion(){
-  let q = questions[index];
-
-  document.getElementById("qno").innerText = 
-    "Q " + (index+1) + "/" + questions.length;
-
-  document.getElementById("question").innerText = q.q;
-
-  let html="";
-  q.options.forEach((opt,i)=>{
-    let selected = answers[index]===i ? "style='background:lightgreen'" : "";
-    html += `<button ${selected} onclick="select(${i})">${opt}</button><br>`;
-  });
-
-  document.getElementById("options").innerHTML = html;
+function loadQuiz(sub) {
+    db.ref("questions/" + sub).once("value", snap => {
+        let data = snap.val();
+        if (!data) {
+            alert("No questions found in this subject!");
+            return;
+        }
+        
+        // डेटा को ऐरे में बदलकर शफल (Shuffle) करना
+        currentQuestions = Object.values(data).sort(() => Math.random() - 0.5);
+        currentIndex = 0;
+        showQuestion();
+    });
 }
 
-// ✅ Select answer
-function select(i){
-  answers[index]=i;
-  loadPalette();
-  loadQuestion();
-}
+function showQuestion() {
+    let q = currentQuestions[currentIndex];
+    let levelEl = document.getElementById("level-indicator");
+    let imgContainer = document.getElementById("image-container");
 
-// ⏭ Next / Prev
-function next(){
-  if(index<questions.length-1){
-    index++;
-    loadQuestion();
-  }
-}
+    // लेवल और उसका रंग सेट करना
+    levelEl.innerText = q.level;
+    levelEl.style.color = q.level === "Easy" ? "#2ecc71" : q.level === "Medium" ? "#f39c12" : "#e74c3c";
 
-function prev(){
-  if(index>0){
-    index--;
-    loadQuestion();
-  }
-}
-
-// ⭐ Mark for review
-function markReview(){
-  review[index]=true;
-  loadPalette();
-}
-
-// 🎯 Palette (important)
-function loadPalette(){
-  let html="";
-  answers.forEach((a,i)=>{
-    let color = "white";
-
-    if(review[i]) color="orange";
-    else if(a!==null) color="lightgreen";
-
-    html += `<button style="background:${color}" onclick="go(${i})">${i+1}</button>`;
-  });
-
-  document.getElementById("palette").innerHTML = html;
-}
-
-function go(i){
-  index=i;
-  loadQuestion();
-}
-
-// 🏁 Submit + Result
-function submitTest(){
-  clearInterval(timer);
-
-  let score=0;
-  let correct=0;
-
-  questions.forEach((q,i)=>{
-    if(answers[i]===q.answer){
-      score+=4;
-      correct++;
-    } else if(answers[i]!==null){
-      score-=1;
+    // प्रश्न और इमेज दिखाना
+    document.getElementById("q-text").innerText = q.q;
+    
+    if (q.img) {
+        imgContainer.innerHTML = `<img src="${q.img}" class="quiz-img">`;
+    } else {
+        imgContainer.innerHTML = "";
     }
-  });
 
-  localStorage.setItem("score", score);
-  localStorage.setItem("correct", correct);
-  localStorage.setItem("total", questions.length);
-
-  window.location="result.html";
+    // ऑप्शन्स दिखाना
+    let optionsHtml = "";
+    q.options.forEach((opt, i) => {
+        optionsHtml += `<button class="opt-btn" onclick="checkAnswer(${i+1}, ${q.answer})">${opt}</button>`;
+    });
+    document.getElementById("options-list").innerHTML = optionsHtml;
 }
+
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        alert("Correct! 🎉");
+    } else {
+        alert("Wrong! The correct answer was option " + correct);
+    }
+}
+
+function nextQuestion() {
+    if (currentIndex < currentQuestions.length - 1) {
+        currentIndex++;
+        showQuestion();
+    } else {
+        alert("Quiz Finished! Well done.");
+    }
+}
+
