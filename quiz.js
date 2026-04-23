@@ -1,20 +1,20 @@
 let currentQuestions = [];
 let currentIndex = 0;
 
-function loadQuiz(sub) {
-    db.ref("questions/" + sub).once("value", snap => {
-        let data = snap.val();
-        if (!data) {
-            alert("No questions found in this subject!");
-            return;
-        }
-        
-        // डेटा को ऐरे में बदलकर शफल (Shuffle) करना
-        currentQuestions = Object.values(data).sort(() => Math.random() - 0.5);
-        currentIndex = 0;
-        showQuestion();
-    });
+function loadSubjectData(sub) {
+  db.ref("questions/" + sub).once("value", snap => {
+    let data = snap.val();
+    if (!data) {
+        document.getElementById("question-box").innerHTML = "❌ No questions yet!";
+        return;
+    }
+    currentQuestions = Object.values(data).sort(() => Math.random() - 0.5);
+    currentIndex = 0;
+    showQuestion();
+  });
 }
+
+
 
 function showQuestion() {
     let q = currentQuestions[currentIndex];
