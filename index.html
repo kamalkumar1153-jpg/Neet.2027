@@ -1,187 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Vault Ultra Pro</title>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
-<style>
-body {margin:0;font-family:Arial;background:#eef1f5;}
-.container {padding:20px;}
-.card {padding:15px;border-radius:15px;color:white;margin:10px 0;}
-.blue{background:#3a7bd5;}
-.orange{background:#ff5e62;}
-.green{background:#56ab2f;}
-.quiz{display:none;padding:20px;}
-.option{display:block;margin:10px 0;padding:12px;background:white;border:none;border-radius:10px;}
-.timer{color:red;font-weight:bold;}
-</style>
-</head>
-
-<body>
-
-<div class="container" id="home">
-<h2>Study Vault Ultra Pro 🎓</h2>
-
-<input id="username" placeholder="Enter Name" style="padding:10px;width:100%;border-radius:10px">
-
-<div class="card blue" onclick="startQuiz('physics')">Physics</div>
-<div class="card orange" onclick="startQuiz('chem')">Chemistry</div>
-<div class="card green" onclick="startQuiz('bio')">Biology</div>
-
-</div>
-
-<div class="quiz" id="quiz">
-<h3 class="timer" id="timer"></h3>
-<h2 id="q"></h2>
-
-<button class="option" onclick="check(0)" id="op0"></button>
-<button class="option" onclick="check(1)" id="op1"></button>
-<button class="option" onclick="check(2)" id="op2"></button>
-<button class="option" onclick="check(3)" id="op3"></button>
-</div>
-
-<div id="result"></div>
-
-<script>
-
-// Firebase config (tumhara)
-const firebaseConfig = {
-  apiKey: "AIzaSyCQ9CNumMZQNq5ED-5oGbga6SzpZFK9il4",
-  authDomain: "neet-2027-9792f.firebaseapp.com",
-  databaseURL: "https://neet-2027-9792f-default-rtdb.firebaseio.com",
-  projectId: "neet-2027-9792f"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// Questions
-const data = {
-physics:[
-{q:"Speed unit?",o:["m/s","kg","sec","amp"],a:0},
-{q:"Force unit?",o:["Newton","Joule","Watt","Volt"],a:0}
-],
-chem:[
-{q:"H2O is?",o:["Water","Oxygen","Hydrogen","Salt"],a:0}
-],
-bio:[
-{q:"Heart chambers?",o:["2","3","4","5"],a:2}
-]
-};
-
-let quiz=[],index=0,score=0,time=10,timer,user="";
-
-// Start
-function startQuiz(sub){
-user = document.getElementById("username").value;
-if(!user){ alert("Enter name"); return; }
-
-quiz = data[sub];
-index=0;score=0;
-
-document.getElementById("home").style.display="none";
-document.getElementById("quiz").style.display="block";
-
-loadQ();
-startTimer();
-}
-
-// Timer per question
-function startTimer(){
-time = 10;
-timer = setInterval(()=>{
-time--;
-document.getElementById("timer").innerText="Time: "+time;
-
-if(time==0){
-index++;
-if(index<quiz.length){
-loadQ();
-startTimer();
-}else{
-endQuiz();
-}
-}
-},1000);
-}
-
-// Load Q
-function loadQ(){
-clearInterval(timer);
-startTimer();
-
-let q=quiz[index];
-document.getElementById("q").innerText=q.q;
-q.o.forEach((opt,i)=>{
-document.getElementById("op"+i).innerText=opt;
-});
-}
-
-// Check
-function check(ans){
-clearInterval(timer);
-
-if(ans==quiz[index].a){
-score++;
-}else{
-score--; // ❌ negative marking
-}
-
-index++;
-if(index<quiz.length){
-loadQ();
-}else{
-endQuiz();
-}
-}
-
-// End
-function endQuiz(){
-clearInterval(timer);
-document.getElementById("quiz").style.display="none";
-
-document.getElementById("result").innerHTML=
-"<h2>Score: "+score+"</h2>";
-
-// Save
-db.ref("leaderboard").push({
-name:user,
-score:score
-});
-
-loadLeaderboard();
-}
-
-// Top 10 Leaderboard
-function loadLeaderboard(){
-db.ref("leaderboard").orderByChild("score").limitToLast(10)
-.on("value",snap=>{
-let data=snap.val();
-let arr=[];
-
-for(let k in data){
-arr.push(data[k]);
-}
-
-arr.sort((a,b)=>b.score-a.score);
-
-let html="<h3>🏆 Top 10 Rank</h3>";
-arr.forEach((d,i)=>{
-html+=`<p>${i+1}. ${d.name} - ${d.score}</p>`;
-});
-
-document.getElementById("result").innerHTML+=html;
-});
-}
-
-</script>
-
-</body>
-</html>
+ import { useState, useEffect } from "react";
+  2
+  3 const questions = [
+  4   { q: "Speed unit?", o: ["m/s", "kg", "sec", "
+  5   { q: "H2O is?", o: ["Water", "Oxygen", "Hydro
+  6   { q: "Force unit?", o: ["Newton", "Joule", "W
+  7 ];
+  8
+  9 export default function App(){
+ 10   const [page,setPage] = useState("home");
+ 11   const [index,setIndex] = useState(0);
+ 12   const [score,setScore] = useState(0);
+ 13   const [time,setTime] = useState(30); // 30 se
+ 14
+ 15   // ⏱️ Timer
+ 16   useEffect(()=>{
+ 17     if(page==="test" && time>0){
+ 18       const t = setInterval(()=>{
+ 19         setTime(prev=>prev-1);
+ 20       },1000);
+ 21       return ()=>clearInterval(t);
+ 22     }
+ 23
 
 
 
