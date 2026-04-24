@@ -61,7 +61,7 @@ const questions = [
 {q:"Unit of time?",options:["Second","Meter","Kg","Amp"],answer:0},
 {q:"Velocity formula?",options:["d/t","t/d","d×t","t+d"],answer:0},
 {q:"Density formula?",options:["m/v","v/m","m×t","t/m"],answer:0},
-{q:"Current formula?",options:["I=Q/t","V=IR","P=VI","F=ma"],answer:0}
+{q:"Current formula?",options:["I=Q/t","V=IR","P=VI","F=ma"],answer:0},
 
 
 /* 🧬 BIOLOGY (20) */
