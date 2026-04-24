@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NEET Quiz</title>
+  <title>NEET Quiz Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -9,7 +9,6 @@
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #333;
     }
 
     .container {
@@ -21,7 +20,6 @@
     .header {
       text-align: center;
       color: white;
-      margin-top: 20px;
     }
 
     .card {
@@ -29,7 +27,6 @@
       border-radius: 20px;
       padding: 20px;
       margin-top: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
     .progress-bar {
@@ -37,27 +34,29 @@
       background: #ddd;
       border-radius: 10px;
       overflow: hidden;
-      margin: 10px 0;
     }
 
     .progress {
       height: 100%;
       width: 0%;
       background: #4CAF50;
-      transition: 0.3s;
     }
 
     button {
-      display: block;
       width: 100%;
-      padding: 16px;
+      padding: 18px;
       margin: 10px 0;
       font-size: 18px;
       border-radius: 12px;
       border: none;
-      background: #f1f1f1;
+      text-align: left;
+      background: #f5f5f5;
       cursor: pointer;
     }
+
+    button.selected { background: #2196F3; color:white; }
+    button.correct { background: #4CAF50; color:white; }
+    button.wrong { background: #f44336; color:white; }
 
     .next-btn {
       background: #667eea;
@@ -70,9 +69,8 @@
 <body>
 
 <div class="container">
-
   <div class="header">
-    <h2>📚 NEET Quiz</h2>
+    <h2>📚 NEET Quiz Pro</h2>
     <h3 id="progressText"></h3>
     <h3 id="timer">Time: 15</h3>
     <h3 id="score">Score: 0</h3>
@@ -85,20 +83,14 @@
   <div id="quiz" class="card"></div>
 
   <button class="next-btn" onclick="nextQ()">Next ➡️</button>
-
 </div>
 
-<!-- 👉 Questions file load -->
 <script src="questions.js"></script>
 
 <script>
-let index = 0;
-let score = 0;
-let time = 15;
-let timer;
-let answered = false;
+let index = 0, score = 0, time = 15, timer, answered = false;
 
-function loadQ() {
+function loadQ(){
   clearInterval(timer);
   time = 15;
   answered = false;
@@ -112,10 +104,13 @@ function loadQ() {
   document.getElementById("progressBar").style.width = percent + "%";
 
   let q = questions[index];
+
   document.getElementById("quiz").innerHTML = `
     <h3>${q.q}</h3>
     ${q.options.map((opt,i)=>
-      `<button onclick="checkAns(${i}, this)">${opt}</button>`
+      `<button onclick="selectAns(${i}, this)">
+        <b>${String.fromCharCode(65+i)}.</b> ${opt}
+      </button>`
     ).join("")}
   `;
 
@@ -126,8 +121,20 @@ function loadQ() {
   },1000);
 }
 
-function checkAns(selected,btn){
+function selectAns(selected,btn){
   if(answered) return;
+
+  let buttons = document.querySelectorAll("#quiz button");
+  buttons.forEach(b => b.classList.remove("selected"));
+
+  btn.classList.add("selected");
+
+  setTimeout(()=>{
+    checkAns(selected);
+  },300);
+}
+
+function checkAns(selected){
   answered = true;
 
   let correct = questions[index].answer;
@@ -135,18 +142,14 @@ function checkAns(selected,btn){
 
   buttons.forEach((b,i)=>{
     if(i==correct){
-      b.style.background="#4CAF50";
-      b.style.color="white";
-    } else {
-      b.style.background="#f44336";
-      b.style.color="white";
+      b.classList.add("correct");
+    } else if(i==selected){
+      b.classList.add("wrong");
     }
-    b.disabled=true;
+    b.disabled = true;
   });
 
-  if(selected==correct){
-    score++;
-  }
+  if(selected==correct) score++;
 
   document.getElementById("score").innerText="Score: "+score;
 }
@@ -157,8 +160,8 @@ function nextQ(){
     loadQ();
   } else {
     document.body.innerHTML=`
-      <h2>🎉 Quiz Finished</h2>
-      <h3>Score: ${score}/${questions.length}</h3>
+      <h2 style="color:white;text-align:center">🎉 Finished</h2>
+      <h3 style="color:white;text-align:center">Score: ${score}/${questions.length}</h3>
       <button onclick="location.reload()">Restart</button>
     `;
   }
