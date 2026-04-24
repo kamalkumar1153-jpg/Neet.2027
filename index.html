@@ -1,138 +1,84 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Vault Pro - Master Prep</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* CSS Styles */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: #f4f7fe; padding-bottom: 80px; }
+  <title>NEET Quiz Pro Max</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Header */
-        .header { text-align: center; padding: 40px 20px 20px; }
-        .header h1 { font-size: 2.2rem; font-weight: 800; color: #000; }
-        .header p { color: #888; font-size: 1rem; margin-top: 5px; }
-
-        /* Search Bar */
-        .search-container { padding: 0 25px; margin-bottom: 30px; }
-        .search-bar { 
-            background: white; display: flex; align-items: center; 
-            padding: 15px 20px; border-radius: 50px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-        }
-        .search-bar input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 1rem; }
-
-        /* Subject Grid */
-        .subject-grid { display: flex; overflow-x: auto; padding: 0 20px; gap: 15px; scrollbar-width: none; }
-        .subject-grid::-webkit-scrollbar { display: none; }
-        
-        .sub-card { 
-            min-width: 140px; padding: 30px 15px; border-radius: 25px; 
-            text-align: center; color: white; flex-shrink: 0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .physics { background: linear-gradient(180deg, #5b99f4, #3a7bd5); }
-        .chemistry { background: linear-gradient(180deg, #ff9a7d, #f06292); }
-        .biology { background: linear-gradient(180deg, #81d667, #4caf50); }
-
-        .sub-card h3 { font-size: 1.4rem; margin-bottom: 15px; }
-        .sub-card p { font-size: 0.85rem; opacity: 0.9; margin: 5px 0; }
-
-        /* Quick Actions (Notes, MCQs, Progress) */
-        .action-row { 
-            display: grid; grid-template-columns: repeat(4, 1fr); 
-            gap: 10px; padding: 30px 20px; 
-        }
-        .action-btn { 
-            background: white; padding: 15px 5px; border-radius: 18px; 
-            text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            font-size: 0.85rem; font-weight: 600; color: #333;
-        }
-        .action-btn span { display: block; font-size: 1.5rem; margin-bottom: 5px; }
-
-        /* Full Test Button */
-        .full-test-btn {
-            background: linear-gradient(90deg, #6200ea, #2979ff);
-            margin: 0 20px; padding: 25px; border-radius: 25px;
-            color: white; text-align: center; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(98, 0, 234, 0.3);
-            transition: 0.3s;
-        }
-        .full-test-btn:active { transform: scale(0.96); }
-        .full-test-btn h2 { font-size: 1.2rem; }
-        .full-test-btn p { font-size: 0.9rem; opacity: 0.8; }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; background: white;
-            display: flex; justify-content: space-around; padding: 15px 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-            border-top-left-radius: 25px; border-top-right-radius: 25px;
-        }
-        .nav-item { text-align: center; color: #888; font-size: 0.75rem; }
-        .nav-item.active { color: #3a7bd5; }
-        .nav-item span { display: block; font-size: 1.4rem; }
-    </style>
+  <style>
+    body { font-family: Arial; text-align:center; padding:20px; }
+    .card { border:1px solid #ccc; padding:20px; border-radius:10px; margin-top:20px; }
+    button { display:block; width:100%; padding:10px; margin:5px 0; }
+  </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Study Vault Pro 🎓</h1>
-        <p>RBSE Class 12th Master Prep</p>
-    </div>
+<h2>📚 NEET Quiz</h2>
+<h3 id="progress"></h3>
+<h3 id="timer">Time: 15</h3>
 
-    <div class="search-container">
-        <div class="search-bar">
-            🔍 <input type="text" placeholder="Search (Optics, Genetics...)">
-        </div>
-    </div>
+<div id="quiz" class="card"></div>
+<button onclick="nextQ()">Next ➡️</button>
 
-    <div class="subject-grid">
-        <div class="sub-card physics" onclick="window.location.href='quiz.html?sub=physics'">
-            <h3>Physics</h3>
-            <p>25 Chapters</p>
-            <p>60% Complete</p>
-        </div>
-        <div class="sub-card chemistry" onclick="window.location.href='quiz.html?sub=chemistry'">
-            <h3>Chemistry</h3>
-            <p>28 Chapters</p>
-            <p>45% Complete</p>
-        </div>
-        <div class="sub-card biology" onclick="window.location.href='quiz.html?sub=biology'">
-            <h3>Biology</h3>
-            <p>22 Chapters</p>
-            <p>70% Complete</p>
-        </div>
-    </div>
+<!-- 👇 Important -->
+<script src="questions.js"></script>
 
-    <div class="action-row">
-        <div class="action-btn"><span>📄</span> Notes</div>
-        <div class="action-btn"><span>📝</span> MCQs</div>
-        <div class="action-btn"><span>📊</span> Progress</div>
-        <div class="action-btn"><span>🔖</span> Save</div>
-    </div>
+<script>
+let index = 0;
+let score = 0;
+let time = 15;
+let timer;
 
-    <div class="full-test-btn" onclick="startFullTest()">
-        <h2>🚀 Start Full Test (120 Qs)</h2>
-        <p>Improve your rank</p>
-    </div>
+function loadQ() {
+  clearInterval(timer);
+  time = 15;
 
-    <div class="bottom-nav">
-        <div class="nav-item active"><span>🏠</span> Home</div>
-        <div class="nav-item"><span>📚</span> Subjects</div>
-        <div class="nav-item"><span>📝</span> Tests</div>
-        <div class="nav-item"><span>🔖</span> Saved</div>
-        <div class="nav-item"><span>👤</span> Profile</div>
-    </div>
+  document.getElementById("progress").innerText =
+    `Question ${index+1} / ${questions.length}`;
 
-    <script>
-        function startFullTest() {
-            alert("फुल टेस्ट शुरू हो रहा है! (120 सवाल)");
-            window.location.href = "quiz.html?mode=full";
-        }
-    </script>
+  document.getElementById("timer").innerText = "Time: " + time;
+
+  let q = questions[index];
+  document.getElementById("quiz").innerHTML = `
+    <h3>${q.q}</h3>
+    ${q.options.map((opt, i) =>
+      `<button onclick="checkAns(${i})">${opt}</button>`
+    ).join("")}
+  `;
+
+  timer = setInterval(() => {
+    time--;
+    document.getElementById("timer").innerText = "Time: " + time;
+    if(time == 0) nextQ();
+  }, 1000);
+}
+
+function checkAns(selected) {
+  if(selected == questions[index].answer) {
+    score++;
+  }
+}
+
+function nextQ() {
+  index++;
+  if(index < questions.length) {
+    loadQ();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  clearInterval(timer);
+  document.body.innerHTML = `
+    <h2>🎉 Quiz Finished</h2>
+    <h3>Score: ${score}/${questions.length}</h3>
+    <button onclick="location.reload()">Restart</button>
+  `;
+}
+
+loadQ();
+</script>
+
 </body>
 </html>
 
