@@ -1,86 +1,82 @@
-<!DOCTYPE html>
-<html>
 <head>
-  <title>NEET Quiz Pro Max</title>
+  <title>NEET Quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body { font-family: Arial; text-align:center; padding:20px; }
-    .card { border:1px solid #ccc; padding:20px; border-radius:10px; margin-top:20px; }
-    button { display:block; width:100%; padding:10px; margin:5px 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #333;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: #4CAF50;
+      transition: 0.3s;
+    }
+
+    h2, h3 {
+      margin: 5px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin: 10px 0;
+      font-size: 18px;
+      border-radius: 12px;
+      border: none;
+      background: #f1f1f1;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #ddd;
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    .next-btn {
+      background: #667eea;
+      color: white;
+      font-weight: bold;
+    }
   </style>
 </head>
-<body>
-
-<h2>📚 NEET Quiz</h2>
-<h3 id="progress"></h3>
-<h3 id="timer">Time: 15</h3>
-
-<div id="quiz" class="card"></div>
-<button onclick="nextQ()">Next ➡️</button>
-
-<!-- 👇 Important -->
-<script src="questions.js"></script>
-
-<script>
-let index = 0;
-let score = 0;
-let time = 15;
-let timer;
-
-function loadQ() {
-  clearInterval(timer);
-  time = 15;
-
-  document.getElementById("progress").innerText =
-    `Question ${index+1} / ${questions.length}`;
-
-  document.getElementById("timer").innerText = "Time: " + time;
-
-  let q = questions[index];
-  document.getElementById("quiz").innerHTML = `
-    <h3>${q.q}</h3>
-    ${q.options.map((opt, i) =>
-      `<button onclick="checkAns(${i})">${opt}</button>`
-    ).join("")}
-  `;
-
-  timer = setInterval(() => {
-    time--;
-    document.getElementById("timer").innerText = "Time: " + time;
-    if(time == 0) nextQ();
-  }, 1000);
-}
-
-function checkAns(selected) {
-  if(selected == questions[index].answer) {
-    score++;
-  }
-}
-
-function nextQ() {
-  index++;
-  if(index < questions.length) {
-    loadQ();
-  } else {
-    showResult();
-  }
-}
-
-function showResult() {
-  clearInterval(timer);
-  document.body.innerHTML = `
-    <h2>🎉 Quiz Finished</h2>
-    <h3>Score: ${score}/${questions.length}</h3>
-    <button onclick="location.reload()">Restart</button>
-  `;
-}
-
-loadQ();
-</script>
-
-</body>
-</html>
 
 
 
