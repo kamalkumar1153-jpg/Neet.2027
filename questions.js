@@ -63,7 +63,7 @@ const questions = [
 {q:"Density formula?",options:["m/v","v/m","m×t","t/m"],answer:0},
 {q:"Work formula?",options:["F×d","m×a","V×I","P×t"],answer:0}
 
-];
+
 /* 🧬 BIOLOGY (20) */
 {q:"Which cell organelle is called suicide bag?",options:["Lysosome","Ribosome","Nucleus","Golgi"],answer:0},
 {q:"Which enzyme breaks starch?",options:["Amylase","Lipase","Protease","Ligase"],answer:0},
