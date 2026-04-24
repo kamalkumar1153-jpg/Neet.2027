@@ -63,7 +63,7 @@ const questions = [
 {q:"Density formula?",options:["m/v","v/m","m×t","t/m"],answer:0},
 {q:"Current formula?",options:["I=Q/t","V=IR","P=VI","F=ma"],answer:0}
 
-];
+
 /* 🧬 BIOLOGY (20) */
 {q:"Photorespiration occurs in?",options:["C3 plants","C4 plants","CAM plants","All"],answer:0},
 {q:"Which enzyme fixes CO2 in C3 cycle?",options:["RuBisCO","PEP carboxylase","ATP synthase","NADH"],answer:0},
@@ -125,4 +125,4 @@ const questions = [
 {q:"Unit of power?",options:["Watt","Joule","Volt","Amp"],answer:0},
 {q:"Gravitational force formula?",options:["F=Gm1m2/r²","F=ma","V=IR","P=VI"],answer:0},
 {q:"Unit of work?",options:["Joule","Watt","Volt","Amp"],answer:0},
-{q:"Which instrument measures pressure?",options:["Barometer","Ammeter","Voltmeter","Thermometer"],answer:0},
+{q:"Which instrument measures pressure?",options:["Barometer","Ammeter","Voltmeter","Thermometer"],answer:0}];
