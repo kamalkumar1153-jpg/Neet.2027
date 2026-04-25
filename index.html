@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NEET AI Quiz PRO</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEET AI Quiz PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{
@@ -13,71 +15,35 @@ body{
   text-align:center;
 }
 
-/* Container */
-.container{
-  max-width:500px;
-  margin:auto;
-  padding:15px;
-}
+.container{max-width:500px;margin:auto;padding:15px}
 
-/* Card */
-.card{
-  background:white;
-  color:black;
-  border-radius:20px;
-  padding:20px;
-  margin-top:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-  animation:fade 0.5s ease;
-}
-
-/* Animation */
-@keyframes fade{
-  from{opacity:0; transform:translateY(20px)}
-  to{opacity:1}
-}
-
-/* Buttons */
 button{
   width:100%;
   padding:15px;
-  margin:10px 0;
+  margin:8px 0;
   border:none;
   border-radius:12px;
   font-size:16px;
   cursor:pointer;
   transition:0.3s;
 }
+button:hover{transform:scale(1.05);box-shadow:0 0 15px cyan}
 
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 15px #00ffff;
+.card{
+  background:white;
+  color:black;
+  border-radius:20px;
+  padding:20px;
+  margin-top:20px;
 }
 
-/* Correct Wrong */
-.correct{background:#4CAF50 !important;color:white}
-.wrong{background:#f44336 !important;color:white}
+.correct{background:#4CAF50!important;color:white}
+.wrong{background:#f44336!important;color:white}
 
-/* Progress */
-.progress{
-  height:10px;
-  background:#ddd;
-  border-radius:10px;
-}
-.progress-bar{
-  height:10px;
-  background:#00ffcc;
-  width:0%;
-  border-radius:10px;
-}
+.progress{height:10px;background:#ddd;border-radius:10px}
+.bar{height:10px;background:#00ffcc;width:0%}
 
-/* Image */
-img{
-  width:100%;
-  border-radius:10px;
-  margin:10px 0;
-}
-
+img{width:100%;border-radius:10px}
 </style>
 </head>
 
@@ -86,62 +52,128 @@ img{
 <div class="container">
 
 <h2>📚 NEET AI Quiz</h2>
-<h3 id="progress"></h3>
-<h3 id="timer">Time: 15</h3>
-<h3 id="score">Score: 0</h3>
-<h3 id="rank"></h3>
 
-<div class="progress">
-  <div class="progress-bar" id="bar"></div>
+<!-- MODE -->
+<div>
+<button onclick="setMode('normal')">🎯 Practice</button>
+<button onclick="setMode('daily')">📅 Daily Test</button>
+<button onclick="setMode('pyq')">📘 PYQ</button>
 </div>
 
-<div id="quiz" class="card"></div>
+<!-- SUBJECT -->
+<div id="subjects">
+<button onclick="showChapters('Biology')">🧬 Biology</button>
+<button onclick="showChapters('Chemistry')">⚗️ Chemistry</button>
+<button onclick="showChapters('Physics')">⚡ Physics</button>
+</div>
 
+<!-- CHAPTER -->
+<div id="chapters" style="display:none;"></div>
+
+<!-- QUIZ -->
+<div id="quizScreen" style="display:none;">
+<h3 id="progress"></h3>
+<h3 id="timer"></h3>
+<h3 id="score"></h3>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<div id="quiz" class="card"></div>
 <button onclick="nextQ()">Next ➡️</button>
+</div>
+
+<!-- GRAPH -->
+<canvas id="chart" style="display:none;"></canvas>
 
 </div>
 
 <script src="questions.js"></script>
 
 <script>
-let index=0;
-let score=0;
-let time=15;
-let timer;
-let used=[];
-let weakTopics={};
+let subject,chapter,filtered=[];
+let index=0,score=0,time=15,timer;
+let weak={};
+let mode="normal";
+let difficulty="easy";
+let currentQ;
 
-function getRandomQ(){
-  let i;
-  do{
-    i=Math.floor(Math.random()*questions.length);
-  }while(used.includes(i));
-  used.push(i);
-  return questions[i];
+function setMode(m){
+  mode=m;
+  alert("Mode: "+m);
 }
 
-let currentQ;
+function showChapters(sub){
+  subject=sub;
+  document.getElementById("subjects").style.display="none";
+
+  let ch=[...new Set(questions.filter(q=>q.subject==sub).map(q=>q.chapter))];
+
+  let html="<h3>Select Chapter</h3>";
+  ch.forEach(c=>{
+    html+=`<button onclick="startQuiz('${c}')">${c}</button>`;
+  });
+
+  document.getElementById("chapters").innerHTML=html;
+  document.getElementById("chapters").style.display="block";
+}
+
+/* 🔥 MODES */
+function getDaily(){
+  let today=new Date().toDateString();
+  let saved=localStorage.getItem("date");
+
+  if(saved===today){
+    return JSON.parse(localStorage.getItem("daily"));
+  }
+
+  let set=[...questions].sort(()=>Math.random()-0.5).slice(0,20);
+
+  localStorage.setItem("date",today);
+  localStorage.setItem("daily",JSON.stringify(set));
+
+  return set;
+}
+
+function getPYQ(){
+  return questions.filter(q=>q.type=="pyq");
+}
+
+function getAI(){
+  let set=questions.filter(q=>q.difficulty==difficulty);
+  if(set.length==0) set=questions;
+  return set;
+}
+
+function startQuiz(ch){
+  chapter=ch;
+
+  if(mode=="daily") filtered=getDaily();
+  else if(mode=="pyq") filtered=getPYQ();
+  else filtered=getAI();
+
+  index=0;
+  score=0;
+
+  document.getElementById("chapters").style.display="none";
+  document.getElementById("quizScreen").style.display="block";
+
+  loadQ();
+}
 
 function loadQ(){
   clearInterval(timer);
   time=15;
 
-  currentQ = getRandomQ();
+  currentQ=filtered[Math.floor(Math.random()*filtered.length)];
 
   document.getElementById("progress").innerText=
-  "Question "+(index+1)+" / 150";
+  subject+" | "+chapter+" | Q "+(index+1);
 
-  document.getElementById("score").innerText=
-  "Score: "+score;
+  document.getElementById("score").innerText="Score: "+score;
+  document.getElementById("bar").style.width=(index/20*100)+"%";
 
-  document.getElementById("bar").style.width=
-  (index/150*100)+"%";
-
-  let html = `<h3>${currentQ.q}</h3>`;
-
-  if(currentQ.img){
-    html += `<img src="${currentQ.img}">`;
-  }
+  let html=`<h3>${currentQ.q}</h3>`;
+  if(currentQ.img) html+=`<img src="${currentQ.img}">`;
 
   currentQ.options.forEach((opt,i)=>{
     html+=`<button onclick="checkAns(${i},this)">${opt}</button>`;
@@ -168,15 +200,17 @@ function checkAns(i,btn){
 
   if(i==correct){
     score++;
+    if(score>5) difficulty="medium";
+    if(score>10) difficulty="hard";
   }else{
-    let t=currentQ.topic;
-    weakTopics[t]=(weakTopics[t]||0)+1;
+    difficulty="easy";
+    weak[currentQ.chapter]=(weak[currentQ.chapter]||0)+1;
   }
 }
 
 function nextQ(){
   index++;
-  if(index<150){
+  if(index<20){
     loadQ();
   }else{
     showResult();
@@ -184,30 +218,17 @@ function nextQ(){
 }
 
 function showResult(){
+  document.getElementById("quizScreen").style.display="none";
+  document.getElementById("chart").style.display="block";
 
-  let rank="Average";
+  let labels=Object.keys(weak);
+  let data=Object.values(weak);
 
-  if(score>120) rank="Topper 🏆";
-  else if(score>90) rank="Good 👍";
-  else if(score>60) rank="Average 🙂";
-  else rank="Weak 😢";
-
-  let weak=Object.entries(weakTopics)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,3)
-    .map(x=>x[0])
-    .join(", ");
-
-  document.body.innerHTML=`
-  <h2>🎉 Finished</h2>
-  <h3>Score: ${score}/150</h3>
-  <h3>Rank: ${rank}</h3>
-  <h3>Weak Topics: ${weak || "None"}</h3>
-  <button onclick="location.reload()">Restart</button>
-  `;
+  new Chart(document.getElementById("chart"),{
+    type:'bar',
+    data:{labels:labels,datasets:[{data:data}]}
+  });
 }
-
-loadQ();
 </script>
 
 </body>
