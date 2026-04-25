@@ -2,106 +2,68 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET AI Dashboard</title>
-
+<title>NEET AI PRO</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{
-  font-family:sans-serif;
-  margin:0;
-  background:#0f172a;
-  color:white;
-}
-
+body{margin:0;font-family:sans-serif;background:#0f172a;color:white;}
 .container{max-width:500px;margin:auto;padding:15px;}
+.card{background:#1e293b;padding:15px;border-radius:15px;margin-top:15px;}
 
-.card{
-  background:#1e293b;
-  padding:15px;
-  border-radius:15px;
-  margin-top:15px;
-}
+button{width:100%;padding:12px;margin:5px 0;border:none;border-radius:10px;background:#3b82f6;color:white;}
+button:hover{background:#2563eb;}
 
-button{
-  width:100%;
-  padding:14px;
-  margin:6px 0;
-  border:none;
-  border-radius:10px;
-  background:#3b82f6;
-  color:white;
-  font-size:15px;
-}
-
-button:hover{
-  background:#2563eb;
-}
-
-.subjects button{
-  width:30%;
-  display:inline-block;
-  background:#475569;
-}
+.subjects button{width:30%;display:inline-block;background:#475569;}
 
 .correct{background:#16a34a;}
 .wrong{background:#dc2626;}
 
-.bar{height:6px;background:#334155;border-radius:10px;margin:10px 0;}
-.progress{height:100%;width:0%;background:#22c55e;}
-
-iframe{border-radius:10px;}
+.video-row{display:flex;overflow-x:auto;gap:10px;padding:10px 0;}
+.video-card{min-width:140px;cursor:pointer;}
+.video-card img{width:100%;border-radius:10px;}
+.video-card:hover{transform:scale(1.1);}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-<h2>🎓 NEET AI Dashboard</h2>
+<h2>🎓 NEET AI PRO</h2>
 
-<!-- 🎥 VIDEO -->
+<!-- 🎬 VIDEO -->
 <div class="card">
-<h3>📺 Featured Video</h3>
-
-<iframe width="100%" height="200"
-src="https://www.youtube.com/embed/5b9hF9q6TjY"
-allowfullscreen></iframe>
-
+<h3>Video Lectures</h3>
+<div id="videoList" class="video-row"></div>
+<iframe id="videoPlayer" width="100%" height="200"></iframe>
+<button onclick="nextVideo()">Next Video ⏭</button>
 </div>
 
-<!-- 📘 SUBJECT -->
+<!-- SUBJECT -->
 <div class="card">
-<h3>📚 Select Subject</h3>
+<h3>Select Subject</h3>
 <div class="subjects">
-<button onclick="setSubject('Biology')">🧬 Bio</button>
-<button onclick="setSubject('Chemistry')">⚗️ Chem</button>
-<button onclick="setSubject('Physics')">⚡ Phy</button>
+<button onclick="setSubject('Biology')">Bio</button>
+<button onclick="setSubject('Chemistry')">Chem</button>
+<button onclick="setSubject('Physics')">Phy</button>
 </div>
 </div>
 
-<!-- 🚀 START -->
-<div class="card">
-<button onclick="startTest()">🚀 Start Test</button>
-</div>
+<button onclick="startTest()">Start Test 🚀</button>
 
-<!-- 🧠 QUIZ -->
-<div id="quizBox" class="card" style="display:none;"></div>
-
-<div class="bar"><div id="progress" class="progress"></div></div>
+<div id="quizBox" class="card"></div>
 
 <button onclick="nextQ()">Next ➡️</button>
 
-<!-- 🤖 AI -->
+<!-- AI -->
 <div class="card">
-<h3>🤖 AI Teacher</h3>
-<button onclick="askAI()">Explain Answer</button>
+<h3>AI Teacher</h3>
+<button onclick="askAI()">Explain</button>
 <div id="aiBox"></div>
 </div>
 
-<!-- 📊 GRAPH -->
+<!-- GRAPH -->
 <div class="card">
-<h3>📊 Weak Topics</h3>
+<h3>Weak Topics</h3>
 <canvas id="chart"></canvas>
 </div>
 
@@ -113,111 +75,126 @@ allowfullscreen></iframe>
 let subject="Biology";
 let index=0,score=0;
 let currentQ;
+let asked=[];
 let weak={};
 
-// 🎯 SUBJECT
+// 🎬 VIDEO SYSTEM
+let currentVideoIndex=0;
+
+const videos={
+Biology:[
+{title:"Cell",thumb:"https://img.youtube.com/vi/URUJD5NEXC8/0.jpg",url:"https://www.youtube.com/embed/URUJD5NEXC8"},
+{title:"Heart",thumb:"https://img.youtube.com/vi/9c7dM4f2KJ0/0.jpg",url:"https://www.youtube.com/embed/9c7dM4f2KJ0"}
+],
+Chemistry:[
+{title:"Atomic",thumb:"https://img.youtube.com/vi/2z1c0v9fY1M/0.jpg",url:"https://www.youtube.com/embed/2z1c0v9fY1M"}
+],
+Physics:[
+{title:"Motion",thumb:"https://img.youtube.com/vi/ZM8ECpBuQYE/0.jpg",url:"https://www.youtube.com/embed/ZM8ECpBuQYE"}
+]
+};
+
+function loadVideos(){
+let list=document.getElementById("videoList");
+list.innerHTML="";
+let saved=JSON.parse(localStorage.getItem("video"))||{};
+currentVideoIndex=saved[subject]||0;
+
+videos[subject].forEach((v,i)=>{
+list.innerHTML+=`
+<div class="video-card" onclick="playVideo(${i})">
+<img src="${v.thumb}">
+<p>${v.title}</p>
+</div>`;
+});
+
+playVideo(currentVideoIndex);
+}
+
+function playVideo(i){
+currentVideoIndex=i;
+document.getElementById("videoPlayer").src=videos[subject][i].url;
+let saved=JSON.parse(localStorage.getItem("video"))||{};
+saved[subject]=i;
+localStorage.setItem("video",JSON.stringify(saved));
+}
+
+function nextVideo(){
+currentVideoIndex++;
+if(currentVideoIndex>=videos[subject].length) currentVideoIndex=0;
+playVideo(currentVideoIndex);
+}
+
+// SUBJECT
 function setSubject(s){
-  subject=s;
-  alert("Selected: "+s);
+subject=s;
+loadVideos();
 }
 
-// 🚀 START
+// QUIZ
 function startTest(){
-  index=0;
-  score=0;
-  weak={};
-  document.getElementById("quizBox").style.display="block";
-  loadQ();
+index=0;score=0;asked=[];weak={};
+loadQ();
 }
 
-// 📥 LOAD QUESTION
 function loadQ(){
-  let filtered = questions.filter(q=>q.topic===subject);
+let filtered=questions.filter(q=>q.topic===subject && !asked.includes(q));
+currentQ=filtered[Math.floor(Math.random()*filtered.length)];
+asked.push(currentQ);
 
-  currentQ = filtered[Math.floor(Math.random()*filtered.length)];
+let html=`<h3>${currentQ.q}</h3>`;
+if(currentQ.img){html+=`<img src="${currentQ.img}" width="100%">`;}
 
-  let html = `<h3>${currentQ.q}</h3>`;
+currentQ.options.forEach((o,i)=>{
+html+=`<button onclick="checkAns(${i},this)">${o}</button>`;
+});
 
-  if(currentQ.img){
-    html += `<img src="${currentQ.img}" width="100%">`;
-  }
-
-  currentQ.options.forEach((opt,i)=>{
-    html+=`<button onclick="checkAns(${i},this)">${opt}</button>`;
-  });
-
-  document.getElementById("quizBox").innerHTML = html;
-
-  document.getElementById("progress").style.width=(index/20*100)+"%";
+document.getElementById("quizBox").innerHTML=html;
 }
 
-// ✅ ANSWER (NEET)
 function checkAns(ans,btn){
-  let buttons=document.querySelectorAll("#quizBox button");
-  buttons.forEach(b=>b.disabled=true);
+let buttons=document.querySelectorAll("#quizBox button");
+buttons.forEach(b=>b.disabled=true);
 
-  if(ans===currentQ.answer){
-    btn.classList.add("correct");
-    score+=4;
-  }else{
-    btn.classList.add("wrong");
-    score-=1;
-    weak[currentQ.topic]=(weak[currentQ.topic]||0)+1;
-  }
+if(ans===currentQ.answer){
+btn.classList.add("correct");
+score+=4;
+}else{
+btn.classList.add("wrong");
+score-=1;
+weak[currentQ.topic]=(weak[currentQ.topic]||0)+1;
+}
 }
 
-// ➡️ NEXT
 function nextQ(){
-  index++;
-  if(index<20){
-    loadQ();
-  }else{
-    finish();
-  }
+index++;
+if(index<20) loadQ();
+else finish();
 }
 
-// 🤖 AI
+// AI
 function askAI(){
-  let ans=currentQ.options[currentQ.answer];
-
-  document.getElementById("aiBox").innerHTML = `
-  <div class="card">
-  ✅ Answer: ${ans}<br><br>
-  📖 Concept: NCERT revise karo<br>
-  🔁 Practice more questions
-  </div>`;
+let ans=currentQ.options[currentQ.answer];
+document.getElementById("aiBox").innerHTML=`
+<div class="card">Answer: ${ans}<br>Revise NCERT</div>`;
 }
 
-// 📊 GRAPH
+// GRAPH
 function showGraph(){
-  let ctx=document.getElementById("chart");
-
-  new Chart(ctx,{
-    type:"bar",
-    data:{
-      labels:Object.keys(weak),
-      datasets:[{
-        label:"Weak Topics",
-        data:Object.values(weak)
-      }]
-    }
-  });
+new Chart(document.getElementById("chart"),{
+type:"bar",
+data:{labels:Object.keys(weak),
+datasets:[{data:Object.values(weak)}]}
+});
 }
 
-// 🏁 FINISH
 function finish(){
-
-  showGraph();
-
-  let rank;
-
-  if(score>=70) rank="🔥 Topper";
-  else if(score>=50) rank="👍 Good";
-  else rank="❌ Weak";
-
-  alert("Score: "+score+"\nRank: "+rank);
+showGraph();
+alert("Score: "+score);
 }
 
+// INIT
+loadVideos();
 </script>
 
 </body>
