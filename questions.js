@@ -20,15 +20,6 @@ chapter:"Human Physiology",
 difficulty:"medium",
 type:"normal"
 },
-{
-q:"Which disease is caused by bacteria?",
-options:["Tuberculosis","Malaria","Dengue","COVID"],
-answer:0,
-subject:"Biology",
-chapter:"Human Health",
-difficulty:"easy",
-type:"pyq"
-},
 
 /* ⚗️ CHEMISTRY */
 {
@@ -36,27 +27,9 @@ q:"pH <7 means?",
 options:["Acidic","Basic","Neutral","Salt"],
 answer:0,
 subject:"Chemistry",
-chapter:"pH",
+chapter:"Acid Base",
 difficulty:"easy",
 type:"normal"
-},
-{
-q:"Strong base?",
-options:["NaOH","NH3","HCl","CO2"],
-answer:0,
-subject:"Chemistry",
-chapter:"Acid Base",
-difficulty:"medium",
-type:"normal"
-},
-{
-q:"NEET: strongest acid?",
-options:["HCl","H2SO4","CH3COOH","NH3"],
-answer:1,
-subject:"Chemistry",
-chapter:"Acids",
-difficulty:"hard",
-type:"pyq"
 },
 
 /* ⚡ PHYSICS */
@@ -68,30 +41,26 @@ subject:"Physics",
 chapter:"Mechanics",
 difficulty:"easy",
 type:"normal"
-},
-{
-q:"Speed of light?",
-options:["3×10^8","1×10^6","9.8","5×10^7"],
-answer:0,
-subject:"Physics",
-chapter:"Modern Physics",
-difficulty:"medium",
-type:"normal"
-},
-{
-q:"NEET: Work unit?",
-options:["Joule","Watt","Newton","Pascal"],
-answer:0,
-subject:"Physics",
-chapter:"Work Energy",
-difficulty:"medium",
-type:"pyq"
 }
 
 ];
 
-// 👉 AUTO FILL 150
+// auto fill 150
 while(questions.length < 150){
-  let q = questions[questions.length % 9];
+  let q = questions[questions.length % 4];
   questions.push({...q});
 }
+
+/* 🎥 VIDEOS */
+const videos = {
+Biology:{
+"Photosynthesis":[
+{title:"Photosynthesis Lecture",url:"https://www.youtube.com/embed/sQK3Yr4Sc_k"}
+]
+},
+Physics:{
+"Mechanics":[
+{title:"Newton Laws",url:"https://www.youtube.com/embed/kKKM8Y-u7ds"}
+]
+}
+};
