@@ -1,222 +1,256 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>NEET Coaching App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>NEET PRO MAX</title>
 
 <style>
 body{
-  margin:0;
   font-family:sans-serif;
+  margin:0;
   background:linear-gradient(135deg,#667eea,#764ba2);
   color:white;
   text-align:center;
 }
-.container{max-width:500px;margin:auto;padding:15px}
-button{
-  width:100%;padding:14px;margin:6px 0;
-  border:none;border-radius:12px;
-}
+
+.container{max-width:500px;margin:auto;padding:15px;}
+
 .card{
-  background:white;color:black;
-  border-radius:20px;padding:20px;margin-top:10px;
+  background:white;
+  color:black;
+  padding:20px;
+  border-radius:20px;
+  margin-top:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
-.correct{background:#4CAF50!important}
-.wrong{background:#f44336!important}
-#chat{height:120px;overflow:auto;background:#eee;color:black}
+
+button{
+  width:100%;
+  padding:15px;
+  margin:8px 0;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+.correct{background:#4CAF50;color:white;}
+.wrong{background:#f44336;color:white;}
+.next{background:#667eea;color:white;font-weight:bold;}
+
+.bar{height:8px;background:#ddd;border-radius:10px;margin:10px 0;}
+.progress{height:100%;width:0%;background:#4CAF50;}
+
+.subjects button{
+  width:30%;
+  display:inline-block;
+  background:#ffffff20;
+  color:white;
+}
+
+.mode button{
+  background:#ff9800;
+  color:white;
+}
+
+img{
+  width:100%;
+  margin:10px 0;
+  border-radius:10px;
+}
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
-<h2>📚 NEET Coaching App</h2>
+<h2>🚀 NEET PRO MAX</h2>
 
-<button onclick="setMode('normal')">Practice</button>
-<button onclick="setMode('daily')">Daily</button>
-<button onclick="setMode('pyq')">PYQ</button>
-
-<button onclick="openVideos()">🎥 Videos</button>
-<button onclick="openNotes()">📄 Notes</button>
-
-<div id="subjects">
-<button onclick="showCh('Biology')">Biology</button>
-<button onclick="showCh('Chemistry')">Chemistry</button>
-<button onclick="showCh('Physics')">Physics</button>
+<!-- SUBJECT -->
+<div class="subjects">
+<button onclick="setSubject('Biology')">🧬 Bio</button>
+<button onclick="setSubject('Chemistry')">⚗️ Chem</button>
+<button onclick="setSubject('Physics')">⚡ Phy</button>
 </div>
 
-<div id="chapters"></div>
+<!-- MODE -->
+<div class="mode">
+<button onclick="setMode('normal')">🧠 Normal</button>
+<button onclick="setMode('pyq')">📘 PYQ</button>
+</div>
 
-<div id="quizBox" style="display:none">
-<h3 id="info"></h3>
+<h3 id="qno"></h3>
+<h3 id="score"></h3>
+
+<div class="bar"><div id="progress" class="progress"></div></div>
+
 <div id="quiz" class="card"></div>
-<button onclick="nextQ()">Next</button>
-<button onclick="bookmark()">⭐ Save</button>
-</div>
 
-<div class="card">
-<h3>🤖 AI Teacher</h3>
-<div id="chat"></div>
-<input id="input"><button onclick="askAI()">Ask</button>
-</div>
-
-<div id="videoSection" style="display:none"></div>
-
-<div id="notesSection" style="display:none">
-<input type="file" id="pdfFile">
-<input id="noteSubject" placeholder="Subject">
-<input id="noteChapter" placeholder="Chapter">
-<button onclick="uploadPDF()">Upload</button>
-<div id="notesList"></div>
-<div id="pdfViewer"></div>
-</div>
-
-<canvas id="chart"></canvas>
+<button onclick="askAI()">🤖 AI Teacher</button>
+<button class="next" onclick="nextQ()">Next ➡️</button>
 
 </div>
 
 <script src="questions.js"></script>
 
 <script>
-let subject,chapter,filtered=[];
-let index=0,score=0,mode="normal";
-let difficulty="easy",weak={},currentQ;
+let index=0, score=0, used=[], weak={};
+let subject="all", mode="normal", currentQ;
 
-/* MODE */
-function setMode(m){mode=m;alert(m)}
-
-/* SUBJECT */
-function showCh(sub){
+// 🎯 SUBJECT
+function setSubject(sub){
   subject=sub;
-  let ch=[...new Set(questions.filter(q=>q.subject==sub).map(q=>q.chapter))];
-  let html="";
-  ch.forEach(c=>html+=`<button onclick="start('${c}')">${c}</button>`);
-  document.getElementById("chapters").innerHTML=html;
+  reset();
 }
 
-/* START */
-function start(ch){
-  chapter=ch;
-  filtered = questions;
-  index=0;score=0;
-  document.getElementById("quizBox").style.display="block";
+// 🎯 MODE
+function setMode(m){
+  mode=m;
+  reset();
+}
+
+// 🔁 RESET
+function reset(){
+  index=0;
+  score=0;
+  used=[];
+  weak={};
   loadQ();
 }
 
+// 🎲 RANDOM QUESTION
+function getRandomQ(){
+  let filtered = questions.filter(q=>{
+    return (subject==="all" || q.topic===subject) &&
+           (mode==="pyq" ? q.pyq : true);
+  });
+
+  let i;
+  do{
+    i=Math.floor(Math.random()*filtered.length);
+  }while(used.includes(i));
+
+  used.push(i);
+  return filtered[i];
+}
+
+// 📥 LOAD QUESTION
 function loadQ(){
-  currentQ=filtered[Math.floor(Math.random()*filtered.length)];
-  document.getElementById("info").innerText=subject+" "+chapter;
+  currentQ=getRandomQ();
+
+  document.getElementById("qno").innerText="Q "+(index+1)+"/50";
+  document.getElementById("score").innerText="Score: "+score;
 
   let html=`<h3>${currentQ.q}</h3>`;
-  currentQ.options.forEach((o,i)=>{
-    html+=`<button onclick="check(${i},this)">${o}</button>`;
+
+  if(currentQ.img){
+    html+=`<img src="${currentQ.img}">`;
+  }
+
+  currentQ.options.forEach((opt,i)=>{
+    html+=`<button onclick="checkAns(${i},this)">${opt}</button>`;
   });
+
   document.getElementById("quiz").innerHTML=html;
+
+  document.getElementById("progress").style.width=(index/50*100)+"%";
 }
 
-function check(i,btn){
-  let c=currentQ.answer;
-  let btns=document.querySelectorAll("#quiz button");
-
-  btns.forEach((b,x)=>{
-    if(x==c)b.classList.add("correct");
-    else b.classList.add("wrong");
-    b.disabled=true;
-  });
-
-  if(i==c) score++;
-  else weak[currentQ.chapter]=(weak[currentQ.chapter]||0)+1;
-
-  document.getElementById("chat").innerHTML+=
-  `<p>🤖 Answer: ${currentQ.options[c]}</p>`;
+// 🧠 DIFFICULTY SCORE
+function getScore(q){
+  if(q.difficulty==="easy") return 2;
+  if(q.difficulty==="medium") return 4;
+  if(q.difficulty==="hard") return 6;
+  return 4;
 }
 
+// ✅ CHECK ANSWER
+function checkAns(ans,btn){
+  let buttons=document.querySelectorAll("#quiz button");
+  buttons.forEach(b=>b.disabled=true);
+
+  if(ans===currentQ.answer){
+    btn.classList.add("correct");
+    score+=getScore(currentQ);
+  }else{
+    btn.classList.add("wrong");
+    score-=1;
+    weak[currentQ.topic]=(weak[currentQ.topic]||0)+1;
+  }
+
+  document.getElementById("score").innerText="Score: "+score;
+}
+
+// ➡️ NEXT
 function nextQ(){
   index++;
-  if(index<20) loadQ();
-  else showGraph();
-}
-
-/* GRAPH */
-function showGraph(){
-  new Chart(document.getElementById("chart"),{
-    type:'bar',
-    data:{labels:Object.keys(weak),datasets:[{data:Object.values(weak)}]}
-  });
-}
-
-/* AI */
-function askAI(){
-  let i=document.getElementById("input").value;
-  let r="Ask NEET topic";
-
-  if(i.includes("force")) r="F = ma";
-
-  document.getElementById("chat").innerHTML+=`<p>${r}</p>`;
-}
-
-/* VIDEOS */
-function openVideos(){
-  let html="";
-  Object.keys(videos).forEach(s=>{
-    html+=`<button onclick="loadV('${s}')">${s}</button>`;
-  });
-  document.getElementById("videoSection").innerHTML=html;
-  document.getElementById("videoSection").style.display="block";
-}
-
-function loadV(s){
-  let html="";
-  Object.keys(videos[s]).forEach(c=>{
-    videos[s][c].forEach(v=>{
-      html+=`<iframe width="100%" src="${v.url}"></iframe>`;
-    });
-  });
-  document.getElementById("videoSection").innerHTML=html;
-}
-
-/* NOTES */
-function openNotes(){
-  document.getElementById("notesSection").style.display="block";
-  loadNotes();
-}
-
-function uploadPDF(){
-  let file=document.getElementById("pdfFile").files[0];
-  let reader=new FileReader();
-  reader.onload=e=>{
-    let notes=JSON.parse(localStorage.getItem("notes")||"[]");
-    notes.push({file:e.target.result});
-    localStorage.setItem("notes",JSON.stringify(notes));
-    loadNotes();
+  if(index<50){
+    loadQ();
+  }else{
+    finish();
   }
-  reader.readAsDataURL(file);
 }
 
-function loadNotes(){
-  let notes=JSON.parse(localStorage.getItem("notes")||"[]");
-  let html="";
-  notes.forEach((n,i)=>{
-    html+=`<button onclick="view(${i})">Open Note ${i+1}</button>`;
-  });
-  document.getElementById("notesList").innerHTML=html;
+// 🤖 AI TEACHER
+function askAI(){
+  let correct = currentQ.options[currentQ.answer];
+  alert("🤖 AI Teacher:\n\nCorrect Answer: " + correct +
+  "\n\nConcept revise karo (NCERT based)");
 }
 
-function view(i){
-  let notes=JSON.parse(localStorage.getItem("notes"));
-  document.getElementById("pdfViewer").innerHTML=
-  `<iframe src="${notes[i].file}" width="100%" height="400"></iframe>`;
+// 🏁 FINISH
+function finish(){
+
+  let percent = (score/200)*100;
+
+  let rank;
+  if(percent>90) rank="🔥 Topper";
+  else if(percent>75) rank="🥇 Excellent";
+  else if(percent>60) rank="👍 Good";
+  else if(percent>40) rank="⚠️ Average";
+  else rank="❌ Weak";
+
+  let name = prompt("Enter Name");
+
+  let board = JSON.parse(localStorage.getItem("neetBoard")||"[]");
+  board.push({name,score});
+  board.sort((a,b)=>b.score-a.score);
+  localStorage.setItem("neetBoard",JSON.stringify(board));
+
+  let graph="<h3>Weak Topics</h3>";
+  for(let t in weak){
+    graph+=`
+    <div style="background:#ddd;margin:5px;border-radius:10px">
+      <div style="width:${weak[t]*15}%;background:red;color:white">
+        ${t}
+      </div>
+    </div>`;
+  }
+
+  document.body.innerHTML=`
+    <h2>🎉 Quiz Finished</h2>
+    <h3>Score: ${score}</h3>
+    <h2>${rank}</h2>
+
+    ${graph}
+
+    <h2>🏆 Leaderboard</h2>
+    ${board.slice(0,5).map((p,i)=>
+      `<p>${i+1}. ${p.name} - ${p.score}</p>`
+    ).join("")}
+
+    <button onclick="location.reload()">Restart</button>
+  `;
 }
 
-/* BOOKMARK */
-function bookmark(){
-  let b=JSON.parse(localStorage.getItem("bm")||"[]");
-  b.push(currentQ);
-  localStorage.setItem("bm",JSON.stringify(b));
-  alert("Saved");
-}
+// 🚀 START
+loadQ();
 </script>
 
 </body>
