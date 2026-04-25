@@ -1,45 +1,97 @@
 const questions = [
 
 /* 🧬 BIOLOGY */
-{q:"Site of Calvin cycle?",options:["Stroma","Thylakoid","Cytoplasm","Mitochondria"],answer:0,topic:"Plant Physiology"},
-{q:"ATP produced in?",options:["Mitochondria","Nucleus","Golgi","Ribosome"],answer:0,topic:"Cell"},
-{q:"Which organ detoxifies blood?",options:["Liver","Kidney","Heart","Lungs"],answer:0,topic:"Human Physiology"},
-
-// Diagram Questions
 {
-q:"Identify the organ shown in diagram",
+q:"Site of Calvin cycle?",
+options:["Stroma","Thylakoid","Cytoplasm","Mitochondria"],
+answer:0,
+subject:"Biology",
+chapter:"Photosynthesis",
+difficulty:"easy",
+type:"normal"
+},
+{
+q:"Identify organ",
 img:"https://upload.wikimedia.org/wikipedia/commons/6/6f/Heart_diagram-en.svg",
 options:["Heart","Kidney","Brain","Liver"],
 answer:0,
-topic:"Human Physiology"
+subject:"Biology",
+chapter:"Human Physiology",
+difficulty:"medium",
+type:"normal"
 },
 {
-q:"Identify the cell structure",
-img:"https://upload.wikimedia.org/wikipedia/commons/3/3a/Animal_cell_structure_en.svg",
-options:["Cell","Tissue","Organ","System"],
+q:"Which disease is caused by bacteria?",
+options:["Tuberculosis","Malaria","Dengue","COVID"],
 answer:0,
-topic:"Cell"
-},
-{
-q:"Identify the neuron",
-img:"https://upload.wikimedia.org/wikipedia/commons/4/4c/Neuron.svg",
-options:["Neuron","Muscle","Bone","Blood"],
-answer:0,
-topic:"Biology"
+subject:"Biology",
+chapter:"Human Health",
+difficulty:"easy",
+type:"pyq"
 },
 
 /* ⚗️ CHEMISTRY */
-{q:"pH <7 means?",options:["Acidic","Basic","Neutral","Salt"],answer:0,topic:"Chemistry"},
-{q:"Strong base?",options:["NaOH","NH3","HCl","CO2"],answer:0,topic:"Chemistry"},
+{
+q:"pH <7 means?",
+options:["Acidic","Basic","Neutral","Salt"],
+answer:0,
+subject:"Chemistry",
+chapter:"pH",
+difficulty:"easy",
+type:"normal"
+},
+{
+q:"Strong base?",
+options:["NaOH","NH3","HCl","CO2"],
+answer:0,
+subject:"Chemistry",
+chapter:"Acid Base",
+difficulty:"medium",
+type:"normal"
+},
+{
+q:"NEET: strongest acid?",
+options:["HCl","H2SO4","CH3COOH","NH3"],
+answer:1,
+subject:"Chemistry",
+chapter:"Acids",
+difficulty:"hard",
+type:"pyq"
+},
 
 /* ⚡ PHYSICS */
-{q:"Unit of force?",options:["Newton","Joule","Watt","Pascal"],answer:0,topic:"Physics"},
-{q:"Speed of light?",options:["3×10^8","1×10^6","9.8","5×10^7"],answer:0,topic:"Physics"},
+{
+q:"Unit of force?",
+options:["Newton","Joule","Watt","Pascal"],
+answer:0,
+subject:"Physics",
+chapter:"Mechanics",
+difficulty:"easy",
+type:"normal"
+},
+{
+q:"Speed of light?",
+options:["3×10^8","1×10^6","9.8","5×10^7"],
+answer:0,
+subject:"Physics",
+chapter:"Modern Physics",
+difficulty:"medium",
+type:"normal"
+},
+{
+q:"NEET: Work unit?",
+options:["Joule","Watt","Newton","Pascal"],
+answer:0,
+subject:"Physics",
+chapter:"Work Energy",
+difficulty:"medium",
+type:"pyq"
+}
 
 ];
 
-// 🔥 AUTO GENERATE 150 QUESTIONS
+// 👉 AUTO FILL 150
 while(questions.length < 150){
-  let q = questions[questions.length % 10];
+  let q = questions[questions.length % 9];
   questions.push({...q});
 }
