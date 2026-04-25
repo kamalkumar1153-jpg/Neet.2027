@@ -2,67 +2,55 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET PRO MAX</title>
+<title>NEET AI Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{
   font-family:sans-serif;
   margin:0;
-  background:linear-gradient(135deg,#667eea,#764ba2);
+  background:#0f172a;
   color:white;
-  text-align:center;
 }
 
 .container{max-width:500px;margin:auto;padding:15px;}
 
 .card{
-  background:white;
-  color:black;
-  padding:20px;
-  border-radius:20px;
-  margin-top:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+  background:#1e293b;
+  padding:15px;
+  border-radius:15px;
+  margin-top:15px;
 }
 
 button{
   width:100%;
-  padding:15px;
-  margin:8px 0;
+  padding:14px;
+  margin:6px 0;
   border:none;
-  border-radius:12px;
-  font-size:16px;
-  cursor:pointer;
-  transition:0.3s;
+  border-radius:10px;
+  background:#3b82f6;
+  color:white;
+  font-size:15px;
 }
 
 button:hover{
-  transform:scale(1.05);
+  background:#2563eb;
 }
-
-.correct{background:#4CAF50;color:white;}
-.wrong{background:#f44336;color:white;}
-.next{background:#667eea;color:white;font-weight:bold;}
-
-.bar{height:8px;background:#ddd;border-radius:10px;margin:10px 0;}
-.progress{height:100%;width:0%;background:#4CAF50;}
 
 .subjects button{
   width:30%;
   display:inline-block;
-  background:#ffffff20;
-  color:white;
+  background:#475569;
 }
 
-.mode button{
-  background:#ff9800;
-  color:white;
-}
+.correct{background:#16a34a;}
+.wrong{background:#dc2626;}
 
-img{
-  width:100%;
-  margin:10px 0;
-  border-radius:10px;
-}
+.bar{height:6px;background:#334155;border-radius:10px;margin:10px 0;}
+.progress{height:100%;width:0%;background:#22c55e;}
+
+iframe{border-radius:10px;}
 </style>
 </head>
 
@@ -70,187 +58,166 @@ img{
 
 <div class="container">
 
-<h2>🚀 NEET PRO MAX</h2>
+<h2>🎓 NEET AI Dashboard</h2>
 
-<!-- SUBJECT -->
+<!-- 🎥 VIDEO -->
+<div class="card">
+<h3>📺 Featured Video</h3>
+
+<iframe width="100%" height="200"
+src="https://www.youtube.com/embed/5b9hF9q6TjY"
+allowfullscreen></iframe>
+
+</div>
+
+<!-- 📘 SUBJECT -->
+<div class="card">
+<h3>📚 Select Subject</h3>
 <div class="subjects">
 <button onclick="setSubject('Biology')">🧬 Bio</button>
 <button onclick="setSubject('Chemistry')">⚗️ Chem</button>
 <button onclick="setSubject('Physics')">⚡ Phy</button>
 </div>
-
-<!-- MODE -->
-<div class="mode">
-<button onclick="setMode('normal')">🧠 Normal</button>
-<button onclick="setMode('pyq')">📘 PYQ</button>
 </div>
 
-<h3 id="qno"></h3>
-<h3 id="score"></h3>
+<!-- 🚀 START -->
+<div class="card">
+<button onclick="startTest()">🚀 Start Test</button>
+</div>
+
+<!-- 🧠 QUIZ -->
+<div id="quizBox" class="card" style="display:none;"></div>
 
 <div class="bar"><div id="progress" class="progress"></div></div>
 
-<div id="quiz" class="card"></div>
+<button onclick="nextQ()">Next ➡️</button>
 
-<button onclick="askAI()">🤖 AI Teacher</button>
-<button class="next" onclick="nextQ()">Next ➡️</button>
+<!-- 🤖 AI -->
+<div class="card">
+<h3>🤖 AI Teacher</h3>
+<button onclick="askAI()">Explain Answer</button>
+<div id="aiBox"></div>
+</div>
+
+<!-- 📊 GRAPH -->
+<div class="card">
+<h3>📊 Weak Topics</h3>
+<canvas id="chart"></canvas>
+</div>
 
 </div>
 
 <script src="questions.js"></script>
 
 <script>
-let index=0, score=0, used=[], weak={};
-let subject="all", mode="normal", currentQ;
+let subject="Biology";
+let index=0,score=0;
+let currentQ;
+let weak={};
 
 // 🎯 SUBJECT
-function setSubject(sub){
-  subject=sub;
-  reset();
+function setSubject(s){
+  subject=s;
+  alert("Selected: "+s);
 }
 
-// 🎯 MODE
-function setMode(m){
-  mode=m;
-  reset();
-}
-
-// 🔁 RESET
-function reset(){
+// 🚀 START
+function startTest(){
   index=0;
   score=0;
-  used=[];
   weak={};
+  document.getElementById("quizBox").style.display="block";
   loadQ();
-}
-
-// 🎲 RANDOM QUESTION
-function getRandomQ(){
-  let filtered = questions.filter(q=>{
-    return (subject==="all" || q.topic===subject) &&
-           (mode==="pyq" ? q.pyq : true);
-  });
-
-  let i;
-  do{
-    i=Math.floor(Math.random()*filtered.length);
-  }while(used.includes(i));
-
-  used.push(i);
-  return filtered[i];
 }
 
 // 📥 LOAD QUESTION
 function loadQ(){
-  currentQ=getRandomQ();
+  let filtered = questions.filter(q=>q.topic===subject);
 
-  document.getElementById("qno").innerText="Q "+(index+1)+"/50";
-  document.getElementById("score").innerText="Score: "+score;
+  currentQ = filtered[Math.floor(Math.random()*filtered.length)];
 
-  let html=`<h3>${currentQ.q}</h3>`;
+  let html = `<h3>${currentQ.q}</h3>`;
 
   if(currentQ.img){
-    html+=`<img src="${currentQ.img}">`;
+    html += `<img src="${currentQ.img}" width="100%">`;
   }
 
   currentQ.options.forEach((opt,i)=>{
     html+=`<button onclick="checkAns(${i},this)">${opt}</button>`;
   });
 
-  document.getElementById("quiz").innerHTML=html;
+  document.getElementById("quizBox").innerHTML = html;
 
-  document.getElementById("progress").style.width=(index/50*100)+"%";
+  document.getElementById("progress").style.width=(index/20*100)+"%";
 }
 
-// 🧠 DIFFICULTY SCORE
-function getScore(q){
-  if(q.difficulty==="easy") return 2;
-  if(q.difficulty==="medium") return 4;
-  if(q.difficulty==="hard") return 6;
-  return 4;
-}
-
-// ✅ CHECK ANSWER
+// ✅ ANSWER (NEET)
 function checkAns(ans,btn){
-  let buttons=document.querySelectorAll("#quiz button");
+  let buttons=document.querySelectorAll("#quizBox button");
   buttons.forEach(b=>b.disabled=true);
 
   if(ans===currentQ.answer){
     btn.classList.add("correct");
-    score+=getScore(currentQ);
+    score+=4;
   }else{
     btn.classList.add("wrong");
     score-=1;
     weak[currentQ.topic]=(weak[currentQ.topic]||0)+1;
   }
-
-  document.getElementById("score").innerText="Score: "+score;
 }
 
 // ➡️ NEXT
 function nextQ(){
   index++;
-  if(index<50){
+  if(index<20){
     loadQ();
   }else{
     finish();
   }
 }
 
-// 🤖 AI TEACHER
+// 🤖 AI
 function askAI(){
-  let correct = currentQ.options[currentQ.answer];
-  alert("🤖 AI Teacher:\n\nCorrect Answer: " + correct +
-  "\n\nConcept revise karo (NCERT based)");
+  let ans=currentQ.options[currentQ.answer];
+
+  document.getElementById("aiBox").innerHTML = `
+  <div class="card">
+  ✅ Answer: ${ans}<br><br>
+  📖 Concept: NCERT revise karo<br>
+  🔁 Practice more questions
+  </div>`;
+}
+
+// 📊 GRAPH
+function showGraph(){
+  let ctx=document.getElementById("chart");
+
+  new Chart(ctx,{
+    type:"bar",
+    data:{
+      labels:Object.keys(weak),
+      datasets:[{
+        label:"Weak Topics",
+        data:Object.values(weak)
+      }]
+    }
+  });
 }
 
 // 🏁 FINISH
 function finish(){
 
-  let percent = (score/200)*100;
+  showGraph();
 
   let rank;
-  if(percent>90) rank="🔥 Topper";
-  else if(percent>75) rank="🥇 Excellent";
-  else if(percent>60) rank="👍 Good";
-  else if(percent>40) rank="⚠️ Average";
+
+  if(score>=70) rank="🔥 Topper";
+  else if(score>=50) rank="👍 Good";
   else rank="❌ Weak";
 
-  let name = prompt("Enter Name");
-
-  let board = JSON.parse(localStorage.getItem("neetBoard")||"[]");
-  board.push({name,score});
-  board.sort((a,b)=>b.score-a.score);
-  localStorage.setItem("neetBoard",JSON.stringify(board));
-
-  let graph="<h3>Weak Topics</h3>";
-  for(let t in weak){
-    graph+=`
-    <div style="background:#ddd;margin:5px;border-radius:10px">
-      <div style="width:${weak[t]*15}%;background:red;color:white">
-        ${t}
-      </div>
-    </div>`;
-  }
-
-  document.body.innerHTML=`
-    <h2>🎉 Quiz Finished</h2>
-    <h3>Score: ${score}</h3>
-    <h2>${rank}</h2>
-
-    ${graph}
-
-    <h2>🏆 Leaderboard</h2>
-    ${board.slice(0,5).map((p,i)=>
-      `<p>${i+1}. ${p.name} - ${p.score}</p>`
-    ).join("")}
-
-    <button onclick="location.reload()">Restart</button>
-  `;
+  alert("Score: "+score+"\nRank: "+rank);
 }
 
-// 🚀 START
-loadQ();
 </script>
 
 </body>
