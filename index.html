@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NEET Quiz Pro</title>
+  <title>NEET Diagram Quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -17,11 +17,6 @@
       padding: 15px;
     }
 
-    .header {
-      text-align: center;
-      color: white;
-    }
-
     .card {
       background: white;
       border-radius: 20px;
@@ -29,39 +24,28 @@
       margin-top: 20px;
     }
 
-    .progress-bar {
-      height: 10px;
-      background: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progress {
-      height: 100%;
-      width: 0%;
-      background: #4CAF50;
+    img {
+      width: 100%;
+      border-radius: 15px;
+      margin: 10px 0;
     }
 
     button {
       width: 100%;
-      padding: 18px;
-      margin: 10px 0;
-      font-size: 18px;
+      padding: 15px;
+      margin: 8px 0;
       border-radius: 12px;
       border: none;
-      text-align: left;
-      background: #f5f5f5;
+      font-size: 16px;
       cursor: pointer;
     }
 
-    button.selected { background: #2196F3; color:white; }
-    button.correct { background: #4CAF50; color:white; }
-    button.wrong { background: #f44336; color:white; }
+    .correct { background: green; color: white; }
+    .wrong { background: red; color: white; }
 
     .next-btn {
-      background: #667eea;
+      background: black;
       color: white;
-      font-weight: bold;
     }
   </style>
 </head>
@@ -69,16 +53,8 @@
 <body>
 
 <div class="container">
-  <div class="header">
-    <h2>📚 NEET Quiz Pro</h2>
-    <h3 id="progressText"></h3>
-    <h3 id="timer">Time: 15</h3>
-    <h3 id="score">Score: 0</h3>
-  </div>
-
-  <div class="progress-bar">
-    <div class="progress" id="progressBar"></div>
-  </div>
+  <h2 style="color:white;text-align:center;">📊 Diagram Quiz</h2>
+  <h3 id="score" style="color:white;text-align:center;">Score: 0</h3>
 
   <div id="quiz" class="card"></div>
 
@@ -88,68 +64,37 @@
 <script src="questions.js"></script>
 
 <script>
-let index = 0, score = 0, time = 15, timer, answered = false;
+let index = 0;
+let score = 0;
 
 function loadQ(){
-  clearInterval(timer);
-  time = 15;
-  answered = false;
-
-  document.getElementById("progressText").innerText =
-    `Question ${index+1} / ${questions.length}`;
-
-  document.getElementById("timer").innerText = "Time: " + time;
-
-  let percent = (index / questions.length) * 100;
-  document.getElementById("progressBar").style.width = percent + "%";
-
   let q = questions[index];
 
   document.getElementById("quiz").innerHTML = `
     <h3>${q.q}</h3>
+
+    ${q.img ? `<img src="${q.img}">` : ""}
+
     ${q.options.map((opt,i)=>
-      `<button onclick="selectAns(${i}, this)">
-        <b>${String.fromCharCode(65+i)}.</b> ${opt}
-      </button>`
+      `<button onclick="checkAns(${i}, this)">${opt}</button>`
     ).join("")}
   `;
-
-  timer = setInterval(()=>{
-    time--;
-    document.getElementById("timer").innerText = "Time: " + time;
-    if(time==0) nextQ();
-  },1000);
 }
 
-function selectAns(selected,btn){
-  if(answered) return;
-
-  let buttons = document.querySelectorAll("#quiz button");
-  buttons.forEach(b => b.classList.remove("selected"));
-
-  btn.classList.add("selected");
-
-  setTimeout(()=>{
-    checkAns(selected);
-  },300);
-}
-
-function checkAns(selected){
-  answered = true;
-
+function checkAns(i,btn){
   let correct = questions[index].answer;
   let buttons = document.querySelectorAll("#quiz button");
 
-  buttons.forEach((b,i)=>{
-    if(i==correct){
+  buttons.forEach((b,ind)=>{
+    if(ind==correct){
       b.classList.add("correct");
-    } else if(i==selected){
+    } else {
       b.classList.add("wrong");
     }
-    b.disabled = true;
+    b.disabled=true;
   });
 
-  if(selected==correct) score++;
+  if(i==correct) score++;
 
   document.getElementById("score").innerText="Score: "+score;
 }
@@ -159,11 +104,7 @@ function nextQ(){
   if(index<questions.length){
     loadQ();
   } else {
-    document.body.innerHTML=`
-      <h2 style="color:white;text-align:center">🎉 Finished</h2>
-      <h3 style="color:white;text-align:center">Score: ${score}/${questions.length}</h3>
-      <button onclick="location.reload()">Restart</button>
-    `;
+    document.body.innerHTML=`<h2>Finished 🎉</h2><h3>Score: ${score}</h3>`;
   }
 }
 
