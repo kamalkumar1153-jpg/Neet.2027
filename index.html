@@ -1,106 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NEET Pro Quiz</title>
+  <title>NEET AI Quiz Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+    body{
+      font-family:sans-serif;
+      margin:0;
+      background:linear-gradient(135deg,#667eea,#764ba2);
+      color:white;
     }
 
-    .container {
-      max-width: 500px;
-      margin: auto;
-      padding: 15px;
+    .container{
+      max-width:500px;
+      margin:auto;
+      padding:15px;
     }
 
-    .header {
-      text-align: center;
-      color: white;
+    select{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      margin-bottom:10px;
     }
 
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    .card{
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:15px;
     }
 
-    img {
-      width: 100%;
-      border-radius: 15px;
-      margin: 10px 0;
+    button{
+      width:100%;
+      padding:15px;
+      margin:10px 0;
+      border:none;
+      border-radius:10px;
+      font-size:16px;
+      cursor:pointer;
+      transition:0.3s;
     }
 
-    button {
-      width: 100%;
-      padding: 16px;
-      margin: 10px 0;
-      font-size: 18px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
+    button:hover{
+      transform:scale(1.05);
     }
 
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(102,126,234,0.7);
-    }
+    .correct{background:green;color:white;}
+    .wrong{background:red;color:white;}
 
-    button:active {
-      transform: scale(0.95);
-    }
-
-    .correct {
-      background: #4CAF50 !important;
-      color: white;
-      animation: pulse 0.5s;
-    }
-
-    .wrong {
-      background: #f44336 !important;
-      color: white;
-      animation: shake 0.4s;
-    }
-
-    @keyframes pulse {
-      0%{transform:scale(1)}
-      50%{transform:scale(1.1)}
-      100%{transform:scale(1)}
-    }
-
-    @keyframes shake {
-      0%{transform:translateX(0)}
-      25%{transform:translateX(-5px)}
-      50%{transform:translateX(5px)}
-      75%{transform:translateX(-5px)}
-      100%{transform:translateX(0)}
-    }
-
-    .next-btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      font-weight: bold;
-    }
-
-    .progress-bar {
-      height: 10px;
-      background: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progress {
-      height: 100%;
-      width: 0%;
-      background: #4CAF50;
-      transition: 0.4s;
-    }
   </style>
 </head>
 
@@ -108,55 +58,102 @@
 
 <div class="container">
 
-  <div class="header">
-    <h2>📚 NEET Diagram Quiz</h2>
-    <h3 id="progressText"></h3>
-    <h3 id="timer">Time: 15</h3>
-    <h3 id="score">Score: 0</h3>
-  </div>
+  <h2>📚 NEET AI Quiz</h2>
 
-  <div class="progress-bar">
-    <div class="progress" id="progressBar"></div>
-  </div>
+  <!-- Chapter Select -->
+  <select id="chapterSelect">
+    <option value="Biology">Biology</option>
+    <option value="Chemistry">Chemistry</option>
+    <option value="Physics">Physics</option>
+  </select>
+
+  <button onclick="startQuiz()">Start Test 🚀</button>
+
+  <h3 id="qno"></h3>
+  <h3 id="timer"></h3>
+  <h3 id="score"></h3>
 
   <div id="quiz" class="card"></div>
 
-  <button class="next-btn" onclick="nextQ()">Next ➡️</button>
+  <button onclick="nextQ()">Next ➡️</button>
 
 </div>
 
-<script src="questions.js"></script>
-
 <script>
+
+// 📚 Chapter-wise Question Bank
+const chapters = {
+
+Biology: [
+{q:"Site of Calvin cycle?",options:["Stroma","Thylakoid","Cytoplasm","Mitochondria"],answer:0},
+{q:"Powerhouse of cell?",options:["Mitochondria","Nucleus","Ribosome","Golgi"],answer:0},
+{q:"RBC function?",options:["O2 transport","Defense","Clotting","Storage"],answer:0},
+{q:"Kidney unit?",options:["Nephron","Neuron","Alveoli","Villus"],answer:0},
+{q:"Plant hormone?",options:["Auxin","Insulin","Testosterone","Adrenaline"],answer:0}
+],
+
+Chemistry: [
+{q:"pH < 7 means?",options:["Acidic","Basic","Neutral","Salt"],answer:0},
+{q:"Strong acid?",options:["HCl","NH3","NaOH","CH3COOH"],answer:0},
+{q:"Mole value?",options:["6.022e23","3e8","1.6e-19","9.8"],answer:0},
+{q:"Bond in NaCl?",options:["Ionic","Covalent","Metallic","Hydrogen"],answer:0},
+{q:"Gas constant?",options:["8.314","1.38","9.8","6.02"],answer:0}
+],
+
+Physics: [
+{q:"Unit of force?",options:["Newton","Joule","Watt","Pascal"],answer:0},
+{q:"Ohm law?",options:["V=IR","F=ma","E=mc2","P=VI"],answer:0},
+{q:"Speed formula?",options:["d/t","t/d","d*t","t+d"],answer:0},
+{q:"Light speed?",options:["3e8","1e6","9.8","5e7"],answer:0},
+{q:"Work formula?",options:["F*d","m*a","V*I","P*t"],answer:0}
+]
+
+};
+
+// 🔀 Generate Questions
+function generateQuestions(count=10){
+  let chapter = document.getElementById("chapterSelect").value;
+  let data = [...chapters[chapter]].sort(()=>Math.random()-0.5);
+
+  return data.slice(0,count).map(q=>{
+    let opts = [...q.options].sort(()=>Math.random()-0.5);
+    return {
+      q:q.q,
+      options:opts,
+      answer:opts.indexOf(q.options[q.answer]),
+      chapter:chapter
+    };
+  });
+}
+
+// 🔥 Quiz variables
+let questions = [];
 let index = 0;
 let score = 0;
 let time = 15;
 let timer;
-let answered = false;
 
+// ▶️ Start quiz
+function startQuiz(){
+  questions = generateQuestions(5);
+  index = 0;
+  score = 0;
+  loadQ();
+}
+
+// 📥 Load question
 function loadQ(){
   clearInterval(timer);
   time = 15;
-  answered = false;
+
+  document.getElementById("qno").innerText=`Q ${index+1}/${questions.length}`;
+  document.getElementById("score").innerText=`Score: ${score}`;
+  document.getElementById("timer").innerText=`Time: ${time}`;
 
   let q = questions[index];
 
-  document.getElementById("progressText").innerText =
-    `Question ${index+1} / ${questions.length}`;
-
-  document.getElementById("timer").innerText = "Time: " + time;
-
-  let percent = (index / questions.length) * 100;
-  document.getElementById("progressBar").style.width = percent + "%";
-
   document.getElementById("quiz").innerHTML = `
     <h3>${q.q}</h3>
-
-    ${q.img ? `
-      <img src="${q.img}" 
-      onerror="this.src='https://via.placeholder.com/400x250?text=Image+Not+Found'">
-    ` : ""}
-
     ${q.options.map((opt,i)=>
       `<button onclick="checkAns(${i}, this)">${opt}</button>`
     ).join("")}
@@ -164,46 +161,66 @@ function loadQ(){
 
   timer = setInterval(()=>{
     time--;
-    document.getElementById("timer").innerText = "Time: " + time;
+    document.getElementById("timer").innerText=`Time: ${time}`;
     if(time==0) nextQ();
   },1000);
 }
 
-function checkAns(selected,btn){
-  if(answered) return;
-  answered = true;
+// 🧠 Weak tracking
+let weak = JSON.parse(localStorage.getItem("weak") || "{}");
 
+function updateWeak(q, correct){
+  if(!weak[q.chapter]) weak[q.chapter]=0;
+  if(!correct) weak[q.chapter]++;
+  localStorage.setItem("weak", JSON.stringify(weak));
+}
+
+// ✅ Check answer
+function checkAns(selected,btn){
   let correct = questions[index].answer;
   let buttons = document.querySelectorAll("#quiz button");
 
   buttons.forEach((b,i)=>{
-    if(i==correct){
-      b.classList.add("correct");
-    } else {
-      b.classList.add("wrong");
-    }
-    b.disabled = true;
+    if(i==correct) b.classList.add("correct");
+    else b.classList.add("wrong");
+    b.disabled=true;
   });
 
-  if(selected==correct) score++;
+  let isCorrect = selected==correct;
 
-  document.getElementById("score").innerText="Score: "+score;
+  if(isCorrect) score++;
+
+  updateWeak(questions[index], isCorrect);
+
+  document.getElementById("score").innerText=`Score: ${score}`;
 }
 
+// ➡️ Next
 function nextQ(){
   index++;
   if(index<questions.length){
     loadQ();
   } else {
-    document.body.innerHTML=`
-      <h2 style="text-align:center;color:white;">🎉 Quiz Finished</h2>
-      <h2 style="text-align:center;color:white;">Score: ${score}/${questions.length}</h2>
-      <button onclick="location.reload()">Restart</button>
-    `;
+    finish();
   }
 }
 
-loadQ();
+// 📊 Finish + Weak Report
+function finish(){
+  let weak = JSON.parse(localStorage.getItem("weak") || "{}");
+
+  let html = `<h2>📊 Weak Topics Report</h2>`;
+
+  for(let ch in weak){
+    html += `<p>${ch} ❌ Mistakes: ${weak[ch]}</p>`;
+  }
+
+  html += `<h3>Score: ${score}/${questions.length}</h3>`;
+  html += `<button onclick="location.reload()">Restart</button>`;
+
+  document.body.innerHTML = html;
+}
+
 </script>
 
 </body>
