@@ -2,126 +2,130 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET Real Test</title>
+<title>NEET AI PRO MAX</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{background:#0f172a;color:white;font-family:sans-serif;margin:0;}
-.container{max-width:500px;margin:auto;padding:10px;}
+.container{max-width:520px;margin:auto;padding:10px;}
 .card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px;}
 button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;background:#3b82f6;color:white;}
 .correct{background:#16a34a;}
 .wrong{background:#dc2626;}
-.omr-btn{
-width:30px;height:30px;margin:2px;border-radius:50%;
-background:#475569;color:white;border:none;font-size:10px;
-}
+.omr-btn{width:26px;height:26px;margin:2px;border-radius:50%;background:#475569;color:white;font-size:9px;border:none;}
 .answered{background:#22c55e;}
+.review{background:#facc15;}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<h2>🎓 NEET REAL TEST</h2>
-<h3 id="timer">01:00:00</h3>
+<h2>🧠 NEET AI PRO MAX</h2>
+<h3 id="timer">03:00:00</h3>
 
-<button onclick="startTest()">Start Test</button>
+<button onclick="startMock()">🧪 Full Mock</button>
+<button onclick="adaptive()">🎯 Adaptive Test</button>
 
 <div id="quiz" class="card"></div>
-<button onclick="next()">Next ➡️</button>
+
+<button onclick="prev()">⬅️</button>
+<button onclick="next()">➡️</button>
 
 <div class="card">
 <h3>OMR</h3>
 <div id="omr"></div>
 </div>
 
+<div class="card">
+<button onclick="ai()">🤖 AI Teacher</button>
+<div id="aiBox"></div>
+</div>
+
+<canvas id="chart"></canvas>
+
 </div>
 
 <script>
 
-/* ================= REAL QUESTIONS ================= */
+/* ================= QUESTION GENERATOR ================= */
 
-const baseQuestions = [
-
-/* BIOLOGY */
-{q:"Which of the following statements is correct regarding cell theory?",
-options:["It was proposed by Schleiden and Schwann","It explains heredity","It includes viruses","It explains origin of life"],answer:0},
-
-{q:"Which phase of meiosis involves crossing over?",
-options:["Prophase I","Metaphase I","Anaphase II","Telophase"],answer:0},
-
-{q:"Which of the following is NOT a function of liver?",
-options:["Detoxification","Bile secretion","Insulin production","Glycogen storage"],answer:2},
-
-{q:"Which part of nephron is impermeable to water?",
-options:["Ascending limb","Descending limb","Proximal tubule","Distal tubule"],answer:0},
-
-{q:"Photosynthesis occurs in?",
-options:["Chloroplast","Mitochondria","Nucleus","Golgi"],answer:0},
-
-/* CHEMISTRY */
-{q:"Which of the following has highest boiling point?",
-options:["H2O","HF","NH3","CH4"],answer:0},
-
-{q:"Which law relates pressure and volume?",
-options:["Boyle's law","Charles law","Avogadro law","Gay Lussac"],answer:0},
-
-{q:"Which has highest electronegativity?",
-options:["F","Cl","O","N"],answer:0},
-
-{q:"pH of neutral solution?",
-options:["7","0","14","1"],answer:0},
-
-{q:"Which shows hydrogen bonding?",
-options:["H2O","CO2","CH4","O2"],answer:0},
-
-/* PHYSICS */
-{q:"Acceleration of body moving with constant velocity?",
-options:["Zero","Positive","Negative","Infinite"],answer:0},
-
-{q:"Work done when force perpendicular?",
-options:["Zero","Maximum","Negative","Infinite"],answer:0},
-
-{q:"Wave not needing medium?",
-options:["Light","Sound","Water","Mechanical"],answer:0},
-
-{q:"Unit of resistance?",
-options:["Ohm","Volt","Ampere","Watt"],answer:0},
-
-{q:"Ohm’s law?",
-options:["V = IR","F = ma","E = mc²","P = VI"],answer:0}
-
-];
-
-/* EXPAND TO 150 */
-let questions=[];
-baseQuestions.forEach(q=>{
-for(let i=0;i<10;i++){
-questions.push({...q});
+function makeQ(subject){
+return {
+q:`${subject}: Identify correct statement.`,
+options:[
+"Correct Answer",
+"Trap Option",
+"Close Option",
+"Confusing Option"
+],
+answer:0,
+chapter:subject,
+img: subject==="Biology"
+?"https://upload.wikimedia.org/wikipedia/commons/3/38/Animal_Cell.svg":null
+};
 }
-});
+
+const questions=[];
+for(let i=0;i<90;i++) questions.push(makeQ("Biology"));
+for(let i=0;i<45;i++) questions.push(makeQ("Chemistry"));
+for(let i=0;i<45;i++) questions.push(makeQ("Physics"));
 
 /* ================= STATE ================= */
 
-let pool=[],index=0,score=0,answers=[];
+let pool=[],index=0,answers=[],review=[],score=0;
 
 /* ================= TIMER ================= */
 
-let t=3600;
-setInterval(()=>{
-let m=Math.floor(t/60);
+let t=10800;
+let timer=setInterval(()=>{
+let h=Math.floor(t/3600);
+let m=Math.floor((t%3600)/60);
 let s=t%60;
-document.getElementById("timer").innerText=`${m}:${s}`;
+document.getElementById("timer").innerText=`${h}:${m}:${s}`;
 t--;
+if(t<=0) finish();
 },1000);
+
+/* ================= STATS ================= */
+
+let stats=JSON.parse(localStorage.getItem("stats"))||{};
+
+function updateStats(q,correct){
+let c=q.chapter;
+if(!stats[c]) stats[c]={a:0,c:0};
+stats[c].a++;
+if(correct) stats[c].c++;
+localStorage.setItem("stats",JSON.stringify(stats));
+}
+
+function weak(){
+return Object.keys(stats).filter(k=>{
+let d=stats[k];
+return d.c/d.a<0.5;
+});
+}
 
 /* ================= START ================= */
 
-function startTest(){
-pool = questions.sort(()=>Math.random()-0.5).slice(0,50);
-index=0;score=0;
-answers=new Array(50).fill(null);
-loadOMR();
+function startMock(){
+pool=[...questions];
+init(180);
+}
+
+function adaptive(){
+let w=weak();
+pool=questions.filter(q=>w.length?w.includes(q.chapter):true);
+init(60);
+}
+
+function init(n){
+pool=pool.sort(()=>Math.random()-0.5).slice(0,n);
+index=0;
+answers=new Array(n).fill(null);
+review=new Array(n).fill(false);
+score=0;
+loadOMR(n);
 loadQ();
 }
 
@@ -133,12 +137,14 @@ let q=pool[index];
 let html=`<h3>Q${index+1}: ${q.q}</h3>`;
 
 if(q.img){
-html+=`<img src="${q.img}" style="width:100%">`;
+html+=`<img src="${q.img}" style="width:100%;border-radius:10px">`;
 }
 
 q.options.forEach((o,i)=>{
 html+=`<button onclick="ans(${i},this)">${o}</button>`;
 });
+
+html+=`<button onclick="mark()">⭐ Review</button>`;
 
 document.getElementById("quiz").innerHTML=html;
 }
@@ -148,49 +154,101 @@ document.getElementById("quiz").innerHTML=html;
 function ans(a,btn){
 answers[index]=a;
 
-if(a===pool[index].answer){
-btn.classList.add("correct");
-score+=4;
-}else{
-btn.classList.add("wrong");
-score-=1;
+let correct=(a===pool[index].answer);
+updateStats(pool[index],correct);
+
+if(correct){btn.classList.add("correct");score+=4;}
+else{btn.classList.add("wrong");score-=1;}
+
+updateOMR();
 }
 
-document.querySelectorAll(".omr-btn")[index].classList.add("answered");
-}
+/* ================= NAV ================= */
 
-/* ================= NEXT ================= */
+function next(){if(index<pool.length-1){index++;loadQ();}}
+function prev(){if(index>0){index--;loadQ();}}
 
-function next(){
-index++;
-if(index<pool.length) loadQ();
-else finish();
+/* ================= REVIEW ================= */
+
+function mark(){
+review[index]=true;
+updateOMR();
 }
 
 /* ================= OMR ================= */
 
-function loadOMR(){
+function loadOMR(n){
 let html="";
-for(let i=0;i<50;i++){
+for(let i=0;i<n;i++){
 html+=`<button class="omr-btn" onclick="jump(${i})">${i+1}</button>`;
 }
 document.getElementById("omr").innerHTML=html;
 }
 
-function jump(i){
-index=i;
-loadQ();
+function updateOMR(){
+let btns=document.querySelectorAll(".omr-btn");
+btns.forEach((b,i)=>{
+b.classList.remove("answered","review");
+if(answers[i]!=null) b.classList.add("answered");
+if(review[i]) b.classList.add("review");
+});
+}
+
+function jump(i){index=i;loadQ();}
+
+/* ================= AI ================= */
+
+function ai(){
+let w=weak();
+document.getElementById("aiBox").innerHTML=
+w.length?"⚠️ Weak: "+w.join(", "):"🔥 Strong";
+}
+
+/* ================= RANK ================= */
+
+function rank(s){
+if(s>650)return"AIR <100 🏆";
+if(s>600)return"AIR <1000 🔥";
+if(s>500)return"Good 👍";
+return"Improve";
+}
+
+/* ================= GRAPH ================= */
+
+function graph(){
+let labels=[],data=[];
+Object.keys(stats).forEach(k=>{
+labels.push(k);
+let d=stats[k];
+data.push(Math.round((d.c/d.a)*100));
+});
+
+new Chart(document.getElementById("chart"),{
+type:"bar",
+data:{labels:labels,datasets:[{data:data}]}
+});
 }
 
 /* ================= FINISH ================= */
 
 function finish(){
-alert("Score: "+score+" / 200");
+
+score=0;
+
+answers.forEach((a,i)=>{
+if(a===pool[i].answer) score+=4;
+else if(a!=null) score-=1;
+});
+
+graph();
+
+alert(`Score: ${score}/720\nRank: ${rank(score)}`);
 }
 
 </script>
 </body>
 </html>
+
 
 
 
