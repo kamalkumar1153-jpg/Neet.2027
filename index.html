@@ -73,8 +73,7 @@ for(let i=0;i<45;i++) questions.push(makeQ("Physics"));
 
 /* ================= STATE ================= */
 
-let pool=[],index=0,answers=[],review=[],score=0;
-
+pool = expanded.sort(()=>Math.random()-0.5).slice(0,180);
 /* ================= TIMER ================= */
 
 let t=10800;
