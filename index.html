@@ -2,60 +2,51 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET AI PRO</title>
-
+<title>NEET AI COACH</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{background:#0f172a;color:white;font-family:sans-serif;margin:0;}
-.container{max-width:500px;margin:auto;padding:10px;}
-.card{background:#1e293b;padding:10px;border-radius:10px;margin-top:10px;}
-button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;background:#3b82f6;color:white;}
-.subjects button{width:32%;display:inline-block;background:#475569;}
+.container{max-width:520px;margin:auto;padding:10px;}
+.card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px;}
+button{
+width:100%;padding:10px;margin:5px 0;
+border:none;border-radius:8px;background:#3b82f6;color:white;
+}
+button:hover{box-shadow:0 0 12px #3b82f6;}
 .correct{background:#16a34a;}
 .wrong{background:#dc2626;}
-.omr-btn{width:30px;height:30px;margin:2px;border-radius:50%;background:#475569;color:white;border:none;font-size:10px;}
-.omr-answered{background:#22c55e;}
+.omr-btn{
+width:28px;height:28px;margin:2px;border-radius:50%;
+background:#475569;color:white;border:none;font-size:9px;
+}
+.answered{background:#22c55e;}
+.review{background:#facc15;}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<h2>🎓 NEET AI PRO</h2>
+<h2>🎓 NEET AI COACH</h2>
 <h3 id="timer">03:00:00</h3>
 
-<!-- SUBJECT -->
-<div class="card subjects">
-<button onclick="setSubject('Biology')">Bio</button>
-<button onclick="setSubject('Chemistry')">Chem</button>
-<button onclick="setSubject('Physics')">Phy</button>
-</div>
+<button onclick="startAdaptive()">🎯 Adaptive Test</button>
+<button onclick="dailyTest()">📅 Daily Test</button>
+<button onclick="startMock()">🧪 Full Mock (180Q)</button>
 
-<!-- CHAPTER -->
-<select onchange="setChapter(this.value)" style="width:100%;padding:8px;border-radius:8px;">
-<option value="all">All Chapters</option>
-<option>Cell</option>
-<option>Biomolecules</option>
-<option>Human Physiology</option>
-<option>Plant Physiology</option>
-<option>Genetics</option>
-</select>
+<div id="quiz" class="card"></div>
 
-<button onclick="startTest()">Start Test</button>
+<button onclick="prev()">⬅️ Prev</button>
+<button onclick="next()">Next ➡️</button>
 
-<div id="quizBox" class="card"></div>
-<button onclick="nextQ()">Next ➡️</button>
-
-<!-- OMR -->
 <div class="card">
 <h3>OMR</h3>
 <div id="omr"></div>
 </div>
 
-<!-- AI -->
 <div class="card">
-<button onclick="askAI()">AI Explain</button>
+<button onclick="askAI()">🤖 AI Teacher</button>
 <div id="aiBox"></div>
 </div>
 
@@ -65,167 +56,208 @@ button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;backgr
 
 <script>
 
-/* ================= NCERT SYSTEM ================= */
-const questions=[];
-function add(q){questions.push(q);}
+/* ================= QUESTION BANK ================= */
 
-const ncert={
-Biology:{
-"Cell":[
-["Cell is basic unit of life","Life"],
-["Cell theory proposed by","Schleiden & Schwann"],
-["Prokaryotes lack","Membrane bound organelles"],
-["Plasma membrane is","Selective permeable"],
-["Fluid mosaic model by","Singer & Nicolson"]
+function qGen(topic){
+return {
+q:`${topic}: Identify correct statement.`,
+options:[
+"Correct Answer",
+"Trap Option",
+"Close Option",
+"Confusing Option"
 ],
-"Biomolecules":[
-["Protein made of","Amino acids"],
-["Enzymes are","Proteins"],
-["Nucleic acid unit","Nucleotide"],
-["Lipids soluble in","Organic solvents"],
-["Polysaccharide example","Starch"]
-],
-"Human Physiology":[
-["RBC life span","120 days"],
-["Oxygen carrier","Hemoglobin"],
-["Kidney unit","Nephron"],
-["Insulin secreted by","Beta cells"],
-["Blood filtration","Glomerulus"]
-],
-"Plant Physiology":[
-["Photosynthesis occurs in","Chloroplast"],
-["Light reaction site","Thylakoid"],
-["Calvin cycle site","Stroma"],
-["Water transport tissue","Xylem"],
-["Food transport tissue","Phloem"]
-],
-"Genetics":[
-["Father of genetics","Mendel"],
-["DNA discovered by","Watson & Crick"],
-["Gene is","Unit of heredity"],
-["RNA base","Uracil"],
-["Chromosomes contain","DNA"]
-]
-}
-};
-
-/* AUTO GENERATE 500+ */
-const diff=["easy","medium","hard"];
-
-Object.keys(ncert).forEach(subject=>{
-Object.keys(ncert[subject]).forEach(chapter=>{
-ncert[subject][chapter].forEach(item=>{
-for(let i=0;i<20;i++){
-add({
-q:item[0]+"?",
-options:[item[1],"Wrong1","Wrong2","Wrong3"],
 answer:0,
-topic:subject,
-chapter:chapter,
-level:diff[i%3]
-});
+topic,
+chapter:topic,
+img: topic==="Biology"
+?"https://upload.wikimedia.org/wikipedia/commons/3/38/Animal_Cell.svg":null
+};
 }
-});
-});
-});
+
+const questions=[];
+for(let i=0;i<90;i++) questions.push(qGen("Biology"));
+for(let i=0;i<45;i++) questions.push(qGen("Chemistry"));
+for(let i=0;i<45;i++) questions.push(qGen("Physics"));
 
 /* ================= STATE ================= */
-let subject="Biology",chapter="all";
-let index=0,score=0,currentQ;
-let pool=[],answers=[];
+
+let index=0,score=0;
+let answers=[],reviewMark=[];
+let pool=[];
 
 /* ================= TIMER ================= */
+
 let t=3*3600;
-setInterval(()=>{
+let timer=setInterval(()=>{
 let h=Math.floor(t/3600);
 let m=Math.floor((t%3600)/60);
 let s=t%60;
-document.getElementById("timer").innerText=
-`${h}:${m}:${s}`;
+document.getElementById("timer").innerText=`${h}:${m}:${s}`;
 t--;
+if(t<=0) finish();
 },1000);
 
-/* ================= FILTER ================= */
-function setSubject(s){subject=s;}
-function setChapter(c){chapter=c;}
+/* ================= STATS ================= */
 
-function getQ(){
-return questions.filter(q=>q.topic===subject &&
-(chapter==="all"||q.chapter===chapter));
+let stats = JSON.parse(localStorage.getItem("stats")) || {};
+
+function updateStats(q,correct){
+let ch=q.chapter;
+if(!stats[ch]) stats[ch]={attempt:0,correct:0};
+stats[ch].attempt++;
+if(correct) stats[ch].correct++;
+localStorage.setItem("stats",JSON.stringify(stats));
 }
 
-/* ================= START ================= */
-function startTest(){
-pool=getQ().sort(()=>Math.random()-0.5).slice(0,50);
+function getWeak(){
+return Object.keys(stats).filter(k=>{
+let a=stats[k];
+return a.correct/a.attempt<0.5;
+});
+}
+
+/* ================= MODES ================= */
+
+function startAdaptive(){
+let weak=getWeak();
+pool=questions.filter(q=>weak.length?weak.includes(q.chapter):true);
+initTest(50);
+}
+
+function dailyTest(){
+let seed=new Date().toDateString();
+pool=questions.sort((a,b)=>seed.localeCompare(b.q));
+initTest(50);
+}
+
+function startMock(){
+pool=[...questions];
+initTest(180);
+}
+
+/* ================= INIT ================= */
+
+function initTest(n){
+pool=pool.sort(()=>Math.random()-0.5).slice(0,n);
 index=0;score=0;
-answers=new Array(50).fill(null);
-loadOMR();
+answers=new Array(n).fill(null);
+reviewMark=new Array(n).fill(false);
+loadOMR(n);
 loadQ();
 }
 
 /* ================= LOAD ================= */
-function loadQ(){
-currentQ=pool[index];
 
-let html=`<h3>Q${index+1}: ${currentQ.q}</h3>`;
-currentQ.options.forEach((o,i)=>{
-html+=`<button onclick="checkAns(${i},this)">${o}</button>`;
+function loadQ(){
+let q=pool[index];
+let html=`<h3>Q${index+1}: ${q.q}</h3>`;
+
+if(q.img){
+html+=`<img src="${q.img}" style="width:100%;border-radius:10px">`;
+}
+
+q.options.forEach((o,i)=>{
+html+=`<button onclick="answer(${i},this)">${o}</button>`;
 });
 
-document.getElementById("quizBox").innerHTML=html;
+html+=`<button onclick="markReview()">⭐ Review</button>`;
+
+document.getElementById("quiz").innerHTML=html;
 }
 
 /* ================= ANSWER ================= */
-function checkAns(a,btn){
+
+function answer(a,btn){
 answers[index]=a;
+let correct=(a===pool[index].answer);
+updateStats(pool[index],correct);
 
-let omr=document.querySelectorAll(".omr-btn");
-omr[index].classList.add("omr-answered");
+if(correct){btn.classList.add("correct");score+=4;}
+else{btn.classList.add("wrong");score-=1;}
 
-if(a===currentQ.answer){
-btn.classList.add("correct");
-score+=4;
-}else{
-btn.classList.add("wrong");
-score-=1;
-}
+updateOMR();
 }
 
-/* ================= NEXT ================= */
-function nextQ(){
-index++;
-if(index<pool.length) loadQ();
-else finish();
+/* ================= NAV ================= */
+
+function next(){if(index<pool.length-1){index++;loadQ();}}
+function prev(){if(index>0){index--;loadQ();}}
+
+/* ================= REVIEW ================= */
+
+function markReview(){
+reviewMark[index]=true;
+updateOMR();
 }
 
 /* ================= OMR ================= */
-function loadOMR(){
+
+function loadOMR(n){
 let html="";
-for(let i=0;i<50;i++){
+for(let i=0;i<n;i++){
 html+=`<button class="omr-btn" onclick="jump(${i})">${i+1}</button>`;
 }
 document.getElementById("omr").innerHTML=html;
 }
 
+function updateOMR(){
+let btns=document.querySelectorAll(".omr-btn");
+btns.forEach((b,i)=>{
+b.classList.remove("answered","review");
+if(answers[i]!=null) b.classList.add("answered");
+if(reviewMark[i]) b.classList.add("review");
+});
+}
+
 function jump(i){index=i;loadQ();}
 
 /* ================= AI ================= */
+
 function askAI(){
+let weak=getWeak();
 document.getElementById("aiBox").innerHTML=
-"Revise this NCERT line carefully 📘";
+weak.length?"⚠️ Weak: "+weak.join(", "):"🔥 Strong performance!";
+}
+
+/* ================= RANK ================= */
+
+function rank(score){
+if(score>650)return"AIR < 100 🏆";
+if(score>600)return"AIR < 1000 🔥";
+if(score>500)return"Good 👍";
+return"Improve";
+}
+
+/* ================= GRAPH ================= */
+
+function graph(){
+let labels=[],data=[];
+Object.keys(stats).forEach(k=>{
+labels.push(k);
+let a=stats[k];
+data.push(Math.round((a.correct/a.attempt)*100));
+});
+new Chart(document.getElementById("chart"),{
+type:"bar",
+data:{labels:labels,datasets:[{data:data}]}
+});
 }
 
 /* ================= FINISH ================= */
-function finish(){
 
-new Chart(document.getElementById("chart"),{
-type:"bar",
-data:{labels:["Score"],datasets:[{data:[score]}]}
+function finish(){
+clearInterval(timer);
+
+score=0;
+answers.forEach((a,i)=>{
+if(a===pool[i].answer) score+=4;
+else if(a!=null) score-=1;
 });
 
-let rank = score>150?"Top":"Average";
+graph();
 
-alert("Score: "+score+" Rank: "+rank);
+alert(`Score: ${score}/720\nRank: ${rank(score)}`);
 }
 
 </script>
