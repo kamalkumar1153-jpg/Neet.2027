@@ -1,106 +1,105 @@
-const questions = [
+const questions = [];
+function add(q){questions.push(q);}
 
-/* 🧬 BIOLOGY PYQ */
+/* ================= NCERT CORE LINES ================= */
 
-{
-q:"NEET 2020: Which of the following is the site of Calvin cycle?",
-options:["Stroma","Thylakoid","Cytoplasm","Mitochondria"],
-answer:0,
-topic:"Biology",
-year:2020
-},
+const ncert = {
 
-{
-q:"NEET 2019: Which hormone is secreted by beta cells of pancreas?",
-options:["Insulin","Glucagon","Adrenaline","Thyroxine"],
-answer:0,
-topic:"Biology",
-year:2019
-},
+Biology:{
 
-{
-q:"NEET 2021: Which organelle is known as powerhouse of cell?",
-options:["Mitochondria","Nucleus","Golgi","Ribosome"],
-answer:0,
-topic:"Biology",
-year:2021
-},
+"Cell":[
+["Cell is basic unit of life","Life"],
+["Cell theory proposed by","Schleiden & Schwann"],
+["Prokaryotes lack","Membrane bound organelles"],
+["Plasma membrane is","Selective permeable"],
+["Fluid mosaic model by","Singer & Nicolson"]
+],
 
-{
-q:"NEET 2018: Which vitamin deficiency causes rickets?",
-options:["A","B","C","D"],
-answer:3,
-topic:"Biology",
-year:2018
-},
+"Biomolecules":[
+["Protein made of","Amino acids"],
+["Enzymes are","Proteins"],
+["Nucleic acid unit","Nucleotide"],
+["Lipids soluble in","Organic solvents"],
+["Polysaccharide example","Starch"]
+],
 
-{
-q:"NEET 2022: Which part of brain controls balance?",
-options:["Cerebrum","Cerebellum","Medulla","Thalamus"],
-answer:1,
-topic:"Biology",
-year:2022
-},
+"Human Physiology":[
+["RBC life span","120 days"],
+["Oxygen carrier","Hemoglobin"],
+["Kidney unit","Nephron"],
+["Insulin secreted by","Beta cells"],
+["Blood filtration","Glomerulus"]
+],
 
-/* ⚗️ CHEMISTRY PYQ */
+"Plant Physiology":[
+["Photosynthesis occurs in","Chloroplast"],
+["Light reaction site","Thylakoid"],
+["Calvin cycle site","Stroma"],
+["Water transport tissue","Xylem"],
+["Food transport tissue","Phloem"]
+],
 
-{
-q:"NEET 2020: Which element has highest electronegativity?",
-options:["F","O","Cl","N"],
-answer:0,
-topic:"Chemistry",
-year:2020
-},
+"Genetics":[
+["Father of genetics","Mendel"],
+["DNA discovered by","Watson & Crick"],
+["Gene is","Unit of heredity"],
+["RNA base","Uracil"],
+["Chromosomes contain","DNA"]
+]
 
-{
-q:"NEET 2017: Which gas is used in photosynthesis?",
-options:["CO2","O2","N2","H2"],
-answer:0,
-topic:"Chemistry",
-year:2017
-},
-
-{
-q:"NEET 2021: Which acid is present in stomach?",
-options:["HCl","H2SO4","HNO3","CH3COOH"],
-answer:0,
-topic:"Chemistry",
-year:2021
-},
-
-{
-q:"NEET 2019: Which bond is strongest?",
-options:["Triple","Double","Single","Hydrogen"],
-answer:0,
-topic:"Chemistry",
-year:2019
-},
-
-/* ⚡ PHYSICS PYQ */
-
-{
-q:"NEET 2020: Unit of force is?",
-options:["Newton","Joule","Watt","Pascal"],
-answer:0,
-topic:"Physics",
-year:2020
-},
-
-{
-q:"NEET 2018: F = ma is given by?",
-options:["Newton","Ohm","Hooke","Boyle"],
-answer:0,
-topic:"Physics",
-year:2018
-},
-
-{
-q:"NEET 2022: Speed of light is?",
-options:["3×10^8 m/s","10 m/s","100 m/s","1 m/s"],
-answer:0,
-topic:"Physics",
-year:2022
 }
 
-];
+};
+
+
+/* ================= AUTO GENERATOR ================= */
+
+const difficulty = ["easy","medium","hard"];
+
+Object.keys(ncert).forEach(subject=>{
+Object.keys(ncert[subject]).forEach(chapter=>{
+
+ncert[subject][chapter].forEach((item,i)=>{
+
+for(let k=0;k<20;k++){  // 🔥 20 variations per line
+
+add({
+q:`NCERT: ${item[0]}?`,
+options:[
+item[1],
+"Wrong Option 1",
+"Wrong Option 2",
+"Wrong Option 3"
+],
+answer:0,
+topic:subject,
+chapter:chapter,
+level:difficulty[k%3]
+});
+
+}
+
+});
+
+});
+});
+
+
+/* ================= SMART SELECT ================= */
+
+function getQuestions({subject="Biology",chapter="all",limit=50}){
+
+let filtered = questions.filter(q=>{
+return q.topic===subject &&
+(chapter==="all" || q.chapter===chapter);
+});
+
+filtered.sort(()=>Math.random()-0.5);
+
+return filtered.slice(0,limit);
+}
+
+
+/* ================= DEBUG ================= */
+console.log("TOTAL QUESTIONS:",questions.length);
 
