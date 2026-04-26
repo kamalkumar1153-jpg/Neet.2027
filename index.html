@@ -2,42 +2,32 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET AI COACH</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>NEET Real Test</title>
 
 <style>
 body{background:#0f172a;color:white;font-family:sans-serif;margin:0;}
-.container{max-width:520px;margin:auto;padding:10px;}
+.container{max-width:500px;margin:auto;padding:10px;}
 .card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px;}
-button{
-width:100%;padding:10px;margin:5px 0;
-border:none;border-radius:8px;background:#3b82f6;color:white;
-}
-button:hover{box-shadow:0 0 12px #3b82f6;}
+button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;background:#3b82f6;color:white;}
 .correct{background:#16a34a;}
 .wrong{background:#dc2626;}
 .omr-btn{
-width:28px;height:28px;margin:2px;border-radius:50%;
-background:#475569;color:white;border:none;font-size:9px;
+width:30px;height:30px;margin:2px;border-radius:50%;
+background:#475569;color:white;border:none;font-size:10px;
 }
 .answered{background:#22c55e;}
-.review{background:#facc15;}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<h2>🎓 NEET AI COACH</h2>
-<h3 id="timer">03:00:00</h3>
+<h2>🎓 NEET REAL TEST</h2>
+<h3 id="timer">01:00:00</h3>
 
-<button onclick="startAdaptive()">🎯 Adaptive Test</button>
-<button onclick="dailyTest()">📅 Daily Test</button>
-<button onclick="startMock()">🧪 Full Mock (180Q)</button>
+<button onclick="startTest()">Start Test</button>
 
 <div id="quiz" class="card"></div>
-
-<button onclick="prev()">⬅️ Prev</button>
 <button onclick="next()">Next ➡️</button>
 
 <div class="card">
@@ -45,105 +35,93 @@ background:#475569;color:white;border:none;font-size:9px;
 <div id="omr"></div>
 </div>
 
-<div class="card">
-<button onclick="askAI()">🤖 AI Teacher</button>
-<div id="aiBox"></div>
-</div>
-
-<canvas id="chart"></canvas>
-
 </div>
 
 <script>
 
-/* ================= QUESTION BANK ================= */
+/* ================= REAL QUESTIONS ================= */
 
-function qGen(topic){
-return {
-q:`${topic}: Identify correct statement.`,
-options:[
-"Correct Answer",
-"Trap Option",
-"Close Option",
-"Confusing Option"
-],
-answer:0,
-topic,
-chapter:topic,
-img: topic==="Biology"
-?"https://upload.wikimedia.org/wikipedia/commons/3/38/Animal_Cell.svg":null
-};
+const baseQuestions = [
+
+/* BIOLOGY */
+{q:"Which of the following statements is correct regarding cell theory?",
+options:["It was proposed by Schleiden and Schwann","It explains heredity","It includes viruses","It explains origin of life"],answer:0},
+
+{q:"Which phase of meiosis involves crossing over?",
+options:["Prophase I","Metaphase I","Anaphase II","Telophase"],answer:0},
+
+{q:"Which of the following is NOT a function of liver?",
+options:["Detoxification","Bile secretion","Insulin production","Glycogen storage"],answer:2},
+
+{q:"Which part of nephron is impermeable to water?",
+options:["Ascending limb","Descending limb","Proximal tubule","Distal tubule"],answer:0},
+
+{q:"Photosynthesis occurs in?",
+options:["Chloroplast","Mitochondria","Nucleus","Golgi"],answer:0},
+
+/* CHEMISTRY */
+{q:"Which of the following has highest boiling point?",
+options:["H2O","HF","NH3","CH4"],answer:0},
+
+{q:"Which law relates pressure and volume?",
+options:["Boyle's law","Charles law","Avogadro law","Gay Lussac"],answer:0},
+
+{q:"Which has highest electronegativity?",
+options:["F","Cl","O","N"],answer:0},
+
+{q:"pH of neutral solution?",
+options:["7","0","14","1"],answer:0},
+
+{q:"Which shows hydrogen bonding?",
+options:["H2O","CO2","CH4","O2"],answer:0},
+
+/* PHYSICS */
+{q:"Acceleration of body moving with constant velocity?",
+options:["Zero","Positive","Negative","Infinite"],answer:0},
+
+{q:"Work done when force perpendicular?",
+options:["Zero","Maximum","Negative","Infinite"],answer:0},
+
+{q:"Wave not needing medium?",
+options:["Light","Sound","Water","Mechanical"],answer:0},
+
+{q:"Unit of resistance?",
+options:["Ohm","Volt","Ampere","Watt"],answer:0},
+
+{q:"Ohm’s law?",
+options:["V = IR","F = ma","E = mc²","P = VI"],answer:0}
+
+];
+
+/* EXPAND TO 150 */
+let questions=[];
+baseQuestions.forEach(q=>{
+for(let i=0;i<10;i++){
+questions.push({...q});
 }
-
-const questions=[];
-for(let i=0;i<90;i++) questions.push(qGen("Biology"));
-for(let i=0;i<45;i++) questions.push(qGen("Chemistry"));
-for(let i=0;i<45;i++) questions.push(qGen("Physics"));
+});
 
 /* ================= STATE ================= */
 
-let index=0,score=0;
-let answers=[],reviewMark=[];
-let pool=[];
+let pool=[],index=0,score=0,answers=[];
 
 /* ================= TIMER ================= */
 
-let t=3*3600;
-let timer=setInterval(()=>{
-let h=Math.floor(t/3600);
-let m=Math.floor((t%3600)/60);
+let t=3600;
+setInterval(()=>{
+let m=Math.floor(t/60);
 let s=t%60;
-document.getElementById("timer").innerText=`${h}:${m}:${s}`;
+document.getElementById("timer").innerText=`${m}:${s}`;
 t--;
-if(t<=0) finish();
 },1000);
 
-/* ================= STATS ================= */
+/* ================= START ================= */
 
-let stats = JSON.parse(localStorage.getItem("stats")) || {};
-
-function updateStats(q,correct){
-let ch=q.chapter;
-if(!stats[ch]) stats[ch]={attempt:0,correct:0};
-stats[ch].attempt++;
-if(correct) stats[ch].correct++;
-localStorage.setItem("stats",JSON.stringify(stats));
-}
-
-function getWeak(){
-return Object.keys(stats).filter(k=>{
-let a=stats[k];
-return a.correct/a.attempt<0.5;
-});
-}
-
-/* ================= MODES ================= */
-
-function startAdaptive(){
-let weak=getWeak();
-pool=questions.filter(q=>weak.length?weak.includes(q.chapter):true);
-initTest(50);
-}
-
-function dailyTest(){
-let seed=new Date().toDateString();
-pool=questions.sort((a,b)=>seed.localeCompare(b.q));
-initTest(50);
-}
-
-function startMock(){
-pool=[...questions];
-initTest(180);
-}
-
-/* ================= INIT ================= */
-
-function initTest(n){
-pool=pool.sort(()=>Math.random()-0.5).slice(0,n);
+function startTest(){
+pool = questions.sort(()=>Math.random()-0.5).slice(0,50);
 index=0;score=0;
-answers=new Array(n).fill(null);
-reviewMark=new Array(n).fill(false);
-loadOMR(n);
+answers=new Array(50).fill(null);
+loadOMR();
 loadQ();
 }
 
@@ -151,113 +129,63 @@ loadQ();
 
 function loadQ(){
 let q=pool[index];
+
 let html=`<h3>Q${index+1}: ${q.q}</h3>`;
 
 if(q.img){
-html+=`<img src="${q.img}" style="width:100%;border-radius:10px">`;
+html+=`<img src="${q.img}" style="width:100%">`;
 }
 
 q.options.forEach((o,i)=>{
-html+=`<button onclick="answer(${i},this)">${o}</button>`;
+html+=`<button onclick="ans(${i},this)">${o}</button>`;
 });
-
-html+=`<button onclick="markReview()">⭐ Review</button>`;
 
 document.getElementById("quiz").innerHTML=html;
 }
 
 /* ================= ANSWER ================= */
 
-function answer(a,btn){
+function ans(a,btn){
 answers[index]=a;
-let correct=(a===pool[index].answer);
-updateStats(pool[index],correct);
 
-if(correct){btn.classList.add("correct");score+=4;}
-else{btn.classList.add("wrong");score-=1;}
-
-updateOMR();
+if(a===pool[index].answer){
+btn.classList.add("correct");
+score+=4;
+}else{
+btn.classList.add("wrong");
+score-=1;
 }
 
-/* ================= NAV ================= */
+document.querySelectorAll(".omr-btn")[index].classList.add("answered");
+}
 
-function next(){if(index<pool.length-1){index++;loadQ();}}
-function prev(){if(index>0){index--;loadQ();}}
+/* ================= NEXT ================= */
 
-/* ================= REVIEW ================= */
-
-function markReview(){
-reviewMark[index]=true;
-updateOMR();
+function next(){
+index++;
+if(index<pool.length) loadQ();
+else finish();
 }
 
 /* ================= OMR ================= */
 
-function loadOMR(n){
+function loadOMR(){
 let html="";
-for(let i=0;i<n;i++){
+for(let i=0;i<50;i++){
 html+=`<button class="omr-btn" onclick="jump(${i})">${i+1}</button>`;
 }
 document.getElementById("omr").innerHTML=html;
 }
 
-function updateOMR(){
-let btns=document.querySelectorAll(".omr-btn");
-btns.forEach((b,i)=>{
-b.classList.remove("answered","review");
-if(answers[i]!=null) b.classList.add("answered");
-if(reviewMark[i]) b.classList.add("review");
-});
-}
-
-function jump(i){index=i;loadQ();}
-
-/* ================= AI ================= */
-
-function askAI(){
-let weak=getWeak();
-document.getElementById("aiBox").innerHTML=
-weak.length?"⚠️ Weak: "+weak.join(", "):"🔥 Strong performance!";
-}
-
-/* ================= RANK ================= */
-
-function rank(score){
-if(score>650)return"AIR < 100 🏆";
-if(score>600)return"AIR < 1000 🔥";
-if(score>500)return"Good 👍";
-return"Improve";
-}
-
-/* ================= GRAPH ================= */
-
-function graph(){
-let labels=[],data=[];
-Object.keys(stats).forEach(k=>{
-labels.push(k);
-let a=stats[k];
-data.push(Math.round((a.correct/a.attempt)*100));
-});
-new Chart(document.getElementById("chart"),{
-type:"bar",
-data:{labels:labels,datasets:[{data:data}]}
-});
+function jump(i){
+index=i;
+loadQ();
 }
 
 /* ================= FINISH ================= */
 
 function finish(){
-clearInterval(timer);
-
-score=0;
-answers.forEach((a,i)=>{
-if(a===pool[i].answer) score+=4;
-else if(a!=null) score-=1;
-});
-
-graph();
-
-alert(`Score: ${score}/720\nRank: ${rank(score)}`);
+alert("Score: "+score+" / 200");
 }
 
 </script>
