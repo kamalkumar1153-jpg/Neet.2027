@@ -2,45 +2,52 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET AI PRO</title>
+<title>NEET PRO MAX</title>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{margin:0;font-family:sans-serif;background:#0f172a;color:white;}
-.container{max-width:500px;margin:auto;padding:15px;}
-.card{background:#1e293b;padding:15px;border-radius:15px;margin-top:15px;}
+.container{max-width:500px;margin:auto;padding:10px;}
 
-button{width:100%;padding:12px;margin:5px 0;border:none;border-radius:10px;background:#3b82f6;color:white;}
+.card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px;}
+
+button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;background:#3b82f6;color:white;}
 button:hover{background:#2563eb;}
 
-.subjects button{width:30%;display:inline-block;background:#475569;}
+.subjects button{width:32%;display:inline-block;background:#475569;}
 
 .correct{background:#16a34a;}
 .wrong{background:#dc2626;}
 
-.video-row{display:flex;overflow-x:auto;gap:10px;padding:10px 0;}
-.video-card{min-width:140px;cursor:pointer;}
+.video-row{display:flex;overflow-x:auto;gap:10px;}
+.video-card{min-width:120px;cursor:pointer;}
 .video-card img{width:100%;border-radius:10px;}
-.video-card:hover{transform:scale(1.1);}
+
+.omr-btn{
+width:30px;height:30px;margin:2px;border-radius:50%;
+border:none;background:#475569;color:white;font-size:10px;
+}
+.omr-answered{background:#22c55e;}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<h2>🎓 NEET AI PRO</h2>
+<h2>🎓 NEET PRO MAX</h2>
 
-<!-- 🎬 VIDEO -->
+<h3 id="timer">03:00:00</h3>
+
+<!-- VIDEO -->
 <div class="card">
 <h3>Video Lectures</h3>
 <div id="videoList" class="video-row"></div>
-<iframe id="videoPlayer" width="100%" height="200"></iframe>
-<button onclick="nextVideo()">Next Video ⏭</button>
+<iframe id="videoPlayer" width="100%" height="180"></iframe>
 </div>
 
 <!-- SUBJECT -->
 <div class="card">
-<h3>Select Subject</h3>
 <div class="subjects">
 <button onclick="setSubject('Biology')">Bio</button>
 <button onclick="setSubject('Chemistry')">Chem</button>
@@ -48,113 +55,181 @@ button:hover{background:#2563eb;}
 </div>
 </div>
 
-<button onclick="startTest()">Start Test 🚀</button>
+<!-- CHAPTER -->
+<select onchange="setChapter(this.value)" style="width:100%;padding:8px;border-radius:8px;">
+<option value="all">All Chapters</option>
+<option>Cell</option>
+<option>Human Physiology</option>
+<option>Thermodynamics</option>
+<option>Laws of Motion</option>
+</select>
+
+<button onclick="startTest()">Start Test</button>
+<button onclick="startFullTest()">Full Test (180)</button>
 
 <div id="quizBox" class="card"></div>
-
 <button onclick="nextQ()">Next ➡️</button>
+
+<!-- OMR -->
+<div class="card">
+<h3>OMR Sheet</h3>
+<div id="omr"></div>
+</div>
 
 <!-- AI -->
 <div class="card">
-<h3>AI Teacher</h3>
-<button onclick="askAI()">Explain</button>
+<button onclick="askAI()">AI Explain</button>
 <div id="aiBox"></div>
 </div>
 
-<!-- GRAPH -->
-<div class="card">
-<h3>Weak Topics</h3>
 <canvas id="chart"></canvas>
-</div>
 
 </div>
-
-<script src="questions.js"></script>
 
 <script>
+
+// ================= QUESTIONS =================
+const questions=[];
+function add(q){questions.push(q);}
+
+// 150 Questions
+["Biology","Chemistry","Physics"].forEach(sub=>{
+for(let i=1;i<=50;i++){
+add({
+q:`${sub} Question ${i}`,
+options:["A","B","C","D"],
+answer:0,
+topic:sub,
+chapter:"Cell"
+});
+}
+});
+
+// ================= STATE =================
 let subject="Biology";
-let index=0,score=0;
-let currentQ;
-let asked=[];
-let weak={};
+let chapter="all";
+let index=0,score=0,currentQ;
+let asked=[],weak={};
+let fullTest=false,fullSet=[];
+let answers=[];
 
-// 🎬 VIDEO SYSTEM
-let currentVideoIndex=0;
+// ================= TIMER =================
+let totalTime=3*60*60;
+let timerInterval;
 
+function startTimer(){
+clearInterval(timerInterval);
+timerInterval=setInterval(()=>{
+let h=Math.floor(totalTime/3600);
+let m=Math.floor((totalTime%3600)/60);
+let s=totalTime%60;
+
+document.getElementById("timer").innerText=
+`${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+
+totalTime--;
+
+if(totalTime<0){
+clearInterval(timerInterval);
+finish();
+}
+},1000);
+}
+
+// ================= VIDEO =================
 const videos={
-Biology:[
-{title:"Cell",thumb:"https://img.youtube.com/vi/URUJD5NEXC8/0.jpg",url:"https://www.youtube.com/embed/URUJD5NEXC8"},
-{title:"Heart",thumb:"https://img.youtube.com/vi/9c7dM4f2KJ0/0.jpg",url:"https://www.youtube.com/embed/9c7dM4f2KJ0"}
-],
-Chemistry:[
-{title:"Atomic",thumb:"https://img.youtube.com/vi/2z1c0v9fY1M/0.jpg",url:"https://www.youtube.com/embed/2z1c0v9fY1M"}
-],
-Physics:[
-{title:"Motion",thumb:"https://img.youtube.com/vi/ZM8ECpBuQYE/0.jpg",url:"https://www.youtube.com/embed/ZM8ECpBuQYE"}
-]
+Biology:[{thumb:"https://img.youtube.com/vi/URUJD5NEXC8/0.jpg",url:"https://www.youtube.com/embed/URUJD5NEXC8"}],
+Chemistry:[{thumb:"https://img.youtube.com/vi/2z1c0v9fY1M/0.jpg",url:"https://www.youtube.com/embed/2z1c0v9fY1M"}],
+Physics:[{thumb:"https://img.youtube.com/vi/ZM8ECpBuQYE/0.jpg",url:"https://www.youtube.com/embed/ZM8ECpBuQYE"}]
 };
 
 function loadVideos(){
 let list=document.getElementById("videoList");
 list.innerHTML="";
-let saved=JSON.parse(localStorage.getItem("video"))||{};
-currentVideoIndex=saved[subject]||0;
-
 videos[subject].forEach((v,i)=>{
-list.innerHTML+=`
-<div class="video-card" onclick="playVideo(${i})">
-<img src="${v.thumb}">
-<p>${v.title}</p>
-</div>`;
+list.innerHTML+=`<div class="video-card" onclick="playVideo(${i})"><img src="${v.thumb}"></div>`;
 });
-
-playVideo(currentVideoIndex);
+playVideo(0);
 }
 
 function playVideo(i){
-currentVideoIndex=i;
 document.getElementById("videoPlayer").src=videos[subject][i].url;
-let saved=JSON.parse(localStorage.getItem("video"))||{};
-saved[subject]=i;
-localStorage.setItem("video",JSON.stringify(saved));
 }
 
-function nextVideo(){
-currentVideoIndex++;
-if(currentVideoIndex>=videos[subject].length) currentVideoIndex=0;
-playVideo(currentVideoIndex);
-}
+// ================= FILTER =================
+function setSubject(s){subject=s;loadVideos();}
+function setChapter(c){chapter=c;}
 
-// SUBJECT
-function setSubject(s){
-subject=s;
-loadVideos();
-}
-
-// QUIZ
+// ================= TEST =================
 function startTest(){
+fullTest=false;
 index=0;score=0;asked=[];weak={};
+startTimer();
 loadQ();
 }
 
 function loadQ(){
-let filtered=questions.filter(q=>q.topic===subject && !asked.includes(q));
+let filtered=questions.filter(q=>q.topic===subject);
 currentQ=filtered[Math.floor(Math.random()*filtered.length)];
-asked.push(currentQ);
 
 let html=`<h3>${currentQ.q}</h3>`;
-if(currentQ.img){html+=`<img src="${currentQ.img}" width="100%">`;}
-
 currentQ.options.forEach((o,i)=>{
 html+=`<button onclick="checkAns(${i},this)">${o}</button>`;
 });
-
 document.getElementById("quizBox").innerHTML=html;
 }
 
+// ================= FULL TEST =================
+function startFullTest(){
+fullTest=true;
+index=0;score=0;
+startTimer();
+
+let bio=questions.filter(q=>q.topic==="Biology").slice(0,90);
+let chem=questions.filter(q=>q.topic==="Chemistry").slice(0,45);
+let phy=questions.filter(q=>q.topic==="Physics").slice(0,45);
+
+fullSet=[...bio,...chem,...phy];
+
+loadOMR(180);
+answers=new Array(180).fill(null);
+
+loadFullQ();
+}
+
+function loadFullQ(){
+currentQ=fullSet[index];
+
+let html=`<h3>Q${index+1}: ${currentQ.q}</h3>`;
+currentQ.options.forEach((o,i)=>{
+html+=`<button onclick="checkAns(${i},this)">${o}</button>`;
+});
+document.getElementById("quizBox").innerHTML=html;
+}
+
+// ================= OMR =================
+function loadOMR(total){
+let html="";
+for(let i=0;i<total;i++){
+html+=`<button class="omr-btn" onclick="goQ(${i})">${i+1}</button>`;
+}
+document.getElementById("omr").innerHTML=html;
+}
+
+function goQ(i){
+index=i;
+loadFullQ();
+}
+
+// ================= ANSWER =================
 function checkAns(ans,btn){
-let buttons=document.querySelectorAll("#quizBox button");
-buttons.forEach(b=>b.disabled=true);
+let btns=document.querySelectorAll("#quizBox button");
+btns.forEach(b=>b.disabled=true);
+
+answers[index]=ans;
+
+let omrBtns=document.querySelectorAll(".omr-btn");
+if(omrBtns[index]) omrBtns[index].classList.add("omr-answered");
 
 if(ans===currentQ.answer){
 btn.classList.add("correct");
@@ -162,39 +237,52 @@ score+=4;
 }else{
 btn.classList.add("wrong");
 score-=1;
-weak[currentQ.topic]=(weak[currentQ.topic]||0)+1;
 }
 }
 
+// ================= NEXT =================
 function nextQ(){
 index++;
+if(fullTest){
+if(index<fullSet.length) loadFullQ();
+else finish();
+return;
+}
 if(index<20) loadQ();
 else finish();
 }
 
-// AI
+// ================= AI =================
 function askAI(){
 let ans=currentQ.options[currentQ.answer];
-document.getElementById("aiBox").innerHTML=`
-<div class="card">Answer: ${ans}<br>Revise NCERT</div>`;
+document.getElementById("aiBox").innerHTML="Correct: "+ans;
 }
 
-// GRAPH
-function showGraph(){
+// ================= RANK =================
+function calculateRank(score){
+if(score>650)return"Top 100";
+if(score>600)return"Top 1K";
+if(score>500)return"Top 10K";
+return"Improve";
+}
+
+// ================= FINISH =================
+function finish(){
+clearInterval(timerInterval);
+
+let rank=calculateRank(score);
+
 new Chart(document.getElementById("chart"),{
 type:"bar",
-data:{labels:Object.keys(weak),
-datasets:[{data:Object.values(weak)}]}
+data:{labels:["Score"],datasets:[{data:[score]}]}
 });
-}
 
-function finish(){
-showGraph();
-alert("Score: "+score);
+alert("Score: "+score+" Rank: "+rank);
 }
 
 // INIT
 loadVideos();
+
 </script>
 
 </body>
