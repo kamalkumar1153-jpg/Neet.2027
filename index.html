@@ -2,32 +2,19 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET PRO MAX</title>
+<title>NEET AI PRO</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{margin:0;font-family:sans-serif;background:#0f172a;color:white;}
+body{background:#0f172a;color:white;font-family:sans-serif;margin:0;}
 .container{max-width:500px;margin:auto;padding:10px;}
-
-.card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px;}
-
+.card{background:#1e293b;padding:10px;border-radius:10px;margin-top:10px;}
 button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;background:#3b82f6;color:white;}
-button:hover{background:#2563eb;}
-
 .subjects button{width:32%;display:inline-block;background:#475569;}
-
 .correct{background:#16a34a;}
 .wrong{background:#dc2626;}
-
-.video-row{display:flex;overflow-x:auto;gap:10px;}
-.video-card{min-width:120px;cursor:pointer;}
-.video-card img{width:100%;border-radius:10px;}
-
-.omr-btn{
-width:30px;height:30px;margin:2px;border-radius:50%;
-border:none;background:#475569;color:white;font-size:10px;
-}
+.omr-btn{width:30px;height:30px;margin:2px;border-radius:50%;background:#475569;color:white;border:none;font-size:10px;}
 .omr-answered{background:#22c55e;}
 </style>
 </head>
@@ -35,44 +22,34 @@ border:none;background:#475569;color:white;font-size:10px;
 <body>
 <div class="container">
 
-<h2>🎓 NEET PRO MAX</h2>
-
+<h2>🎓 NEET AI PRO</h2>
 <h3 id="timer">03:00:00</h3>
 
-<!-- VIDEO -->
-<div class="card">
-<h3>Video Lectures</h3>
-<div id="videoList" class="video-row"></div>
-<iframe id="videoPlayer" width="100%" height="180"></iframe>
-</div>
-
 <!-- SUBJECT -->
-<div class="card">
-<div class="subjects">
+<div class="card subjects">
 <button onclick="setSubject('Biology')">Bio</button>
 <button onclick="setSubject('Chemistry')">Chem</button>
 <button onclick="setSubject('Physics')">Phy</button>
-</div>
 </div>
 
 <!-- CHAPTER -->
 <select onchange="setChapter(this.value)" style="width:100%;padding:8px;border-radius:8px;">
 <option value="all">All Chapters</option>
 <option>Cell</option>
+<option>Biomolecules</option>
 <option>Human Physiology</option>
-<option>Thermodynamics</option>
-<option>Laws of Motion</option>
+<option>Plant Physiology</option>
+<option>Genetics</option>
 </select>
 
 <button onclick="startTest()">Start Test</button>
-<button onclick="startFullTest()">Full Test (180)</button>
 
 <div id="quizBox" class="card"></div>
 <button onclick="nextQ()">Next ➡️</button>
 
 <!-- OMR -->
 <div class="card">
-<h3>OMR Sheet</h3>
+<h3>OMR</h3>
 <div id="omr"></div>
 </div>
 
@@ -88,150 +65,124 @@ border:none;background:#475569;color:white;font-size:10px;
 
 <script>
 
-// ================= QUESTIONS =================
+/* ================= NCERT SYSTEM ================= */
 const questions=[];
 function add(q){questions.push(q);}
 
-// 150 Questions
-["Biology","Chemistry","Physics"].forEach(sub=>{
-for(let i=1;i<=50;i++){
-add({
-q:`${sub} Question ${i}`,
-options:["A","B","C","D"],
-answer:0,
-topic:sub,
-chapter:"Cell"
-});
+const ncert={
+Biology:{
+"Cell":[
+["Cell is basic unit of life","Life"],
+["Cell theory proposed by","Schleiden & Schwann"],
+["Prokaryotes lack","Membrane bound organelles"],
+["Plasma membrane is","Selective permeable"],
+["Fluid mosaic model by","Singer & Nicolson"]
+],
+"Biomolecules":[
+["Protein made of","Amino acids"],
+["Enzymes are","Proteins"],
+["Nucleic acid unit","Nucleotide"],
+["Lipids soluble in","Organic solvents"],
+["Polysaccharide example","Starch"]
+],
+"Human Physiology":[
+["RBC life span","120 days"],
+["Oxygen carrier","Hemoglobin"],
+["Kidney unit","Nephron"],
+["Insulin secreted by","Beta cells"],
+["Blood filtration","Glomerulus"]
+],
+"Plant Physiology":[
+["Photosynthesis occurs in","Chloroplast"],
+["Light reaction site","Thylakoid"],
+["Calvin cycle site","Stroma"],
+["Water transport tissue","Xylem"],
+["Food transport tissue","Phloem"]
+],
+"Genetics":[
+["Father of genetics","Mendel"],
+["DNA discovered by","Watson & Crick"],
+["Gene is","Unit of heredity"],
+["RNA base","Uracil"],
+["Chromosomes contain","DNA"]
+]
 }
-});
-
-// ================= STATE =================
-let subject="Biology";
-let chapter="all";
-let index=0,score=0,currentQ;
-let asked=[],weak={};
-let fullTest=false,fullSet=[];
-let answers=[];
-
-// ================= TIMER =================
-let totalTime=3*60*60;
-let timerInterval;
-
-function startTimer(){
-clearInterval(timerInterval);
-timerInterval=setInterval(()=>{
-let h=Math.floor(totalTime/3600);
-let m=Math.floor((totalTime%3600)/60);
-let s=totalTime%60;
-
-document.getElementById("timer").innerText=
-`${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
-
-totalTime--;
-
-if(totalTime<0){
-clearInterval(timerInterval);
-finish();
-}
-},1000);
-}
-
-// ================= VIDEO =================
-const videos={
-Biology:[{thumb:"https://img.youtube.com/vi/URUJD5NEXC8/0.jpg",url:"https://www.youtube.com/embed/URUJD5NEXC8"}],
-Chemistry:[{thumb:"https://img.youtube.com/vi/2z1c0v9fY1M/0.jpg",url:"https://www.youtube.com/embed/2z1c0v9fY1M"}],
-Physics:[{thumb:"https://img.youtube.com/vi/ZM8ECpBuQYE/0.jpg",url:"https://www.youtube.com/embed/ZM8ECpBuQYE"}]
 };
 
-function loadVideos(){
-let list=document.getElementById("videoList");
-list.innerHTML="";
-videos[subject].forEach((v,i)=>{
-list.innerHTML+=`<div class="video-card" onclick="playVideo(${i})"><img src="${v.thumb}"></div>`;
+/* AUTO GENERATE 500+ */
+const diff=["easy","medium","hard"];
+
+Object.keys(ncert).forEach(subject=>{
+Object.keys(ncert[subject]).forEach(chapter=>{
+ncert[subject][chapter].forEach(item=>{
+for(let i=0;i<20;i++){
+add({
+q:item[0]+"?",
+options:[item[1],"Wrong1","Wrong2","Wrong3"],
+answer:0,
+topic:subject,
+chapter:chapter,
+level:diff[i%3]
 });
-playVideo(0);
 }
+});
+});
+});
 
-function playVideo(i){
-document.getElementById("videoPlayer").src=videos[subject][i].url;
-}
+/* ================= STATE ================= */
+let subject="Biology",chapter="all";
+let index=0,score=0,currentQ;
+let pool=[],answers=[];
 
-// ================= FILTER =================
-function setSubject(s){subject=s;loadVideos();}
+/* ================= TIMER ================= */
+let t=3*3600;
+setInterval(()=>{
+let h=Math.floor(t/3600);
+let m=Math.floor((t%3600)/60);
+let s=t%60;
+document.getElementById("timer").innerText=
+`${h}:${m}:${s}`;
+t--;
+},1000);
+
+/* ================= FILTER ================= */
+function setSubject(s){subject=s;}
 function setChapter(c){chapter=c;}
 
-// ================= TEST =================
+function getQ(){
+return questions.filter(q=>q.topic===subject &&
+(chapter==="all"||q.chapter===chapter));
+}
+
+/* ================= START ================= */
 function startTest(){
-fullTest=false;
-index=0;score=0;asked=[];weak={};
-startTimer();
+pool=getQ().sort(()=>Math.random()-0.5).slice(0,50);
+index=0;score=0;
+answers=new Array(50).fill(null);
+loadOMR();
 loadQ();
 }
 
+/* ================= LOAD ================= */
 function loadQ(){
-let filtered=questions.filter(q=>q.topic===subject);
-currentQ=filtered[Math.floor(Math.random()*filtered.length)];
-
-let html=`<h3>${currentQ.q}</h3>`;
-currentQ.options.forEach((o,i)=>{
-html+=`<button onclick="checkAns(${i},this)">${o}</button>`;
-});
-document.getElementById("quizBox").innerHTML=html;
-}
-
-// ================= FULL TEST =================
-function startFullTest(){
-fullTest=true;
-index=0;score=0;
-startTimer();
-
-let bio=questions.filter(q=>q.topic==="Biology").slice(0,90);
-let chem=questions.filter(q=>q.topic==="Chemistry").slice(0,45);
-let phy=questions.filter(q=>q.topic==="Physics").slice(0,45);
-
-fullSet=[...bio,...chem,...phy];
-
-loadOMR(180);
-answers=new Array(180).fill(null);
-
-loadFullQ();
-}
-
-function loadFullQ(){
-currentQ=fullSet[index];
+currentQ=pool[index];
 
 let html=`<h3>Q${index+1}: ${currentQ.q}</h3>`;
 currentQ.options.forEach((o,i)=>{
 html+=`<button onclick="checkAns(${i},this)">${o}</button>`;
 });
+
 document.getElementById("quizBox").innerHTML=html;
 }
 
-// ================= OMR =================
-function loadOMR(total){
-let html="";
-for(let i=0;i<total;i++){
-html+=`<button class="omr-btn" onclick="goQ(${i})">${i+1}</button>`;
-}
-document.getElementById("omr").innerHTML=html;
-}
+/* ================= ANSWER ================= */
+function checkAns(a,btn){
+answers[index]=a;
 
-function goQ(i){
-index=i;
-loadFullQ();
-}
+let omr=document.querySelectorAll(".omr-btn");
+omr[index].classList.add("omr-answered");
 
-// ================= ANSWER =================
-function checkAns(ans,btn){
-let btns=document.querySelectorAll("#quizBox button");
-btns.forEach(b=>b.disabled=true);
-
-answers[index]=ans;
-
-let omrBtns=document.querySelectorAll(".omr-btn");
-if(omrBtns[index]) omrBtns[index].classList.add("omr-answered");
-
-if(ans===currentQ.answer){
+if(a===currentQ.answer){
 btn.classList.add("correct");
 score+=4;
 }else{
@@ -240,51 +191,44 @@ score-=1;
 }
 }
 
-// ================= NEXT =================
+/* ================= NEXT ================= */
 function nextQ(){
 index++;
-if(fullTest){
-if(index<fullSet.length) loadFullQ();
-else finish();
-return;
-}
-if(index<20) loadQ();
+if(index<pool.length) loadQ();
 else finish();
 }
 
-// ================= AI =================
+/* ================= OMR ================= */
+function loadOMR(){
+let html="";
+for(let i=0;i<50;i++){
+html+=`<button class="omr-btn" onclick="jump(${i})">${i+1}</button>`;
+}
+document.getElementById("omr").innerHTML=html;
+}
+
+function jump(i){index=i;loadQ();}
+
+/* ================= AI ================= */
 function askAI(){
-let ans=currentQ.options[currentQ.answer];
-document.getElementById("aiBox").innerHTML="Correct: "+ans;
+document.getElementById("aiBox").innerHTML=
+"Revise this NCERT line carefully 📘";
 }
 
-// ================= RANK =================
-function calculateRank(score){
-if(score>650)return"Top 100";
-if(score>600)return"Top 1K";
-if(score>500)return"Top 10K";
-return"Improve";
-}
-
-// ================= FINISH =================
+/* ================= FINISH ================= */
 function finish(){
-clearInterval(timerInterval);
-
-let rank=calculateRank(score);
 
 new Chart(document.getElementById("chart"),{
 type:"bar",
 data:{labels:["Score"],datasets:[{data:[score]}]}
 });
 
+let rank = score>150?"Top":"Average";
+
 alert("Score: "+score+" Rank: "+rank);
 }
 
-// INIT
-loadVideos();
-
 </script>
-
 </body>
 </html>
 
