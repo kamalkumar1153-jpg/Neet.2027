@@ -442,7 +442,7 @@ answer:0,subject:"Physics"
 q:"Which mirror forms virtual image?",
 options:["Plane mirror","Concave","Convex","None"],
 answer:0,subject:"Physics"
-}
+},
 
 /* ... continue till 40 */
 
