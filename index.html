@@ -3,176 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEET AI PRO MAX - 180Q Full Mock</title>
+    <title>NEET AI SUPER PRO</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --accent: #3b82f6; --success: #22c55e; --error: #ef4444; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 10px; }
-        .container { max-width: 500px; margin: auto; }
-        .header { display: flex; justify-content: space-between; padding: 15px; background: var(--card); border-radius: 12px; margin-bottom: 10px; border-bottom: 4px solid var(--accent); position: sticky; top: 0; z-index: 100; }
-        .card { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .q-text { font-size: 1.1rem; margin-bottom: 15px; }
-        .opt-btn { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #334155; border-radius: 8px; background: #2d3748; color: white; text-align: left; cursor: pointer; }
-        .opt-btn.correct { background: var(--success) !important; }
-        .opt-btn.wrong { background: var(--error) !important; }
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: var(--accent); color: white; }
+        :root {
+            --physics: #3b82f6; --chemistry: #ff8a65; --biology: #4caf50;
+            --bg: #f3f4f6; --accent: #6366f1; --success: #10b981; --error: #ef4444;
+        }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; overflow-x: hidden; }
+        
+        /* Dashboard Styles */
+        #dashboard { padding-bottom: 70px; }
+        .header { background: white; padding: 25px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .subject-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 15px; }
+        .subject-card { border-radius: 20px; padding: 20px 10px; text-align: center; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .start-btn { margin: 20px 15px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; padding: 20px; border-radius: 20px; text-align: center; font-weight: bold; font-size: 18px; cursor: pointer; }
+
+        /* Quiz Styles */
+        #quiz-screen { display: none; padding: 15px; background: #0b0f1a; min-height: 100vh; color: #e2e8f0; }
+        .q-card { background: #161e31; padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        #q-img { width: 100%; border-radius: 12px; margin: 10px 0; background: white; display: none; max-height: 250px; object-fit: contain; }
+        .opt { width: 100%; padding: 15px; margin: 8px 0; border: 1.5px solid #2d3748; border-radius: 12px; background: #1e293b; color: white; text-align: left; cursor: pointer; }
+        .opt.correct { background: var(--success) !important; border: none; }
+        .opt.wrong { background: var(--error) !important; border: none; }
+        
+        /* OMR Grid */
         .omr-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; margin-top: 10px; }
-        .dot { aspect-ratio: 1; border-radius: 50%; border: 1px solid #475569; background: transparent; color: #94a3b8; font-size: 0.7rem; cursor: pointer; }
-        .dot.active { border: 2px solid white; color: white; }
+        .dot { aspect-ratio: 1; border-radius: 50%; border: 1px solid #334155; background: transparent; color: #64748b; font-size: 10px; display: flex; align-items: center; justify-content: center; }
         .dot.filled { background: var(--success); color: white; border: none; }
+        .dot.active { border: 2px solid white; }
+
+        .nav-bar { display: flex; gap: 10px; }
+        .nav-btn { flex: 1; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="menu" class="card" style="text-align:center;">
-        <h2>🧠 NEET AI PRO MAX</h2>
-        <p>180 Questions | 3 Hours | Negative Marking</p>
-        <button class="btn" style="width:100%;" onclick="startExam()">🚀 Start Full Mock Test</button>
-    </div>
-
-    <div id="exam-area" style="display:none;">
+    <div id="dashboard">
+        <div style="background: #1e293b; color: #fbbf24; text-align: center; padding: 8px; font-size: 12px;" id="timer-target"></div>
         <div class="header">
-            <div id="timer" style="color:#fbbf24; font-weight:bold;">03:00:00</div>
-            <div style="background:var(--accent); padding:2px 10px; border-radius:5px;">Score: <span id="score">0</span></div>
+            <h1 style="margin:0;">Study Vault Pro 🎓</h1>
+            <p>RBSE Class 12th Master Prep</p>
         </div>
 
-        <div class="card" id="question-box"></div>
-
-        <div class="nav-grid">
-            <button class="btn" style="background:#475569" onclick="changeQ(-1)">⬅️ Prev</button>
-            <button class="btn" onclick="changeQ(1)">Next ➡️</button>
+        <div class="subject-grid">
+            <div class="subject-card" style="background: var(--physics);"><h3>Physics</h3><p>60% Done</p></div>
+            <div class="subject-card" style="background: var(--chemistry);"><h3>Chemistry</h3><p>45% Done</p></div>
+            <div class="subject-card" style="background: var(--biology);"><h3>Biology</h3><p>70% Done</p></div>
         </div>
 
-        <div class="card">
-            <h4 style="margin:0 0 10px 0">OMR Sheet</h4>
-            <div id="omr-grid" class="omr-grid"></div>
+        <div class="start-btn" onclick="startQuiz()">
+            🚀 Start Full Mock Test (180 Qs)
+            <div style="font-size: 12px; font-weight: normal;">Based on Latest NEET Pattern</div>
         </div>
     </div>
-</div>
+
+    <div id="quiz-screen">
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+            <div id="quiz-timer" style="color:#fbbf24; font-weight:bold; font-size:1.2rem;">03:00:00</div>
+            <div style="font-weight:bold;">Score: <span id="live-score" style="color:var(--success)">0</span></div>
+        </div>
+
+        <div class="q-card">
+            <small id="q-sub" style="color:var(--physics); font-weight:bold;"></small>
+            <p id="q-text" style="font-size:1.1rem; margin:10px 0;"></p>
+            <img id="q-img" src="" alt="Diagram">
+            <div id="options-box"></div>
+        </div>
+
+        <div class="nav-bar">
+            <button class="nav-btn" style="background:#334155; color:white;" onclick="move(-1)">PREV</button>
+            <button class="nav-btn" style="background:var(--accent); color:white;" onclick="move(1)">NEXT</button>
+        </div>
+
+        <div class="q-card" style="margin-top:15px;">
+            <div id="omr" class="omr-grid"></div>
+        </div>
+    </div>
 
 <script>
-// ===== 180 QUESTIONS DATABASE (NEET PATTERN) =====
-const BASE = [
-    // BIOLOGY
-    {q:"Powerhouse of cell is:", opts:["Mitochondria","Golgi","Lysosome","Nucleus"], ans:0, sub:"Bio"},
-    {q:"Insulin is secreted by:", opts:["Alpha cells","Beta cells","Delta cells","Liver"], ans:1, sub:"Bio"},
-    {q:"Functional unit of Kidney:", opts:["Neuron","Nephron","Alveoli","Hepatocyte"], ans:1, sub:"Bio"},
-    {q:"Double fertilization is found in:", opts:["Angiosperms","Gymnosperms","Algae","Bryophytes"], ans:0, sub:"Bio"},
-    {q:"Hormone for 'Fight or Flight' response:", opts:["Adrenaline","Insulin","Thyroxine","Oxytocin"], ans:0, sub:"Bio"},
-    {q:"Father of Genetics:", opts:["Gregor Mendel","Darwin","Lamarck","Morgan"], ans:0, sub:"Bio"},
-    {q:"Where does Glycolysis occur?", opts:["Cytoplasm","Mitochondria","Ribosome","Golgi"], ans:0, sub:"Bio"},
-    {q:"Which hormone triggers Ovulation?", opts:["LH","FSH","Progesterone","Estrogen"], ans:0, sub:"Bio"},
-    {q:"The 'P' wave in ECG represents:", opts:["Atrial depolarization","Ventricular depolarization","Atrial repolarization","Resting state"], ans:0, sub:"Bio"},
-    {q:"Smallest cell in human body:", opts:["Sperm cell","Ovum","Neuron","RBC"], ans:0, sub:"Bio"},
-    
-    // CHEMISTRY
-    {q:"Most electronegative element:", opts:["Fluorine","Chlorine","Oxygen","Nitrogen"], ans:0, sub:"Chem"},
-    {q:"pH of a neutral solution:", opts:["7","0","1","14"], ans:0, sub:"Chem"},
-    {q:"Hybridization of Carbon in Methane:", opts:["sp3","sp2","sp","dsp2"], ans:0, sub:"Chem"},
-    {q:"Chemical formula of Baking Soda:", opts:["NaHCO3","Na2CO3","NaOH","NaCl"], ans:0, sub:"Chem"},
-    {q:"Gas used in fire extinguishers:", opts:["CO2","O2","N2","H2"], ans:0, sub:"Chem"},
-    
-    // PHYSICS
-    {q:"Unit of Electric Current:", opts:["Ampere","Volt","Ohm","Watt"], ans:0, sub:"Phy"},
-    {q:"Speed of light in vacuum (m/s):", opts:["3x10^8","3x10^6","2x10^8","3x10^10"], ans:0, sub:"Phy"},
-    {q:"Newton's First Law is also known as:", opts:["Law of Inertia","Momentum","Action-Reaction","Gravity"], ans:0, sub:"Phy"},
-    {q:"Mirror used as rear-view in vehicles:", opts:["Convex","Concave","Plain","Cylindrical"], ans:0, sub:"Phy"},
-    {q:"Device that converts AC to DC:", opts:["Rectifier","Inverter","Transformer","Generator"], ans:0, sub:"Phy"}
+const DB = [
+    {q:"Identify the part labeled 'A' in the heart diagram:", img:"https://upload.wikimedia.org/wikipedia/commons/e/e5/Diagram_of_the_human_heart_%28cropped%29.svg", o:["Left Atrium","Right Atrium","Aorta","Vena Cava"], a:2, s:"Biology"},
+    {q:"Which phase of mitosis is shown here?", img:"https://upload.wikimedia.org/wikipedia/commons/f/f3/Anaphase_IF.jpg", o:["Prophase","Metaphase","Anaphase","Telophase"], a:2, s:"Biology"},
+    {q:"What is the SI unit of Magnetic Flux?", o:["Tesla","Weber","Henry","Watt"], a:1, s:"Physics"},
+    {q:"Mirror used by dentists is:", o:["Convex","Concave","Plain","Cylindrical"], a:1, s:"Physics"},
+    {q:"Formula of Baking Soda is:", o:["NaHCO3","Na2CO3","NaOH","NaCl"], a:0, s:"Chemistry"}
 ];
 
-// DATA GENERATOR (180 Questions)
-let questions = [];
-let userAns = [];
-let currentIdx = 0;
-let score = 0;
+let questions = [], userAns = [], current = 0, score = 0, quizTimer;
 
-function startExam() {
-    // Generate 180 questions by shuffling and repeating BASE data
-    while(questions.length < 180) {
-        let shuffleBase = [...BASE].sort(() => Math.random() - 0.5);
-        questions.push(...shuffleBase);
-    }
-    questions = questions.slice(0, 180);
-    userAns = new Array(180).fill(null);
-
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('exam-area').style.display = 'block';
-    
+function startQuiz() {
+    questions = [];
+    while(questions.length < 30) questions.push({...DB[Math.floor(Math.random()*DB.length)]});
+    userAns = new Array(questions.length).fill(null);
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
     renderOMR();
     loadQ();
-    startTimer(10800); // 3 Hours
+    runTimer(10800);
 }
 
 function loadQ() {
-    let q = questions[currentIdx];
-    let html = `<div style="font-size:0.8rem; color:var(--accent); font-weight:bold;">${q.sub.toUpperCase()} | Q${currentIdx+1}</div>
-                <div class="q-text">${q.q}</div>`;
-    
-    q.opts.forEach((opt, i) => {
-        let cls = "";
-        if(userAns[currentIdx] !== null) {
-            if(i === q.ans) cls = "correct";
-            else if(i === userAns[currentIdx]) cls = "wrong";
-        }
-        html += `<button class="opt-btn ${cls}" onclick="submit(${i})">${opt}</button>`;
+    let q = questions[current];
+    document.getElementById('q-sub').innerText = q.s.toUpperCase() + " | Q" + (current + 1);
+    document.getElementById('q-text').innerText = q.q;
+    let img = document.getElementById('q-img');
+    if(q.img) { img.src = q.img; img.style.display = "block"; } else { img.style.display = "none"; }
+
+    let html = "";
+    q.o.forEach((opt, i) => {
+        let cls = userAns[current] !== null ? (i === q.a ? "correct" : (i === userAns[current] ? "wrong" : "")) : "";
+        html += `<button class="opt ${cls}" onclick="handleAns(${i})">${opt}</button>`;
     });
-    
-    document.getElementById('question-box').innerHTML = html;
+    document.getElementById('options-box').innerHTML = html;
     updateOMR();
 }
 
-function submit(choice) {
-    if(userAns[currentIdx] !== null) return; // Lock after click
-    
-    userAns[currentIdx] = choice;
-    if(choice === questions[currentIdx].ans) score += 4;
-    else score -= 1;
-    
-    document.getElementById('score').innerText = score;
+function handleAns(i) {
+    if(userAns[current] !== null) return;
+    userAns[current] = i;
+    score += (i === questions[current].a) ? 4 : -1;
+    document.getElementById('live-score').innerText = score;
     loadQ();
 }
 
-function changeQ(step) {
-    let next = currentIdx + step;
-    if(next >= 0 && next < 180) {
-        currentIdx = next;
-        loadQ();
-    }
+function move(s) {
+    let n = current + s;
+    if(n >= 0 && n < questions.length) { current = n; loadQ(); }
 }
 
 function renderOMR() {
-    let html = "";
-    for(let i=0; i<180; i++) {
-        html += `<button class="dot" id="dot-${i}" onclick="jump(${i})">${i+1}</button>`;
-    }
-    document.getElementById('omr-grid').innerHTML = html;
+    let h = "";
+    questions.forEach((_, i) => h += `<div class="dot" id="dot-${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('omr').innerHTML = h;
 }
+
+function jump(i) { current = i; loadQ(); }
 
 function updateOMR() {
     document.querySelectorAll('.dot').forEach((d, i) => {
         d.classList.remove('active');
-        if(i === currentIdx) d.classList.add('active');
+        if(i === current) d.classList.add('active');
         if(userAns[i] !== null) d.classList.add('filled');
     });
 }
 
-function jump(i) { currentIdx = i; loadQ(); }
-
-function startTimer(t) {
-    setInterval(() => {
-        let h = Math.floor(t / 3600);
-        let m = Math.floor((t % 3600) / 60);
-        let s = t % 60;
-        document.getElementById('timer').innerText = 
-            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        if(t <= 0) alert("Time Up! Score: " + score);
-        t--;
+function runTimer(sec) {
+    quizTimer = setInterval(() => {
+        let h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+        document.getElementById('quiz-timer').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        if(sec-- <= 0) { clearInterval(quizTimer); alert("Time Up! Final Score: " + score); location.reload(); }
     }, 1000);
 }
+
+// Target Countdown logic
+function setTarget() {
+    const target = new Date("April 15, 2027").getTime();
+    const now = new Date().getTime();
+    const days = Math.floor((target - now) / (1000 * 60 * 60 * 24));
+    document.getElementById('timer-target').innerText = `🎯 TARGET: APRIL 15, 2027 | ${days} DAYS TO GO`;
+}
+setTarget();
 </script>
 </body>
 </html>
+
 
 
 
