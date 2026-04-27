@@ -1,250 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEET AI PRO MAX</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{background:#0f172a;color:white;font-family:sans-serif;margin:0;}
-.container{max-width:520px;margin:auto;padding:10px;}
-.card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px;}
-button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;background:#3b82f6;color:white;}
-.correct{background:#16a34a;}
-.wrong{background:#dc2626;}
-.omr-btn{width:26px;height:26px;margin:2px;border-radius:50%;background:#475569;color:white;font-size:9px;border:none;}
-.answered{background:#22c55e;}
-.review{background:#facc15;}
+body{background:#0f172a;color:white;font-family:sans-serif}
+.container{max-width:500px;margin:auto;padding:10px}
+.card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px}
+button{
+width:100%;padding:10px;margin:5px 0;
+border:none;border-radius:10px;
+background:#3b82f6;color:white;font-weight:bold
+}
+.omr-btn{
+width:25px;height:25px;margin:2px;
+border-radius:50%;background:#475569;color:white;border:none;font-size:10px
+}
+.answered{background:#22c55e}
+.correct{background:#16a34a}
+.wrong{background:#dc2626}
 </style>
+
+<!-- 🔥 IMPORTANT -->
+<script src="questions.js"></script>
+
 </head>
 
 <body>
 <div class="container">
 
 <h2>🧠 NEET AI PRO MAX</h2>
-<h3 id="timer">03:00:00</h3>
+<div id="timer">00:00</div>
+<div id="score">Score: 0</div>
 
-<button onclick="startMock()">🧪 Full Mock</button>
-<button onclick="adaptive()">🎯 Adaptive Test</button>
+<div class="card">
+<button onclick="startFullMock()">🧪 Full Mock (180Q)</button>
+<button onclick="startTest()">🎯 Start Test</button>
+</div>
 
 <div id="quiz" class="card"></div>
 
-<button onclick="prev()">⬅️</button>
-<button onclick="next()">➡️</button>
+<button onclick="next()">Next ➡️</button>
 
 <div class="card">
 <h3>OMR</h3>
 <div id="omr"></div>
 </div>
 
-<div class="card">
-<button onclick="ai()">🤖 AI Teacher</button>
-<div id="aiBox"></div>
-</div>
-
-<canvas id="chart"></canvas>
-
 </div>
 
 <script>
 
-/* ================= QUESTION GENERATOR ================= */
+// GLOBAL
+let pool=[], index=0, score=0, answers=[];
 
-function makeQ(subject){
-return {
-q:`${subject}: Identify correct statement.`,
-options:[
-"Correct Answer",
-"Trap Option",
-"Close Option",
-"Confusing Option"
-],
-answer:0,
-chapter:subject,
-img: subject==="Biology"
-?"https://upload.wikimedia.org/wikipedia/commons/3/38/Animal_Cell.svg":null
-};
-}
-
-const questions=[];
-for(let i=0;i<90;i++) questions.push(makeQ("Biology"));
-for(let i=0;i<45;i++) questions.push(makeQ("Chemistry"));
-for(let i=0;i<45;i++) questions.push(makeQ("Physics"));
-
-/* ================= STATE ================= */
-
-pool = expanded.sort(()=>Math.random()-0.5).slice(0,180);
-/* ================= TIMER ================= */
-
-let t=10800;
-let timer=setInterval(()=>{
-let h=Math.floor(t/3600);
-let m=Math.floor((t%3600)/60);
+// TIMER
+let t=0;
+function startTimer(sec){
+t=sec;
+setInterval(()=>{
+let m=Math.floor(t/60);
 let s=t%60;
-document.getElementById("timer").innerText=`${h}:${m}:${s}`;
+document.getElementById("timer").innerText = m+":"+s;
 t--;
-if(t<=0) finish();
 },1000);
-
-/* ================= STATS ================= */
-
-let stats=JSON.parse(localStorage.getItem("stats"))||{};
-
-function updateStats(q,correct){
-let c=q.chapter;
-if(!stats[c]) stats[c]={a:0,c:0};
-stats[c].a++;
-if(correct) stats[c].c++;
-localStorage.setItem("stats",JSON.stringify(stats));
 }
 
-function weak(){
-return Object.keys(stats).filter(k=>{
-let d=stats[k];
-return d.c/d.a<0.5;
-});
-}
+// START TEST
+function startTest(){
 
-/* ================= START ================= */
+pool = questions.sort(()=>Math.random()-0.5).slice(0,50);
 
-function startMock(){
-pool=[...questions];
-init(180);
-}
-
-function adaptive(){
-let w=weak();
-pool=questions.filter(q=>w.length?w.includes(q.chapter):true);
-init(60);
-}
-
-function init(n){
-pool=pool.sort(()=>Math.random()-0.5).slice(0,n);
 index=0;
-answers=new Array(n).fill(null);
-review=new Array(n).fill(false);
 score=0;
-loadOMR(n);
+answers=new Array(pool.length).fill(undefined);
+
+loadOMR();
+loadQ();
+startTimer(1800);
+
+}
+
+// FULL MOCK
+function startFullMock(){
+
+let bio = questions.filter(q=>q.subject==="Biology").slice(0,90);
+let chem = questions.filter(q=>q.subject==="Chemistry").slice(0,45);
+let phy = questions.filter(q=>q.subject==="Physics").slice(0,45);
+
+pool = [...bio,...chem,...phy].sort(()=>Math.random()-0.5);
+
+index=0;
+score=0;
+answers=new Array(pool.length).fill(undefined);
+
+loadOMR();
+loadQ();
+startTimer(10800);
+
+}
+
+// LOAD QUESTION
+function loadQ(){
+
+let q = pool[index];
+
+let html = `<h3>Q${index+1}: ${q.q}</h3>`;
+
+q.options.forEach((opt,i)=>{
+html += `<button onclick="ans(${i},this)">${opt}</button>`;
+});
+
+document.getElementById("quiz").innerHTML = html;
+
+}
+
+// ANSWER (NEGATIVE MARKING)
+function ans(choice,btn){
+
+let prev = answers[index];
+
+// remove previous effect
+if(prev !== undefined){
+if(prev === pool[index].answer) score -= 4;
+else score += 1;
+}
+
+// save new
+answers[index] = choice;
+
+// apply new
+if(choice === pool[index].answer){
+score += 4;
+btn.classList.add("correct");
+}else{
+score -= 1;
+btn.classList.add("wrong");
+}
+
+document.getElementById("score").innerText="Score: "+score;
+
+document.querySelectorAll(".omr-btn")[index].classList.add("answered");
+
+}
+
+// NEXT
+function next(){
+if(index < pool.length-1){
+index++;
+loadQ();
+}
+}
+
+// OMR
+function loadOMR(){
+
+let html="";
+for(let i=0;i<pool.length;i++){
+html += `<button class="omr-btn" onclick="jump(${i})">${i+1}</button>`;
+}
+document.getElementById("omr").innerHTML = html;
+
+}
+
+function jump(i){
+index=i;
 loadQ();
 }
 
-/* ================= LOAD ================= */
-
-function loadQ(){
-let q=pool[index];
-
-let html=`<h3>Q${index+1}: ${q.q}</h3>`;
-
-if(q.img){
-html+=`<img src="${q.img}" style="width:100%;border-radius:10px">`;
-}
-
-q.options.forEach((o,i)=>{
-html+=`<button onclick="ans(${i},this)">${o}</button>`;
-});
-
-html+=`<button onclick="mark()">⭐ Review</button>`;
-
-document.getElementById("quiz").innerHTML=html;
-}
-
-/* ================= ANSWER ================= */
-
-function ans(a,btn){
-answers[index]=a;
-
-let correct=(a===pool[index].answer);
-updateStats(pool[index],correct);
-
-if(correct){btn.classList.add("correct");score+=4;}
-else{btn.classList.add("wrong");score-=1;}
-
-updateOMR();
-}
-
-/* ================= NAV ================= */
-
-function next(){if(index<pool.length-1){index++;loadQ();}}
-function prev(){if(index>0){index--;loadQ();}}
-
-/* ================= REVIEW ================= */
-
-function mark(){
-review[index]=true;
-updateOMR();
-}
-
-/* ================= OMR ================= */
-
-function loadOMR(n){
-let html="";
-for(let i=0;i<n;i++){
-html+=`<button class="omr-btn" onclick="jump(${i})">${i+1}</button>`;
-}
-document.getElementById("omr").innerHTML=html;
-}
-
-function updateOMR(){
-let btns=document.querySelectorAll(".omr-btn");
-btns.forEach((b,i)=>{
-b.classList.remove("answered","review");
-if(answers[i]!=null) b.classList.add("answered");
-if(review[i]) b.classList.add("review");
-});
-}
-
-function jump(i){index=i;loadQ();}
-
-/* ================= AI ================= */
-
-function ai(){
-let w=weak();
-document.getElementById("aiBox").innerHTML=
-w.length?"⚠️ Weak: "+w.join(", "):"🔥 Strong";
-}
-
-/* ================= RANK ================= */
-
-function rank(s){
-if(s>650)return"AIR <100 🏆";
-if(s>600)return"AIR <1000 🔥";
-if(s>500)return"Good 👍";
-return"Improve";
-}
-
-/* ================= GRAPH ================= */
-
-function graph(){
-let labels=[],data=[];
-Object.keys(stats).forEach(k=>{
-labels.push(k);
-let d=stats[k];
-data.push(Math.round((d.c/d.a)*100));
-});
-
-new Chart(document.getElementById("chart"),{
-type:"bar",
-data:{labels:labels,datasets:[{data:data}]}
-});
-}
-
-/* ================= FINISH ================= */
-
-function finish(){
-
-score=0;
-
-answers.forEach((a,i)=>{
-if(a===pool[i].answer) score+=4;
-else if(a!=null) score-=1;
-});
-
-graph();
-
-alert(`Score: ${score}/720\nRank: ${rank(score)}`);
-}
-
 </script>
+
 </body>
 </html>
 
