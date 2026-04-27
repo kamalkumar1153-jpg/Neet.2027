@@ -3,170 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEET AI SUPER PRO - Study Vault</title>
-    <script src="questions.js"></script>
+    <title>Kamal-Trader Study Vault Pro</title>
     <style>
         :root {
             --physics: #3b82f6; --chemistry: #ff8a65; --biology: #4caf50;
-            --bg: #f3f4f6; --accent: #6366f1; --success: #10b981; --error: #ef4444; --dark: #1e293b;
+            --bg: #0f172a; --card: #1e293b; --accent: #6366f1; --success: #10b981; --error: #ef4444;
         }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; user-select: none; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #f1f5f9; user-select: none; }
         
-        /* Dashboard */
-        .top-strip { background: var(--dark); color: #fbbf24; text-align: center; padding: 12px; font-size: 13px; font-weight: bold; }
-        .header { background: white; padding: 35px 20px; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .subject-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; padding: 20px; }
-        .sub-card { border-radius: 24px; padding: 25px 10px; text-align: center; color: white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .start-btn { margin: 25px 20px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; padding: 22px; border-radius: 25px; text-align: center; font-weight: bold; font-size: 20px; cursor: pointer; box-shadow: 0 12px 25px rgba(99, 102, 241, 0.4); border: none; width: calc(100% - 40px); }
-
-        /* Quiz Screen */
-        #quiz-screen, #result-screen { display: none; padding: 15px; background: #0b0f1a; min-height: 100vh; color: #e2e8f0; }
-        .q-card { background: #161e31; padding: 20px; border-radius: 25px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .opt { width: 100%; padding: 16px; margin: 10px 0; border: 2px solid #2d3748; border-radius: 15px; background: #1e293b; color: white; text-align: left; font-size: 16px; transition: 0.2s; }
-        .opt.selected { border-color: var(--accent); background: rgba(99, 102, 241, 0.2); }
+        /* Home Screen */
+        #home-screen { padding: 20px; text-align: center; }
+        .header { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 40px 20px; border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .mode-card { background: var(--card); padding: 20px; margin: 15px 0; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .start-btn { width: 100%; padding: 20px; border-radius: 20px; background: var(--accent); color: white; border: none; font-weight: bold; font-size: 18px; margin-top: 20px; cursor: pointer; }
         
-        /* OMR Grid */
-        .omr-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; max-height: 180px; overflow-y: auto; padding: 10px; background: #161e31; border-radius: 15px; }
-        .dot { aspect-ratio: 1; border-radius: 50%; border: 1px solid #334155; font-size: 9px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .dot.filled { background: var(--accent); color: white; border: none; }
-        .dot.active { border: 2px solid white; scale: 1.1; }
+        /* Quiz UI */
+        #quiz-screen, #result-screen { display: none; padding: 20px; }
+        .stats-bar { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: #fbbf24; }
+        .q-card { background: var(--card); padding: 25px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .opt { width: 100%; padding: 18px; margin: 10px 0; border: 2px solid #334155; border-radius: 15px; background: #0f172a; color: white; text-align: left; font-size: 16px; cursor: pointer; }
+        .opt:active { background: var(--accent); }
+        
+        /* Progress Bar */
+        .p-container { width: 100%; height: 8px; background: #334155; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: var(--accent); transition: 0.3s; }
 
-        /* Results */
-        .score-circle { width: 140px; height: 140px; border-radius: 50%; border: 8px solid var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px auto; background: #1e293b; }
+        /* Mistakes Report */
+        .mistake-card { background: #161e31; padding: 15px; border-radius: 15px; margin-top: 10px; border-left: 5px solid var(--error); text-align: left; font-size: 14px; }
+        .correct-ans { color: var(--success); font-weight: bold; }
+        .your-ans { color: var(--error); text-decoration: line-through; margin-right: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="dashboard">
-        <div class="top-strip" id="countdown">TARGET: APRIL 15, 2027</div>
+    <div id="home-screen">
         <div class="header">
-            <h1>Study Vault Pro 🎓</h1>
-            <p>120+ Questions Loaded from JS</p>
+            <h1 style="margin:0; color: #fbbf24;">Study Vault Pro 🎓</h1>
+            <p style="opacity: 0.7;">NEET & Board Preparation Terminal</p>
         </div>
-        <div class="subject-grid">
-            <div class="sub-card" style="background: var(--physics);"><h3>Physics</h3><p>Active</p></div>
-            <div class="sub-card" style="background: var(--chemistry);"><h3>Chemistry</h3><p>Active</p></div>
-            <div class="sub-card" style="background: var(--biology);"><h3>Biology</h3><p>Active</p></div>
+
+        <div style="margin-top: 30px;">
+            <div class="mode-card" style="border-left: 5px solid var(--physics);" onclick="start('Physics')">
+                <span>Physics Practice</span> <small>40 Qs</small>
+            </div>
+            <div class="mode-card" style="border-left: 5px solid var(--chemistry);" onclick="start('Chemistry')">
+                <span>Chemistry Practice</span> <small>40 Qs</small>
+            </div>
+            <div class="mode-card" style="border-left: 5px solid var(--biology);" onclick="start('Biology')">
+                <span>Biology Practice</span> <small>40 Qs</small>
+            </div>
+            
+            <div style="background: #1e293b; padding: 15px; border-radius: 15px; margin-top: 20px;">
+                <label style="display:flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                    <span>Negative Marking (-0.25)</span>
+                    <input type="checkbox" id="neg-toggle" style="width:20px; height:20px;">
+                </label>
+            </div>
+
+            <button class="start-btn" onclick="start('All')" style="background: linear-gradient(135deg, #6366f1, #a855f7);">🚀 START FULL MOCK TEST (120 Qs)</button>
         </div>
-        <button class="start-btn" onclick="startQuiz()">🚀 START FULL TEST</button>
     </div>
 
     <div id="quiz-screen">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <div id="timer" style="color:#fbbf24; font-weight:bold; font-size:1.4rem;">03:00:00</div>
-            <button onclick="showResult()" style="background:var(--error); color:white; border:none; padding:8px 18px; border-radius:10px;">FINISH</button>
+        <div class="stats-bar">
+            <span id="sub-tag">SUBJECT</span>
+            <span id="live-score">0.00</span>
         </div>
+        
+        <div class="p-container"><div id="progress-bar"></div></div>
+        
+        <div style="text-align: right; margin-bottom: 10px; opacity: 0.6; font-size: 12px;" id="counter">0/0</div>
 
         <div class="q-card">
-            <div id="q-info" style="color:var(--accent); font-weight:bold; font-size:12px; margin-bottom:10px;"></div>
-            <p id="q-text" style="font-size:1.1rem; line-height:1.4;"></p>
-            <div id="options-box"></div>
+            <p id="question" style="font-size: 1.2rem; line-height: 1.5;"></p>
+            <div id="options-box" style="margin-top: 20px;"></div>
         </div>
-
-        <div style="display:flex; gap:10px;">
-            <button onclick="nav(-1)" style="flex:1; padding:18px; border-radius:15px; background:#334155; color:white; border:none;">PREV</button>
-            <button onclick="nav(1)" style="flex:1; padding:18px; border-radius:15px; background:var(--accent); color:white; border:none;">NEXT</button>
-        </div>
-
-        <div class="omr-grid" id="omr-grid" style="margin-top:15px;"></div>
     </div>
 
-    <div id="result-screen" style="text-align:center;">
-        <h2>Exam Report</h2>
-        <div class="score-circle">
-            <span id="final-score" style="font-size: 2.5rem; font-weight:bold;">0</span>
-            <small>Score</small>
-        </div>
-        <div id="stats" class="q-card" style="text-align:left;"></div>
-        <button onclick="location.reload()" style="width:100%; padding:20px; border-radius:15px; background:var(--success); color:white; border:none;">RETRY TEST</button>
+    <div id="result-screen" style="text-align: center;">
+        <h2 style="color: var(--fbbf24);">Final Performance</h2>
+        <div style="font-size: 4rem; font-weight: bold; margin: 20px 0; color: var(--success);" id="final-score">0</div>
+        <p style="opacity: 0.7;">Total Score Achieved</p>
+        
+        <div id="review-box" style="margin-top: 30px; max-height: 400px; overflow-y: auto;"></div>
+        
+        <button class="start-btn" onclick="location.reload()" style="background: var(--card); margin-top: 30px;">🏠 BACK TO DASHBOARD</button>
     </div>
 
 <script>
-    // Agar questions.js load nahi hui toh empty array handle karein
-    let rawData = typeof masterDB !== 'undefined' ? masterDB : [];
-    let testQs = [];
+// --- YOUR DATA BANK (120 QUESTIONS) ---
+const bank = [
+    // PHYSICS (40)
+    {s:"Physics", q:"Two charges +1μC and +5μC are separated by a distance. Ratio of forces acting on them is?", o:["1:1","1:5","5:1","1:25"], a:"1:1"},
+    {s:"Physics", q:"Electric field inside a hollow spherical conductor is?", o:["Zero","Constant","Infinite","Variable"], a:"Zero"},
+    {s:"Physics", q:"If the distance between two plates of a capacitor is doubled, its capacitance?", o:["Doubles","Becomes half","Remains same","Quintuples"], a:"Becomes half"},
+    {s:"Physics", q:"The resistivity of a wire depends on its?", o:["Length","Area","Material","Shape"], a:"Material"},
+    {s:"Physics", q:"A wire of resistance R is stretched to double its length. New resistance is?", o:["2R","4R","R/2","R/4"], a:"4R"},
+    {s:"Physics", q:"Magnetic field at the center of a circular current loop is?", o:["μ₀I/2r","μ₀I/r","2μ₀I/r","Zero"], a:"μ₀I/2r"},
+    {s:"Physics", q:"Which has the shortest wavelength?", o:["Gamma rays","X-rays","UV rays","Microwaves"], a:"Gamma rays"},
+    {s:"Physics", q:"The phase difference between current and voltage in a pure inductor is?", o:["0°","90°","180°","45°"], a:"90°"},
+    {s:"Physics", q:"The working of a transformer is based on?", o:["Self Induction","Mutual Induction","Eddy Currents","None"], a:"Mutual Induction"},
+    {s:"Physics", q:"A lens has power +2.0 D. Its focal length is?", o:["50 cm","20 cm","100 cm","25 cm"], a:"50 cm"},
+    {s:"Physics", q:"The speed of light is minimum in?", o:["Air","Glass","Water","Diamond"], a:"Diamond"},
+    {s:"Physics", q:"The sky appears blue due to?", o:["Refraction","Scattering","Interference","Diffraction"], a:"Scattering"},
+    {s:"Physics", q:"According to Huygens, light is a?", o:["Wave","Particle","Ray","None"], a:"Wave"},
+    {s:"Physics", q:"Photoelectric effect proves?", o:["Wave nature","Particle nature","Both","None"], a:"Particle nature"},
+    {s:"Physics", q:"Energy of an electron in the nth orbit of Hydrogen is proportional to?", o:["n","n²","1/n²","1/n"], a:"1/n²"},
+    {s:"Physics", q:"Mass-Energy equivalence relation is?", o:["E=mc²","E=mc","E=m²c","E=hν"], a:"E=mc²"},
+    {s:"Physics", q:"In a P-type semiconductor, majority carriers are?", o:["Electrons","Holes","Neutrons","Protons"], a:"Holes"},
+    {s:"Physics", q:"The gate that gives output 1 only when both inputs are 1?", o:["AND","OR","NOT","NAND"], a:"AND"},
+    {s:"Physics", q:"Which of these is a Universal Gate?", o:["AND","OR","NOR","XOR"], a:"NOR"},
+    {s:"Physics", q:"The ratio of Sin(i) to Sin(r) is constant. This is?", o:["Ohm's Law","Snell's Law","Boyle's Law","Lenz's Law"], a:"Snell's Law"},
+    {s:"Physics", q:"Unit of Electric Flux is?", o:["Weber","Volt-metre","Tesla","Newton"], a:"Volt-metre"},
+    {s:"Physics", q:"The resistance of an ideal voltmeter is?", o:["Zero","Infinite","1000 Ohm","None"], a:"Infinite"},
+    {s:"Physics", q:"Eddy currents are used in?", o:["Induction furnace","Galvanometer damping","Both","None"], a:"Both"},
+    {s:"Physics", q:"Self inductance of a coil is 2H. If current changes at 1A/s, EMF is?", o:["2V","1V","0.5V","4V"], a:"2V"},
+    {s:"Physics", q:"The unit of Magnetic Moment is?", o:["A/m²","Am²","Tesla-m","Weber/m"], a:"Am²"},
+    {s:"Physics", q:"Critical angle for total internal reflection depends on?", o:["Refractive index","Color of light","Both","None"], a:"Both"},
+    {s:"Physics", q:"Power of a plane glass plate is?", o:["Zero","Infinite","1D","10D"], a:"Zero"},
+    {s:"Physics", q:"Standard frequency of AC in India is?", o:["50 Hz","60 Hz","100 Hz","220 Hz"], a:"50 Hz"},
+    {s:"Physics", q:"The core of a transformer is laminated to reduce?", o:["Copper loss","Eddy current loss","Hysteresis","None"], a:"Eddy current loss"},
+    {s:"Physics", q:"Which mirror is used in solar furnaces?", o:["Concave","Convex","Plane","Cylindrical"], a:"Concave"},
+    {s:"Physics", q:"The unit of power of a lens is?", o:["Watt","Dioptre","Candela","Metre"], a:"Dioptre"},
+    {s:"Physics", q:"Which phenomenon shows light is transverse?", o:["Interference","Polarization","Reflection","Refraction"], a:"Polarization"},
+    {s:"Physics", q:"Threshold frequency depends on?", o:["Intensity","Metal surface","Frequency","Voltage"], a:"Metal surface"},
+    {s:"Physics", q:"Nuclear force is?", o:["Short range","Long range","Weak","Gravitational"], a:"Short range"},
+    {s:"Physics", q:"Half-life of a substance depends on?", o:["Temperature","Pressure","Nature of substance","Mass"], a:"Nature of substance"},
+    {s:"Physics", q:"De-Broglie wavelength formula?", o:["λ = h/p","λ = h/mv","Both","None"], a:"Both"},
+    {s:"Physics", q:"Energy of a photon of wavelength λ is?", o:["hc/λ","hλ/c","mc²","hν/λ"], a:"hc/λ"},
+    {s:"Physics", q:"In reverse bias, the width of depletion layer?", o:["Increases","Decreases","Constant","None"], a:"Increases"},
+    {s:"Physics", q:"The device that converts AC to DC?", o:["Amplifier","Rectifier","Oscillator","None"], a:"Rectifier"},
+    {s:"Physics", q:"Sky appears black to an astronaut because?", o:["No atmosphere","No scattering","Both","None"], a:"Both"},
+
+    // CHEMISTRY (40)
+    {s:"Chemistry", q:"Number of atoms in a simple cubic unit cell?", o:["1","2","4","8"], a:"1"},
+    {s:"Chemistry", q:"Which defect decreases the density of a crystal?", o:["Schottky","Frenkel","Metal excess","None"], a:"Schottky"},
+    {s:"Chemistry", q:"Unit of rate constant for a first order reaction is?", o:["s⁻¹","mol L⁻¹ s⁻¹","L mol⁻¹ s⁻¹","None"], a:"s⁻¹"},
+    {s:"Chemistry", q:"Colligative properties depend on?", o:["Nature of solute","Number of solute particles","Nature of solvent","None"], a:"Number of solute particles"},
+    {s:"Chemistry", q:"Molarity of pure water is?", o:["55.5","18","100","1"], a:"55.5"},
+    {s:"Chemistry", q:"Standard reduction potential of Hydrogen is?", o:["0.0 V","1.0 V","-1.0 V","0.5 V"], a:"0.0 V"},
+    {s:"Chemistry", q:"Rusting of iron is an example of?", o:["Corrosion","Reduction","Polymerization","None"], a:"Corrosion"},
+    {s:"Chemistry", q:"Which catalyst is used in Haber's process?", o:["Iron","Nickel","Platinum","Copper"], a:"Iron"},
+    {s:"Chemistry", q:"The most abundant metal in earth's crust is?", o:["Aluminium","Iron","Gold","Silver"], a:"Aluminium"},
+    {s:"Chemistry", q:"Bauxite is an ore of?", o:["Al","Fe","Cu","Zn"], a:"Al"},
+    {s:"Chemistry", q:"Strongest acid among following is?", o:["HClO4","HClO3","HClO2","HClO"], a:"HClO4"},
+    {s:"Chemistry", q:"Which gas is used in advertising signs?", o:["Neon","Argon","Nitrogen","Helium"], a:"Neon"},
+    {s:"Chemistry", q:"Hybridization of Carbon in Diamond is?", o:["sp³","sp²","sp","dsp²"], a:"sp³"},
+    {s:"Chemistry", q:"The IUPAC name of CH3CHO is?", o:["Ethanal","Methanal","Ethanol","Propanal"], a:"Ethanal"},
+    {s:"Chemistry", q:"Fehling solution B is?", o:["Aq. CuSO4","Rochelle salt","NaOH","None"], a:"Rochelle salt"},
+    {s:"Chemistry", q:"Zwitter ion is formed by?", o:["Amino acids","Fats","Ethers","None"], a:"Amino acids"},
+    {s:"Chemistry", q:"The vitamin that contains Cobalt is?", o:["B12","B1","C","D"], a:"B12"},
+    {s:"Chemistry", q:"Natural rubber is a polymer of?", o:["Isoprene","Ethylene","Styrene","Neoprene"], a:"Isoprene"},
+    {s:"Chemistry", q:"The monomer of Teflon is?", o:["Tetrafluoroethylene","Vinyl chloride","Styrene","None"], a:"Tetrafluoroethylene"},
+    {s:"Chemistry", q:"Bakelite is an example of?", o:["Thermoplastic","Thermosetting","Fiber","Elastomer"], a:"Thermosetting"},
+    {s:"Chemistry", q:"Example of an antidepressant drug is?", o:["Aspirin","Equanil","Penicillin","None"], a:"Equanil"},
+    {s:"Chemistry", q:"The bond order in Oxygen (O2) is?", o:["1","2","3","0"], a:"2"},
+    {s:"Chemistry", q:"The pH of human blood is approx?", o:["7.4","6.0","8.0","7.0"], a:"7.4"},
+    {s:"Chemistry", q:"Dry ice is?", o:["Solid CO2","Solid H2O","Liquid N2","None"], a:"Solid CO2"},
+    {s:"Chemistry", q:"Which noble gas is most reactive?", o:["Xenon","Helium","Neon","Argon"], a:"Xenon"},
+    {s:"Chemistry", q:"Main constituent of LPG is?", o:["Methane","Butane","Propane","Ethane"], a:"Butane"},
+    {s:"Chemistry", q:"PVC is used for making?", o:["Raincoats","Pipes","Both","None"], a:"Both"},
+    {s:"Chemistry", q:"Hardness of water is due to salts of?", o:["Ca & Mg","Na & K","Cu & Fe","None"], a:"Ca & Mg"},
+    {s:"Chemistry", q:"The element used in matchstick industry?", o:["Red Phosphorus","White P","Sulfur","Carbon"], a:"Red Phosphorus"},
+    {s:"Chemistry", q:"Strongest reducing agent among Halogens?", o:["I⁻","F⁻","Cl⁻","Br⁻"], a:"I⁻"},
+    {s:"Chemistry", q:"The order of reaction for radioactive decay is?", o:["First","Zero","Second","Third"], a:"First"},
+    {s:"Chemistry", q:"Which enzyme converts glucose to ethanol?", o:["Zymase","Invertase","Maltase","None"], a:"Zymase"},
+    {s:"Chemistry", q:"Oxidation state of Ni in [Ni(CO)4] is?", o:["0","+2","+4","-2"], a:"0"},
+    {s:"Chemistry", q:"Which of following is not a greenhouse gas?", o:["CO2","CH4","O2","N2O"], a:"O2"},
+    {s:"Chemistry", q:"Antiseptic property of Dettol is due to?", o:["Chloroxylenol","Bithionol","Iodine","None"], a:"Chloroxylenol"},
+    {s:"Chemistry", q:"Main ore of Iron is?", o:["Haematite","Bauxite","Magnetite","Calamine"], a:"Haematite"},
+    {s:"Chemistry", q:"Cinnabar is an ore of?", o:["Hg","Pb","Cu","Zn"], a:"Hg"},
+    {s:"Chemistry", q:"Transition elements are?", o:["d-block","s-block","p-block","f-block"], a:"d-block"},
+    {s:"Chemistry", q:"Half life of a zero order reaction is?", o:["[A]₀/2k","0.693/k","[A]₀/k","None"], a:"[A]₀/2k"},
+    {s:"Chemistry", q:"Formula of washing soda is?", o:["Na2CO3.10H2O","NaHCO3","NaOH","Na2CO3"], a:"Na2CO3.10H2O"},
+
+    // BIOLOGY (40)
+    {s:"Biology", q:"Who is known as Father of Biology?", o:["Aristotle","Darwin","Lamarck","Mendel"], a:"Aristotle"},
+    {s:"Biology", q:"Structural unit of life is?", o:["Cell","Tissue","Organ","Atom"], a:"Cell"},
+    {s:"Biology", q:"Which organelle is called Powerhouse?", o:["Mitochondria","Nucleus","Golgi","Ribosome"], a:"Mitochondria"},
+    {s:"Biology", q:"Total chromosomes in humans?", o:["46","23","44","48"], a:"46"},
+    {s:"Biology", q:"The largest gland in human body is?", o:["Liver","Pancreas","Thyroid","Pituitary"], a:"Liver"},
+    {s:"Biology", q:"Master Gland of the body?", o:["Pituitary","Thyroid","Adrenal","None"], a:"Pituitary"},
+    {s:"Biology", q:"Universal Donor blood group?", o:["O-","AB+","A+","B-"], a:"O-"},
+    {s:"Biology", q:"Universal Acceptor blood group?", o:["AB+","O-","A-","B+"], a:"AB+"},
+    {s:"Biology", q:"Insulin is secreted by?", o:["Pancreas","Liver","Kidney","Heart"], a:"Pancreas"},
+    {s:"Biology", q:"Which vitamin helps in blood clotting?", o:["Vit K","Vit A","Vit C","Vit D"], a:"Vit K"},
+    {s:"Biology", q:"Functional unit of Kidney?", o:["Nephron","Neuron","Alveoli","None"], a:"Nephron"},
+    {s:"Biology", q:"Suicide bags of the cell are?", o:["Lysosomes","Ribosomes","Golgi","Nucleus"], a:"Lysosomes"},
+    {s:"Biology", q:"DNA replication occurs in?", o:["S-phase","G1-phase","M-phase","G2-phase"], a:"S-phase"},
+    {s:"Biology", q:"Double Helix model of DNA was given by?", o:["Watson & Crick","Mendel","Darwin","None"], a:"Watson & Crick"},
+    {s:"Biology", q:"Which tissue transports water in plants?", o:["Xylem","Phloem","Cortex","Epidermis"], a:"Xylem"},
+    {s:"Biology", q:"Phloem transports?", o:["Food","Water","Minerals","Gas"], a:"Food"},
+    {s:"Biology", q:"Father of Genetics?", o:["Gregor Mendel","Darwin","Morgan","Lamarck"], a:"Gregor Mendel"},
+    {s:"Biology", q:"Gas released during photosynthesis?", o:["Oxygen","CO2","Nitrogen","None"], a:"Oxygen"},
+    {s:"Biology", q:"Smallest bone in human body?", o:["Stapes","Femur","Radius","Ulna"], a:"Stapes"},
+    {s:"Biology", q:"Blood pressure is measured by?", o:["Sphygmomanometer","Stethoscope","Thermometer","None"], a:"Sphygmomanometer"},
+    {s:"Biology", q:"Total chambers in human heart?", o:["4","2","3","1"], a:"4"},
+    {s:"Biology", q:"The brain part that controls balance?", o:["Cerebellum","Cerebrum","Medulla","None"], a:"Cerebellum"},
+    {s:"Biology", q:"Which hormone is 'Fight or Flight'?", o:["Adrenaline","Insulin","Thyroxine","None"], a:"Adrenaline"},
+    {s:"Biology", q:"Study of fungi is?", o:["Mycology","Phycology","Virology","None"], a:"Mycology"},
+    {s:"Biology", q:"Pollen grains are produced in?", o:["Anther","Stigma","Ovary","Style"], a:"Anther"},
+    {s:"Biology", q:"Full form of AIDS?", o:["Acquired Immune Deficiency Syndrome","Active Immune","None","Both"], a:"Acquired Immune Deficiency Syndrome"},
+    {s:"Biology", q:"Penicillin was discovered by?", o:["Alexander Fleming","Pasteur","Hooke","None"], a:"Alexander Fleming"},
+    {s:"Biology", q:"Deficiency of Iodine causes?", o:["Goitre","Anemia","Scurvy","Rickets"], a:"Goitre"},
+    {s:"Biology", q:"Which part of leaf performs gas exchange?", o:["Stomata","Veins","Petiole","Midrib"], a:"Stomata"},
+    {s:"Biology", q:"Bile is stored in?", o:["Gall Bladder","Liver","Pancreas","Stomach"], a:"Gall Bladder"},
+    {s:"Biology", q:"RBC lifespan is?", o:["120 days","60 days","10 days","None"], a:"120 days"},
+    {s:"Biology", q:"Unit of nervous system?", o:["Neuron","Nephron","Cell","Tissue"], a:"Neuron"},
+    {s:"Biology", q:"Hormone for milk secretion?", o:["Oxytocin","Prolactin","Both","None"], a:"Both"},
+    {s:"Biology", q:"Night blindness is due to?", o:["Vit A","Vit B","Vit C","Vit D"], a:"Vit A"},
+    {s:"Biology", q:"Turners syndrome karyotype?", o:["45, XO","47, XXY","47, XYY","None"], a:"45, XO"},
+    {s:"Biology", q:"Downs syndrome is due to trisomy of?", o:["21st","18th","13th","None"], a:"21st"},
+    {s:"Biology", q:"Scurvy is caused by?", o:["Vit C","Vit D","Vit A","Vit B"], a:"Vit C"},
+    {s:"Biology", q:"Main site of photosynthesis?", o:["Chloroplast","Mitochondria","Nucleus","None"], a:"Chloroplast"},
+    {s:"Biology", q:"The only floating bone in body?", o:["Hyoid","Stapes","Femur","Patella"], a:"Hyoid"},
+    {s:"Biology", q:"Scientific name of Humans?", o:["Homo sapiens","Felis catus","Canis","None"], a:"Homo sapiens"}
+];
+
+let testSet = [], idx = 0, score = 0, useNeg = false;
+let userAnswers = [];
+
+function start(mode) {
+    useNeg = document.getElementById('neg-toggle').checked;
     
-    // Logic: 180 questions poore karna (Data ko repeat karke)
-    if(rawData.length > 0) {
-        for(let i=0; i<180; i++) {
-            testQs.push({...rawData[i % rawData.length], id: i+1});
-        }
+    // Select questions based on mode
+    testSet = mode === 'All' ? bank : bank.filter(x => x.s === mode);
+    
+    // Shuffle questions
+    testSet = testSet.sort(() => 0.5 - Math.random());
+    
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('result-screen').style.display = 'none';
+    
+    idx = 0; score = 0; userAnswers = [];
+    showQ();
+}
+
+function showQ() {
+    if(idx >= testSet.length) {
+        showFinal();
+        return;
     }
-
-    let userAnswers = new Array(180).fill(null);
-    let currentIdx = 0;
-    let timeLeft = 10800;
-    let timer;
-
-    function startQuiz() {
-        if(testQs.length === 0) return alert("Error: questions.js load nahi hui!");
-        document.getElementById('dashboard').style.display = 'none';
-        document.getElementById('quiz-screen').style.display = 'block';
-        renderOMR();
-        loadQ();
-        timer = setInterval(updateTimer, 1000);
-    }
-
-    function loadQ() {
-        let q = testQs[currentIdx];
-        document.getElementById('q-info').innerText = `${q.s} | QUESTION ${currentIdx + 1}/180`;
-        document.getElementById('q-text').innerText = q.q;
-        
-        let html = "";
-        q.o.forEach((opt, i) => {
-            let active = userAnswers[currentIdx] === i ? 'selected' : '';
-            html += `<button class="opt ${active}" onclick="pick(${i})">${opt}</button>`;
-        });
-        document.getElementById('options-box').innerHTML = html;
-        updateOMR();
-    }
-
-    function pick(i) { userAnswers[currentIdx] = i; loadQ(); }
-    function nav(dir) { let n = currentIdx + dir; if(n >=0 && n < 180) { currentIdx = n; loadQ(); } }
-
-    function renderOMR() {
-        let h = "";
-        for(let i=0; i<180; i++) h += `<div class="dot" id="dot-${i}" onclick="currentIdx=${i};loadQ();">${i+1}</div>`;
-        document.getElementById('omr-grid').innerHTML = h;
-    }
-
-    function updateOMR() {
-        document.querySelectorAll('.dot').forEach((d, i) => {
-            d.className = "dot";
-            if(i === currentIdx) d.classList.add('active');
-            if(userAnswers[i] !== null) d.classList.add('filled');
-        });
-    }
-
-    function updateTimer() {
-        timeLeft--;
-        let h = Math.floor(timeLeft/3600), m = Math.floor((timeLeft%3600)/60), s = timeLeft%60;
-        document.getElementById('timer').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        if(timeLeft <= 0) showResult();
-    }
-
-    function showResult() {
-        clearInterval(timer);
-        let score = 0, correct = 0, wrong = 0;
-        userAnswers.forEach((ans, i) => {
-            if(ans !== null) {
-                if(ans === testQs[i].a) { score += 4; correct++; }
-                else { score -= 1; wrong++; }
+    const q = testSet[idx];
+    document.getElementById('sub-tag').innerText = q.s.toUpperCase();
+    document.getElementById('counter').innerText = (idx + 1) + " / " + testSet.length;
+    document.getElementById('live-score').innerText = score.toFixed(2);
+    document.getElementById('question').innerText = q.q;
+    document.getElementById('progress-bar').style.width = ((idx / testSet.length) * 100) + "%";
+    
+    const box = document.getElementById('options-box');
+    box.innerHTML = "";
+    
+    q.o.forEach(opt => {
+        const b = document.createElement('button');
+        b.className = "opt";
+        b.innerText = opt;
+        b.onclick = () => {
+            // STRING MATCHING LOGIC (Text check)
+            const isCorrect = (opt === q.a);
+            
+            userAnswers.push({ q: q.q, sel: opt, ans: q.a, ok: isCorrect });
+            
+            if(isCorrect) {
+                score += 1;
+            } else if(useNeg) {
+                score -= 0.25;
             }
-        });
-        document.getElementById('quiz-screen').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'block';
-        document.getElementById('final-score').innerText = score;
-        document.getElementById('stats').innerHTML = `<p>✅ Correct: ${correct}</p><p>❌ Wrong: ${wrong}</p><p>⚪ Skipped: ${180-(correct+wrong)}</p>`;
-    }
+            
+            idx++; 
+            showQ();
+        };
+        box.appendChild(b);
+    });
+}
 
-    // Countdown target
-    const target = new Date("April 15, 2027").getTime();
-    const days = Math.floor((target - new Date().getTime()) / (1000*60*60*24));
-    document.getElementById('countdown').innerText = `TARGET: APRIL 15, 2027 | ${days} DAYS TO GO 🎯`;
+function showFinal() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+    document.getElementById('final-score').innerText = score.toFixed(2);
+    
+    let html = "<h3>Mistakes Report:</h3>";
+    let bad = userAnswers.filter(a => !a.ok);
+    
+    if(bad.length === 0) {
+        html += "<p style='color:var(--success)'>🔥 Unstoppable! 100% Accuracy.</p>";
+    } else {
+        bad.forEach(m => {
+            html += `<div class="mistake-card">
+                <b>Q:</b> ${m.q}<br>
+                <div style="margin-top:5px;">
+                    <span class="your-ans">${m.sel}</span>
+                    <span class="correct-ans">✅ ${m.ans}</span>
+                </div>
+            </div>`;
+        });
+    }
+    document.getElementById('review-box').innerHTML = html;
+}
 </script>
 </body>
 </html>
+
 
 
 
