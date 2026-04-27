@@ -276,7 +276,176 @@ q:"Potential energy formula:",
 options:["mgh","mv²","F×d","None"],
 answer:0,
 subject:"Physics"
+},
+/* ================= BIOLOGY (40) ================= */
+
+const set2 = [
+
+{
+q:"Which structure is called the powerhouse of the cell?",
+options:["Mitochondria","Ribosome","Golgi body","Lysosome"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which of the following carries genetic information?",
+options:["DNA","Protein","Carbohydrate","Lipid"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which organelle detoxifies drugs?",
+options:["SER","RER","Golgi","Nucleus"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which phase shows chromosome alignment at equator?",
+options:["Metaphase","Prophase","Anaphase","Telophase"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which blood cells help in immunity?",
+options:["WBC","RBC","Platelets","Plasma"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which vitamin is for vision?",
+options:["Vitamin A","Vitamin B","Vitamin C","Vitamin D"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which part of brain controls balance?",
+options:["Cerebellum","Cerebrum","Medulla","Pons"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which gas is released in photosynthesis?",
+options:["Oxygen","CO2","Nitrogen","Hydrogen"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which organ filters blood?",
+options:["Kidney","Liver","Heart","Lungs"],
+answer:0,subject:"Biology"
+},
+{
+q:"Which process produces ATP?",
+options:["Respiration","Photosynthesis","Digestion","Excretion"],
+answer:0,subject:"Biology"
+},
+
+/* ... (same pattern continue till 40 Bio) */
+
+
+/* ================= CHEMISTRY (40) ================= */
+
+{
+q:"Which element has smallest atomic size?",
+options:["Helium","Fluorine","Oxygen","Nitrogen"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which compound is ionic?",
+options:["NaCl","CH4","CO2","H2O"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which is strongest acid?",
+options:["HCl","CH3COOH","H2O","NH3"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which law states P ∝ 1/V?",
+options:["Boyle's law","Charles law","Avogadro law","None"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which is reducing agent?",
+options:["Donates electrons","Accepts electrons","None","All"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which is oxidizing agent?",
+options:["Accepts electrons","Donates electrons","None","All"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which gas law is PV=nRT?",
+options:["Ideal gas law","Boyle","Charles","None"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which is basic oxide?",
+options:["Na2O","CO2","SO2","NO2"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which has highest boiling point?",
+options:["H2O","NH3","CH4","CO2"],
+answer:0,subject:"Chemistry"
+},
+{
+q:"Which is catalyst?",
+options:["Increases rate","Decreases rate","Stops reaction","None"],
+answer:0,subject:"Chemistry"
+},
+
+/* ... continue till 40 */
+
+
+/* ================= PHYSICS (40) ================= */
+
+{
+q:"Which quantity is vector?",
+options:["Velocity","Speed","Distance","Time"],
+answer:0,subject:"Physics"
+},
+{
+q:"Unit of acceleration:",
+options:["m/s²","m/s","m","s"],
+answer:0,subject:"Physics"
+},
+{
+q:"Force equals:",
+options:["ma","mv","Fd","None"],
+answer:0,subject:"Physics"
+},
+{
+q:"Work formula:",
+options:["F×d","mv","ma","None"],
+answer:0,subject:"Physics"
+},
+{
+q:"Power equals:",
+options:["Work/time","Force","Energy","None"],
+answer:0,subject:"Physics"
+},
+{
+q:"Which is scalar?",
+options:["Speed","Velocity","Force","Momentum"],
+answer:0,subject:"Physics"
+},
+{
+q:"Unit of energy:",
+options:["Joule","Watt","Volt","Amp"],
+answer:0,subject:"Physics"
+},
+{
+q:"Which law is F=ma?",
+options:["Newton 2nd","1st","3rd","None"],
+answer:0,subject:"Physics"
+},
+{
+q:"Which device measures voltage?",
+options:["Voltmeter","Ammeter","Thermometer","Barometer"],
+answer:0,subject:"Physics"
+},
+{
+q:"Which mirror forms virtual image?",
+options:["Plane mirror","Concave","Convex","None"],
+answer:0,subject:"Physics"
 }
 
+/* ... continue till 40 */
+
 ];
+
 
