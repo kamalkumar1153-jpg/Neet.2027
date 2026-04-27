@@ -1,178 +1,249 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEET AI PRO MAX</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEET AI PRO MAX - 2026 Edition</title>
+    <style>
+        :root { 
+            --bg: #0f172a; --card: #1e293b; --accent: #3b82f6; 
+            --success: #22c55e; --error: #ef4444; --text: #f1f5f9;
+        }
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 10px; 
+        }
+        .container { max-width: 500px; margin: auto; }
+        
+        /* Header & Stats */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px; background: var(--card); border-radius: 12px; 
+            margin-bottom: 15px; border-bottom: 4px solid var(--accent);
+            position: sticky; top: 5px; z-index: 100;
+        }
+        .timer { color: #fbbf24; font-weight: bold; font-family: monospace; font-size: 1.1rem; }
+        .score-box { background: var(--accent); padding: 4px 10px; border-radius: 8px; font-weight: bold; }
 
-<style>
-body{background:#0f172a;color:white;font-family:sans-serif}
-.container{max-width:500px;margin:auto;padding:10px}
-.card{background:#1e293b;padding:12px;border-radius:12px;margin-top:10px}
-button{
-width:100%;padding:10px;margin:5px 0;
-border:none;border-radius:10px;
-background:#3b82f6;color:white;font-weight:bold
-}
-.omr-btn{
-width:25px;height:25px;margin:2px;
-border-radius:50%;background:#475569;color:white;border:none;font-size:10px
-}
-.answered{background:#22c55e}
-.correct{background:#16a34a}
-.wrong{background:#dc2626}
-</style>
+        /* Cards */
+        .card { 
+            background: var(--card); padding: 15px; border-radius: 15px; 
+            margin-bottom: 15px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Questions & Buttons */
+        .subject-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: bold; }
+        .question-text { margin: 10px 0 20px 0; font-size: 1.1rem; line-height: 1.4; }
+        
+        .opt-btn { 
+            width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #334155; 
+            border-radius: 10px; background: #2d3748; color: white; 
+            text-align: left; cursor: pointer; font-size: 1rem; transition: 0.2s;
+        }
+        .opt-btn:active { transform: scale(0.98); }
+        .opt-btn.correct { background: var(--success) !important; border-color: #15803d; }
+        .opt-btn.wrong { background: var(--error) !important; border-color: #b91c1c; }
 
-<!-- 🔥 IMPORTANT -->
-<script src="questions.js"></script>
+        /* Navigation */
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-nav { 
+            background: #475569; color: white; border: none; padding: 12px; 
+            border-radius: 10px; font-weight: bold; cursor: pointer;
+        }
+        .btn-main { background: var(--accent); border: none; color: white; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 1rem; margin-top: 10px; }
 
+        /* OMR Grid */
+        .omr-grid { 
+            display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; 
+            max-height: 200px; overflow-y: auto; padding: 5px;
+        }
+        .dot { 
+            aspect-ratio: 1; border-radius: 50%; border: 1px solid #475569; 
+            background: transparent; color: #94a3b8; font-size: 0.6rem; cursor: pointer;
+        }
+        .dot.active { border: 2px solid var(--accent); color: white; }
+        .dot.filled { background: var(--success); color: white; border: none; }
+        
+        #result-screen { text-align: center; display: none; }
+    </style>
 </head>
-
 <body>
+
 <div class="container">
+    <div class="header">
+        <div id="timer" class="timer">03:00:00</div>
+        <div class="score-box">Score: <span id="score-val">0</span></div>
+    </div>
 
-<h2>🧠 NEET AI PRO MAX</h2>
-<div id="timer">00:00</div>
-<div id="score">Score: 0</div>
+    <div id="menu" class="card">
+        <h2 style="margin-top:0">NEET AI PRO MAX</h2>
+        <p style="color:#94a3b8; font-size:0.9rem">Practice with real PYQ & NCERT Questions</p>
+        <button class="btn-main" onclick="startExam(180)">🚀 Full Mock (180Q)</button>
+        <button class="btn-main" style="background:#6366f1" onclick="startExam(20)">🎯 Quick Practice (20Q)</button>
+    </div>
 
-<div class="card">
-<button onclick="startFullMock()">🧪 Full Mock (180Q)</button>
-<button onclick="startTest()">🎯 Start Test</button>
-</div>
+    <div id="exam-area" style="display:none">
+        <div class="card" id="q-container"></div>
+        
+        <div class="nav-grid">
+            <button class="btn-nav" onclick="nav(-1)">⬅️ Previous</button>
+            <button class="btn-nav" onclick="nav(1)">Next ➡️</button>
+        </div>
 
-<div id="quiz" class="card"></div>
+        <div class="card">
+            <p style="margin:0 0 10px 0; font-weight:bold; font-size:0.8rem">OMR STATUS</p>
+            <div id="omr-box" class="omr-grid"></div>
+        </div>
+    </div>
 
-<button onclick="next()">Next ➡️</button>
-
-<div class="card">
-<h3>OMR</h3>
-<div id="omr"></div>
-</div>
-
+    <div id="result-screen" class="card">
+        <h2>Test Completed!</h2>
+        <h1 id="final-score" style="font-size:3rem; margin:10px 0">0</h1>
+        <p id="stats-text"></p>
+        <button class="btn-main" onclick="location.reload()">Try Again</button>
+    </div>
 </div>
 
 <script>
+// ===== QUESTION DATABASE (Expand this as needed) =====
+const BASE_DATA = [
+    {q:"Powerhouse of cell is:", options:["Mitochondria","Golgi","Lysosome","Nucleus"], ans:0, sub:"Biology"},
+    {q:"Insulin is secreted by:", options:["Alpha cells","Beta cells","Delta cells","Liver"], ans:1, sub:"Biology"},
+    {q:"Unit of Force is:", options:["Joule","Watt","Newton","Pascal"], ans:2, sub:"Physics"},
+    {q:"pH of pure water is:", options:["0","7","14","1"], ans:1, sub:"Chemistry"},
+    {q:"Speed of light is:", options:["3x10^8 m/s","3x10^6 m/s","2x10^8 m/s","3x10^10 m/s"], ans:0, sub:"Physics"},
+    {q:"Functional unit of Kidney:", options:["Neuron","Nephron","Alveoli","Hepatocyte"], ans:1, sub:"Biology"},
+    {q:"Most electronegative element:", options:["Oxygen","Chlorine","Fluorine","Nitrogen"], ans:2, sub:"Chemistry"},
+    {q:"Work done in circular motion:", options:["Positive","Negative","Zero","Infinite"], ans:2, sub:"Physics"},
+    {q:"Gas used in Photosynthesis:", options:["O2","CO2","N2","H2"], ans:1, sub:"Biology"},
+    {q:"Oxidation state of Oxygen in H2O2:", options:["-2","-1","0","+1"], ans:1, sub:"Chemistry"}
+];
 
-// GLOBAL
-let pool=[], index=0, score=0, answers=[];
-
-// TIMER
-let t=0;
-function startTimer(sec){
-t=sec;
-setInterval(()=>{
-let m=Math.floor(t/60);
-let s=t%60;
-document.getElementById("timer").innerText = m+":"+s;
-t--;
-},1000);
+// Generate 200 questions by shuffling and repeating if data is low
+function generatePool(size) {
+    let pool = [];
+    while(pool.length < size) {
+        let item = BASE_DATA[Math.floor(Math.random() * BASE_DATA.length)];
+        pool.push({...item});
+    }
+    return pool;
 }
 
-// START TEST
-function startTest(){
+// ===== APP LOGIC =====
+let questions = [];
+let currentIdx = 0;
+let userAns = [];
+let totalScore = 0;
+let timerInt;
 
-pool = questions.sort(()=>Math.random()-0.5).slice(0,50);
-
-index=0;
-score=0;
-answers=new Array(pool.length).fill(undefined);
-
-loadOMR();
-loadQ();
-startTimer(1800);
-
+function startExam(count) {
+    questions = generatePool(count);
+    userAns = new Array(count).fill(null);
+    currentIdx = 0;
+    totalScore = 0;
+    
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById('exam-area').style.display = 'block';
+    
+    renderOMR();
+    showQ();
+    startTimer(count === 180 ? 10800 : 1200);
 }
 
-// FULL MOCK
-function startFullMock(){
-
-let bio = questions.filter(q=>q.subject==="Biology").slice(0,90);
-let chem = questions.filter(q=>q.subject==="Chemistry").slice(0,45);
-let phy = questions.filter(q=>q.subject==="Physics").slice(0,45);
-
-pool = [...bio,...chem,...phy].sort(()=>Math.random()-0.5);
-
-index=0;
-score=0;
-answers=new Array(pool.length).fill(undefined);
-
-loadOMR();
-loadQ();
-startTimer(10800);
-
+function showQ() {
+    let q = questions[currentIdx];
+    let html = `
+        <div class="subject-tag">${q.sub} | Q${currentIdx + 1} of ${questions.length}</div>
+        <div class="question-text">${q.q}</div>
+    `;
+    
+    q.options.forEach((opt, i) => {
+        let style = "";
+        if(userAns[currentIdx] !== null) {
+            if(i === q.ans) style = "correct";
+            else if(i === userAns[currentIdx]) style = "wrong";
+        }
+        html += `<button class="opt-btn ${style}" onclick="checkAns(${i})">${opt}</button>`;
+    });
+    
+    document.getElementById('q-container').innerHTML = html;
+    updateOMR();
 }
 
-// LOAD QUESTION
-function loadQ(){
+function checkAns(choice) {
+    if(userAns[currentIdx] !== null) return; // Lock question
 
-let q = pool[index];
-
-let html = `<h3>Q${index+1}: ${q.q}</h3>`;
-
-q.options.forEach((opt,i)=>{
-html += `<button onclick="ans(${i},this)">${opt}</button>`;
-});
-
-document.getElementById("quiz").innerHTML = html;
-
+    userAns[currentIdx] = choice;
+    if(choice === questions[currentIdx].ans) {
+        totalScore += 4;
+    } else {
+        totalScore -= 1;
+    }
+    
+    document.getElementById('score-val').innerText = totalScore;
+    showQ(); // Refresh UI
 }
 
-// ANSWER (NEGATIVE MARKING)
-function ans(choice,btn){
-
-let prev = answers[index];
-
-// remove previous effect
-if(prev !== undefined){
-if(prev === pool[index].answer) score -= 4;
-else score += 1;
+function nav(step) {
+    let next = currentIdx + step;
+    if(next >= 0 && next < questions.length) {
+        currentIdx = next;
+        showQ();
+    }
 }
 
-// save new
-answers[index] = choice;
-
-// apply new
-if(choice === pool[index].answer){
-score += 4;
-btn.classList.add("correct");
-}else{
-score -= 1;
-btn.classList.add("wrong");
+function renderOMR() {
+    let html = "";
+    questions.forEach((_, i) => {
+        html += `<button class="dot" id="dot-${i}" onclick="jump(${i})">${i+1}</button>`;
+    });
+    document.getElementById('omr-box').innerHTML = html;
 }
 
-document.getElementById("score").innerText="Score: "+score;
-
-document.querySelectorAll(".omr-btn")[index].classList.add("answered");
-
+function updateOMR() {
+    document.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.remove('active');
+        if(i === currentIdx) d.classList.add('active');
+        if(userAns[i] !== null) d.classList.add('filled');
+    });
 }
 
-// NEXT
-function next(){
-if(index < pool.length-1){
-index++;
-loadQ();
-}
+function jump(i) {
+    currentIdx = i;
+    showQ();
 }
 
-// OMR
-function loadOMR(){
-
-let html="";
-for(let i=0;i<pool.length;i++){
-html += `<button class="omr-btn" onclick="jump(${i})">${i+1}</button>`;
+function startTimer(sec) {
+    let t = sec;
+    timerInt = setInterval(() => {
+        let h = Math.floor(t / 3600);
+        let m = Math.floor((t % 3600) / 60);
+        let s = t % 60;
+        document.getElementById('timer').innerText = 
+            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        
+        if(t <= 0) {
+            clearInterval(timerInt);
+            finish();
+        }
+        t--;
+    }, 1000);
 }
-document.getElementById("omr").innerHTML = html;
 
+function finish() {
+    document.getElementById('exam-area').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+    document.getElementById('final-score').innerText = totalScore;
+    
+    let attempted = userAns.filter(a => a !== null).length;
+    document.getElementById('stats-text').innerText = 
+        `Attempted: ${attempted} | Correct: ${Math.floor((totalScore + attempted)/5)} | Incorrect: ${attempted - Math.floor((totalScore + attempted)/5)}`;
 }
-
-function jump(i){
-index=i;
-loadQ();
-}
-
 </script>
 
 </body>
 </html>
+
 
 
 
