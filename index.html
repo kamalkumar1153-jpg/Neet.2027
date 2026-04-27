@@ -1,99 +1,7 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kamal-Trader Study Vault Pro</title>
-    <style>
-        :root {
-            --physics: #3b82f6; --chemistry: #ff8a65; --biology: #4caf50;
-            --bg: #0f172a; --card: #1e293b; --accent: #6366f1; --success: #10b981; --error: #ef4444;
-        }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #f1f5f9; user-select: none; }
-        
-        /* Home Screen */
-        #home-screen { padding: 20px; text-align: center; }
-        .header { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 40px 20px; border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .mode-card { background: var(--card); padding: 20px; margin: 15px 0; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .start-btn { width: 100%; padding: 20px; border-radius: 20px; background: var(--accent); color: white; border: none; font-weight: bold; font-size: 18px; margin-top: 20px; cursor: pointer; }
-        
-        /* Quiz UI */
-        #quiz-screen, #result-screen { display: none; padding: 20px; }
-        .stats-bar { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: #fbbf24; }
-        .q-card { background: var(--card); padding: 25px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .opt { width: 100%; padding: 18px; margin: 10px 0; border: 2px solid #334155; border-radius: 15px; background: #0f172a; color: white; text-align: left; font-size: 16px; cursor: pointer; }
-        .opt:active { background: var(--accent); }
-        
-        /* Progress Bar */
-        .p-container { width: 100%; height: 8px; background: #334155; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        #progress-bar { width: 0%; height: 100%; background: var(--accent); transition: 0.3s; }
 
-        /* Mistakes Report */
-        .mistake-card { background: #161e31; padding: 15px; border-radius: 15px; margin-top: 10px; border-left: 5px solid var(--error); text-align: left; font-size: 14px; }
-        .correct-ans { color: var(--success); font-weight: bold; }
-        .your-ans { color: var(--error); text-decoration: line-through; margin-right: 10px; }
-    </style>
-</head>
-<body>
-
-    <div id="home-screen">
-        <div class="header">
-            <h1 style="margin:0; color: #fbbf24;">Study Vault Pro 🎓</h1>
-            <p style="opacity: 0.7;">NEET & Board Preparation Terminal</p>
-        </div>
-
-        <div style="margin-top: 30px;">
-            <div class="mode-card" style="border-left: 5px solid var(--physics);" onclick="start('Physics')">
-                <span>Physics Practice</span> <small>40 Qs</small>
-            </div>
-            <div class="mode-card" style="border-left: 5px solid var(--chemistry);" onclick="start('Chemistry')">
-                <span>Chemistry Practice</span> <small>40 Qs</small>
-            </div>
-            <div class="mode-card" style="border-left: 5px solid var(--biology);" onclick="start('Biology')">
-                <span>Biology Practice</span> <small>40 Qs</small>
-            </div>
-            
-            <div style="background: #1e293b; padding: 15px; border-radius: 15px; margin-top: 20px;">
-                <label style="display:flex; justify-content: space-between; align-items: center; cursor: pointer;">
-                    <span>Negative Marking (-0.25)</span>
-                    <input type="checkbox" id="neg-toggle" style="width:20px; height:20px;">
-                </label>
-            </div>
-
-            <button class="start-btn" onclick="start('All')" style="background: linear-gradient(135deg, #6366f1, #a855f7);">🚀 START FULL MOCK TEST (120 Qs)</button>
-        </div>
-    </div>
-
-    <div id="quiz-screen">
-        <div class="stats-bar">
-            <span id="sub-tag">SUBJECT</span>
-            <span id="live-score">0.00</span>
-        </div>
-        
-        <div class="p-container"><div id="progress-bar"></div></div>
-        
-        <div style="text-align: right; margin-bottom: 10px; opacity: 0.6; font-size: 12px;" id="counter">0/0</div>
-
-        <div class="q-card">
-            <p id="question" style="font-size: 1.2rem; line-height: 1.5;"></p>
-            <div id="options-box" style="margin-top: 20px;"></div>
-        </div>
-    </div>
-
-    <div id="result-screen" style="text-align: center;">
-        <h2 style="color: var(--fbbf24);">Final Performance</h2>
-        <div style="font-size: 4rem; font-weight: bold; margin: 20px 0; color: var(--success);" id="final-score">0</div>
-        <p style="opacity: 0.7;">Total Score Achieved</p>
-        
-        <div id="review-box" style="margin-top: 30px; max-height: 400px; overflow-y: auto;"></div>
-        
-        <button class="start-btn" onclick="location.reload()" style="background: var(--card); margin-top: 30px;">🏠 BACK TO DASHBOARD</button>
-    </div>
-
-<script>
-// --- YOUR DATA BANK (120 QUESTIONS) ---
+// --- UPDATED FULL BANK (150 QUESTIONS) ---
 const bank = [
-    // PHYSICS (40)
+    // PHYSICS (50 Qs)
     {s:"Physics", q:"Two charges +1μC and +5μC are separated by a distance. Ratio of forces acting on them is?", o:["1:1","1:5","5:1","1:25"], a:"1:1"},
     {s:"Physics", q:"Electric field inside a hollow spherical conductor is?", o:["Zero","Constant","Infinite","Variable"], a:"Zero"},
     {s:"Physics", q:"If the distance between two plates of a capacitor is doubled, its capacitance?", o:["Doubles","Becomes half","Remains same","Quintuples"], a:"Becomes half"},
@@ -134,8 +42,18 @@ const bank = [
     {s:"Physics", q:"In reverse bias, the width of depletion layer?", o:["Increases","Decreases","Constant","None"], a:"Increases"},
     {s:"Physics", q:"The device that converts AC to DC?", o:["Amplifier","Rectifier","Oscillator","None"], a:"Rectifier"},
     {s:"Physics", q:"Sky appears black to an astronaut because?", o:["No atmosphere","No scattering","Both","None"], a:"Both"},
+    {s:"Physics", q:"Unit of Electric Dipole Moment?", o:["Coulomb-metre","Volt/metre","Newton/Coulomb","Debye-metre"], a:"Coulomb-metre"},
+    {s:"Physics", q:"When light enters from air to glass, its frequency?", o:["Increases","Decreases","Remains constant","Doubles"], a:"Remains constant"},
+    {s:"Physics", q:"Which lens is used to correct Myopia?", o:["Convex","Concave","Cylindrical","Bifocal"], a:"Concave"},
+    {s:"Physics", q:"Energy stored in a capacitor C at potential V?", o:["1/2 CV²","CV²","1/2 C²V","QV"], a:"1/2 CV²"},
+    {s:"Physics", q:"A transformer works on?", o:["Only AC","Only DC","Both","None"], a:"Only AC"},
+    {s:"Physics", q:"Resistance of an ideal Ammeter?", o:["Zero","Infinite","100 Ohm","1 Ohm"], a:"Zero"},
+    {s:"Physics", q:"Colour of thin soap films is due to?", o:["Interference","Scattering","Dispersion","Diffraction"], a:"Interference"},
+    {s:"Physics", q:"Wave used in TV remotes?", o:["Infrared","Ultraviolet","Radio waves","X-rays"], a:"Infrared"},
+    {s:"Physics", q:"Refractive index of water is?", o:["1.33","1.50","2.42","1.00"], a:"1.33"},
+    {s:"Physics", q:"Unit of magnetic flux is?", o:["Weber","Tesla","Gauss","Ampere"], a:"Weber"},
 
-    // CHEMISTRY (40)
+    // CHEMISTRY (50 Qs)
     {s:"Chemistry", q:"Number of atoms in a simple cubic unit cell?", o:["1","2","4","8"], a:"1"},
     {s:"Chemistry", q:"Which defect decreases the density of a crystal?", o:["Schottky","Frenkel","Metal excess","None"], a:"Schottky"},
     {s:"Chemistry", q:"Unit of rate constant for a first order reaction is?", o:["s⁻¹","mol L⁻¹ s⁻¹","L mol⁻¹ s⁻¹","None"], a:"s⁻¹"},
@@ -153,7 +71,7 @@ const bank = [
     {s:"Chemistry", q:"Fehling solution B is?", o:["Aq. CuSO4","Rochelle salt","NaOH","None"], a:"Rochelle salt"},
     {s:"Chemistry", q:"Zwitter ion is formed by?", o:["Amino acids","Fats","Ethers","None"], a:"Amino acids"},
     {s:"Chemistry", q:"The vitamin that contains Cobalt is?", o:["B12","B1","C","D"], a:"B12"},
-    {s:"Chemistry", q:"Natural rubber is a polymer of?", o:["Isoprene","Ethylene","Styrene","Neoprene"], a:"Isoprene"},
+    {s:"Chemistry", q:"Natural rubber is a polymer of?", o:["Isoprene","Ethylene","Styrene","None"], a:"Isoprene"},
     {s:"Chemistry", q:"The monomer of Teflon is?", o:["Tetrafluoroethylene","Vinyl chloride","Styrene","None"], a:"Tetrafluoroethylene"},
     {s:"Chemistry", q:"Bakelite is an example of?", o:["Thermoplastic","Thermosetting","Fiber","Elastomer"], a:"Thermosetting"},
     {s:"Chemistry", q:"Example of an antidepressant drug is?", o:["Aspirin","Equanil","Penicillin","None"], a:"Equanil"},
@@ -176,8 +94,18 @@ const bank = [
     {s:"Chemistry", q:"Transition elements are?", o:["d-block","s-block","p-block","f-block"], a:"d-block"},
     {s:"Chemistry", q:"Half life of a zero order reaction is?", o:["[A]₀/2k","0.693/k","[A]₀/k","None"], a:"[A]₀/2k"},
     {s:"Chemistry", q:"Formula of washing soda is?", o:["Na2CO3.10H2O","NaHCO3","NaOH","Na2CO3"], a:"Na2CO3.10H2O"},
+    {s:"Chemistry", q:"Gas evolved when Sodium reacts with Ethanol?", o:["Hydrogen","Oxygen","CO2","Nitrogen"], a:"Hydrogen"},
+    {s:"Chemistry", q:"Coordination number of BCC structure?", o:["8","6","12","4"], a:"8"},
+    {s:"Chemistry", q:"Acid present in Tamarind?", o:["Tartaric acid","Citric acid","Acetic acid","Oxalic acid"], a:"Tartaric acid"},
+    {s:"Chemistry", q:"Functional group in Ketones?", o:">C=O","-CHO","-OH","-COOH"], a:">C=O"},
+    {s:"Chemistry", q:"Brass is an alloy of?", o:["Cu & Zn","Cu & Sn","Fe & Ni","Al & Mg"], a:"Cu & Zn"},
+    {s:"Chemistry", q:"Strongest oxidizing halogen?", o:["F2","Cl2","Br2","I2"], a:"F2"},
+    {s:"Chemistry", q:"Molality units?", o:["mol/kg","mol/L","g/L","None"], a:"mol/kg"},
+    {s:"Chemistry", q:"Heating ore in excess air is?", o:["Roasting","Calcination","Smelting","Refining"], a:"Roasting"},
+    {s:"Chemistry", q:"Carbohydrate known as Cane Sugar?", o:["Sucrose","Glucose","Fructose","Lactose"], a:"Sucrose"},
+    {s:"Chemistry", q:"Catalyst for Hydrogenation of oils?", o:["Nickel","Iron","Vanadium","Platinum"], a:"Nickel"},
 
-    // BIOLOGY (40)
+    // BIOLOGY (50 Qs)
     {s:"Biology", q:"Who is known as Father of Biology?", o:["Aristotle","Darwin","Lamarck","Mendel"], a:"Aristotle"},
     {s:"Biology", q:"Structural unit of life is?", o:["Cell","Tissue","Organ","Atom"], a:"Cell"},
     {s:"Biology", q:"Which organelle is called Powerhouse?", o:["Mitochondria","Nucleus","Golgi","Ribosome"], a:"Mitochondria"},
@@ -217,93 +145,18 @@ const bank = [
     {s:"Biology", q:"Scurvy is caused by?", o:["Vit C","Vit D","Vit A","Vit B"], a:"Vit C"},
     {s:"Biology", q:"Main site of photosynthesis?", o:["Chloroplast","Mitochondria","Nucleus","None"], a:"Chloroplast"},
     {s:"Biology", q:"The only floating bone in body?", o:["Hyoid","Stapes","Femur","Patella"], a:"Hyoid"},
-    {s:"Biology", q:"Scientific name of Humans?", o:["Homo sapiens","Felis catus","Canis","None"], a:"Homo sapiens"}
+    {s:"Biology", q:"Scientific name of Humans?", o:["Homo sapiens","Felis catus","Canis","None"], a:"Homo sapiens"},
+    {s:"Biology", q:"'Kitchen of the cell' organelle?", o:["Chloroplast","Mitochondria","Ribosome","Vacuole"], a:"Chloroplast"},
+    {s:"Biology", q:"Double fertilization is found in?", o:["Angiosperms","Gymnosperms","Algae","Fungi"], a:"Angiosperms"},
+    {s:"Biology", q:"Total bones in an adult human?", o:["206","300","208","210"], a:"206"},
+    {s:"Biology", q:"Hormone for fruit ripening?", o:["Ethylene","Auxin","Gibberellin","Cytokinin"], a:"Ethylene"},
+    {s:"Biology", q:"AB blood group can donate to?", o:["Only AB","All groups","Only O","A and B"], a:"Only AB"},
+    {s:"Biology", q:"Study of tissues is?", o:["Histology","Cytology","Ecology","Anatomy"], a:"Histology"},
+    {s:"Biology", q:"Part of eye controlling light?", o:["Iris","Cornea","Lens","Retina"], a:"Iris"},
+    {s:"Biology", q:"World AIDS Day is?", o:["1st December","1st July","5th June","2nd October"], a:"1st December"},
+    {s:"Biology", q:"Vitamin synthesized by sunlight?", o:["Vitamin D","Vitamin A","Vitamin B12","Vitamin C"], a:"Vitamin D"},
+    {s:"Biology", q:"Functional unit of inheritance?", o:["Gene","Chromosome","DNA","Nucleus"], a:"Gene"}
 ];
-
-let testSet = [], idx = 0, score = 0, useNeg = false;
-let userAnswers = [];
-
-function start(mode) {
-    useNeg = document.getElementById('neg-toggle').checked;
-    
-    // Select questions based on mode
-    testSet = mode === 'All' ? bank : bank.filter(x => x.s === mode);
-    
-    // Shuffle questions
-    testSet = testSet.sort(() => 0.5 - Math.random());
-    
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('quiz-screen').style.display = 'block';
-    document.getElementById('result-screen').style.display = 'none';
-    
-    idx = 0; score = 0; userAnswers = [];
-    showQ();
-}
-
-function showQ() {
-    if(idx >= testSet.length) {
-        showFinal();
-        return;
-    }
-    const q = testSet[idx];
-    document.getElementById('sub-tag').innerText = q.s.toUpperCase();
-    document.getElementById('counter').innerText = (idx + 1) + " / " + testSet.length;
-    document.getElementById('live-score').innerText = score.toFixed(2);
-    document.getElementById('question').innerText = q.q;
-    document.getElementById('progress-bar').style.width = ((idx / testSet.length) * 100) + "%";
-    
-    const box = document.getElementById('options-box');
-    box.innerHTML = "";
-    
-    q.o.forEach(opt => {
-        const b = document.createElement('button');
-        b.className = "opt";
-        b.innerText = opt;
-        b.onclick = () => {
-            // STRING MATCHING LOGIC (Text check)
-            const isCorrect = (opt === q.a);
-            
-            userAnswers.push({ q: q.q, sel: opt, ans: q.a, ok: isCorrect });
-            
-            if(isCorrect) {
-                score += 1;
-            } else if(useNeg) {
-                score -= 0.25;
-            }
-            
-            idx++; 
-            showQ();
-        };
-        box.appendChild(b);
-    });
-}
-
-function showFinal() {
-    document.getElementById('quiz-screen').style.display = 'none';
-    document.getElementById('result-screen').style.display = 'block';
-    document.getElementById('final-score').innerText = score.toFixed(2);
-    
-    let html = "<h3>Mistakes Report:</h3>";
-    let bad = userAnswers.filter(a => !a.ok);
-    
-    if(bad.length === 0) {
-        html += "<p style='color:var(--success)'>🔥 Unstoppable! 100% Accuracy.</p>";
-    } else {
-        bad.forEach(m => {
-            html += `<div class="mistake-card">
-                <b>Q:</b> ${m.q}<br>
-                <div style="margin-top:5px;">
-                    <span class="your-ans">${m.sel}</span>
-                    <span class="correct-ans">✅ ${m.ans}</span>
-                </div>
-            </div>`;
-        });
-    }
-    document.getElementById('review-box').innerHTML = html;
-}
-</script>
-</body>
-</html>
 
 
 
