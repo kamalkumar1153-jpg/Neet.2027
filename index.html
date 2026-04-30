@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NEET AI App</title>
+  <title>NEET PRO AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     body { font-family: Arial; background:#0f172a; color:white; padding:10px;}
-    .card { background:#1e293b; padding:15px; border-radius:10px; margin-top:10px;}
-    button { width:100%; padding:10px; margin:5px 0; border:none; border-radius:8px;}
+    .card { background:#1e293b; padding:15px; border-radius:12px; margin-top:10px;}
+    button { width:100%; padding:10px; margin:5px 0; border:none; border-radius:8px; font-weight:bold;}
     .option { background:#334155; }
     .correct { background:green !important; }
     .wrong { background:red !important; }
@@ -17,7 +19,7 @@
 
 <body>
 
-<h2>🔥 NEET AI App</h2>
+<h2>🔥 NEET PRO AI</h2>
 
 <input id="name" placeholder="Enter Name">
 
@@ -28,10 +30,13 @@
   <option value="Chemistry">Chemistry</option>
 </select>
 
+<select id="mode">
+  <option value="practice">Practice Mode</option>
+  <option value="exam">Exam Mode</option>
+</select>
+
 <button onclick="startQuiz()">Start Quiz</button>
-<button onclick="startAdaptiveTest()">🔥 Weak Test</button>
-<button onclick="startDailyTest()">📅 Daily Test</button>
-<button onclick="showProgress()">📊 Progress</button>
+<button onclick="togglePause()">⏸ Pause</button>
 
 <div id="quiz" style="display:none;">
   <h3 id="timer">Time: 30</h3>
@@ -45,31 +50,35 @@
 </div>
 
 <h3 id="result"></h3>
-
-<div class="card">
-  <h3>🏆 Leaderboard</h3>
-  <div id="board"></div>
-</div>
-
-<script src="questions.js"></script>
+<canvas id="chart"></canvas>
 
 <script>
+
+// ================= SAMPLE QUESTIONS =================
+const questions = [
+  {q:"LH surge triggers:",options:["Ovulation","Menstruation","Implantation","Fertilization"],answer:0,subject:"Biology",chapter:"Reproduction"},
+  {q:"Powerhouse of cell:",options:["Nucleus","Mitochondria","Golgi","ER"],answer:1,subject:"Biology",chapter:"Cell"},
+  {q:"Unit of force:",options:["Newton","Joule","Watt","Pascal"],answer:0,subject:"Physics",chapter:"Motion"},
+  {q:"Ohm law:",options:["V=IR","F=ma","E=mc²","P=VI"],answer:0,subject:"Physics",chapter:"Electricity"},
+  {q:"pH neutral:",options:["0","7","14","1"],answer:1,subject:"Chemistry",chapter:"Basic"}
+];
+
 // ================= VARIABLES =================
-let index=0, score=0, timer, time=30, username="";
-let filteredQuestions=[];
-let correctCount=0, wrongCount=0;
+let filteredQuestions=[], index=0, score=0, timer, time=30;
+let correctCount=0, wrongCount=0, attempted=false;
+let mode="practice", paused=false;
+let answers=[];
 let stats = JSON.parse(localStorage.getItem("stats")) || {};
 
-// ================= START QUIZ =================
+// ================= START =================
 function startQuiz(){
-  username = document.getElementById("name").value;
-  let sub = document.getElementById("subject").value;
+  let sub=document.getElementById("subject").value;
+  mode=document.getElementById("mode").value;
 
-  if(!username) return alert("Enter name");
+  filteredQuestions=(sub==="All")?questions:questions.filter(q=>q.subject===sub);
+  filteredQuestions=filteredQuestions.sort(()=>0.5-Math.random());
 
-  filteredQuestions = (sub==="All") ? questions : questions.filter(q=>q.subject===sub);
-
-  reset();
+  index=0; score=0; correctCount=0; wrongCount=0; answers=[];
   loadQuestion();
 }
 
@@ -89,6 +98,7 @@ function startTimer(){
 
 // ================= LOAD =================
 function loadQuestion(){
+  attempted=false;
   document.getElementById("quiz").style.display="block";
 
   if(index>=filteredQuestions.length){
@@ -114,8 +124,10 @@ function check(ans,btn){
   let all=document.querySelectorAll(".option");
 
   all.forEach(b=>b.disabled=true);
+  attempted=true;
+  answers[index]=ans;
 
-  let isCorrect = ans==correct;
+  let isCorrect=ans===correct;
 
   if(isCorrect){
     btn.classList.add("correct");
@@ -124,7 +136,8 @@ function check(ans,btn){
   }else{
     btn.classList.add("wrong");
     all[correct].classList.add("correct");
-    score-=1;
+
+    if(mode==="exam") score-=1;
     wrongCount++;
   }
 
@@ -134,10 +147,12 @@ function check(ans,btn){
 
 // ================= NEXT =================
 function nextQuestion(){
+  if(!attempted){
+    answers[index]=null;
+  }
   index++;
   loadQuestion();
 }
-
 document.getElementById("nextBtn").onclick=nextQuestion;
 
 // ================= FINISH =================
@@ -145,119 +160,76 @@ function finishQuiz(){
   document.getElementById("quiz").style.display="none";
 
   let total=correctCount+wrongCount;
-  let acc = total ? ((correctCount/total)*100).toFixed(1) : 0;
+  let acc= total ? ((correctCount/total)*100).toFixed(1) : 0;
 
   document.getElementById("result").innerHTML=`
     🔥 Score: ${score}<br>
-    ✅ Correct: ${correctCount}<br>
-    ❌ Wrong: ${wrongCount}<br>
     🎯 Accuracy: ${acc}%
   `;
 
-  saveScore();
+  showReview();
+  showChart();
 }
 
-// ================= RESET =================
-function reset(){
-  index=0; score=0; correctCount=0; wrongCount=0;
+// ================= REVIEW =================
+function showReview(){
+  let html="<h3>Review</h3>";
+
+  filteredQuestions.forEach((q,i)=>{
+    let user=answers[i];
+    let correct=q.answer;
+
+    html+=`<div class="card">
+      ${q.q}<br>
+      Your: ${user!=null?q.options[user]:"Not Attempted"}<br>
+      Correct: ${q.options[correct]}
+    </div>`;
+  });
+
+  document.getElementById("result").innerHTML+=html;
 }
 
 // ================= STATS =================
 function updateStats(q,correct){
   let key=q.chapter;
 
-  if(!stats[key]){
-    stats[key]={correct:0,wrong:0};
-  }
+  if(!stats[key]) stats[key]={correct:0,wrong:0};
+  correct?stats[key].correct++:stats[key].wrong++;
 
-  correct ? stats[key].correct++ : stats[key].wrong++;
   localStorage.setItem("stats",JSON.stringify(stats));
 }
 
-function getWeakChapters(){
-  let weak=[];
+// ================= CHART =================
+function showChart(){
+  let labels=[], data=[];
+
   for(let ch in stats){
     let d=stats[ch];
     let total=d.correct+d.wrong;
-    if(total>3){
-      let acc=d.correct/total;
-      if(acc<0.5) weak.push(ch);
-    }
-  }
-  return weak;
-}
+    let acc= total ? (d.correct/total)*100 : 0;
 
-// ================= ADAPTIVE =================
-function startAdaptiveTest(){
-  let weak=getWeakChapters();
-
-  filteredQuestions = weak.length
-    ? questions.filter(q=>weak.includes(q.chapter))
-    : questions;
-
-  filteredQuestions = filteredQuestions.sort(()=>0.5-Math.random()).slice(0,30);
-
-  reset();
-  loadQuestion();
-}
-
-// ================= DAILY =================
-function startDailyTest(){
-  let today=new Date().toDateString();
-  let last=localStorage.getItem("lastTest");
-
-  if(last===today){
-    alert("Already done today");
-    return;
+    labels.push(ch);
+    data.push(acc);
   }
 
-  localStorage.setItem("lastTest",today);
-
-  filteredQuestions=questions.sort(()=>0.5-Math.random()).slice(0,30);
-
-  reset();
-  loadQuestion();
-}
-
-// ================= PROGRESS =================
-function showProgress(){
-  let html="<h3>📊 Progress</h3>";
-  for(let ch in stats){
-    let d=stats[ch];
-    let total=d.correct+d.wrong;
-    let acc=((d.correct/total)*100).toFixed(1);
-    html+=`<p>${ch} → ${acc}%</p>`;
-  }
-  document.getElementById("result").innerHTML=html;
-}
-
-// ================= FIREBASE =================
-const firebaseConfig = {
-  databaseURL: "https://console.firebase.google.com/project/neet-2027-9792f/database/neet-2027-9792f-default-rtdb/data/~2F"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-
-function saveScore(){
-  db.ref("scores").push({
-    name: username,
-    score: score
+  new Chart(document.getElementById("chart"),{
+    type:"bar",
+    data:{labels:labels,datasets:[{label:"Accuracy %",data:data}]}
   });
 }
 
-db.ref("scores").on("value", snap=>{
-  let data=snap.val();
-  let html="";
-  for(let k in data){
-    html+=`<p>${data[k].name} - ${data[k].score}</p>`;
+// ================= PAUSE =================
+function togglePause(){
+  if(paused){
+    startTimer();
+    paused=false;
+  }else{
+    clearInterval(timer);
+    paused=true;
   }
-  document.getElementById("board").innerHTML=html;
-});
-</script>
+}
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</script>
 
 </body>
 </html>
