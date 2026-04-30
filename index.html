@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NEET Pro App</title>
+  <title>NEET AI App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -17,10 +17,21 @@
 
 <body>
 
-<h2>🔥 NEET Pro App</h2>
+<h2>🔥 NEET AI App</h2>
 
 <input id="name" placeholder="Enter Name">
+
+<select id="subject">
+  <option value="All">All Subjects</option>
+  <option value="Biology">Biology</option>
+  <option value="Physics">Physics</option>
+  <option value="Chemistry">Chemistry</option>
+</select>
+
 <button onclick="startQuiz()">Start Quiz</button>
+<button onclick="startAdaptiveTest()">🔥 Weak Test</button>
+<button onclick="startDailyTest()">📅 Daily Test</button>
+<button onclick="showProgress()">📊 Progress</button>
 
 <div id="quiz" style="display:none;">
   <h3 id="timer">Time: 30</h3>
@@ -43,16 +54,26 @@
 <script src="questions.js"></script>
 
 <script>
+// ================= VARIABLES =================
 let index=0, score=0, timer, time=30, username="";
+let filteredQuestions=[];
+let correctCount=0, wrongCount=0;
+let stats = JSON.parse(localStorage.getItem("stats")) || {};
 
+// ================= START QUIZ =================
 function startQuiz(){
   username = document.getElementById("name").value;
+  let sub = document.getElementById("subject").value;
+
   if(!username) return alert("Enter name");
 
-  document.getElementById("quiz").style.display="block";
+  filteredQuestions = (sub==="All") ? questions : questions.filter(q=>q.subject===sub);
+
+  reset();
   loadQuestion();
 }
 
+// ================= TIMER =================
 function startTimer(){
   clearInterval(timer);
   time=30;
@@ -66,14 +87,17 @@ function startTimer(){
   },1000);
 }
 
+// ================= LOAD =================
 function loadQuestion(){
-  if(index>=questions.length){
+  document.getElementById("quiz").style.display="block";
+
+  if(index>=filteredQuestions.length){
     finishQuiz();
     return;
   }
 
-  let q=questions[index];
-  document.getElementById("question").innerText=`Q${index+1}: ${q.q}`;
+  let q=filteredQuestions[index];
+  document.getElementById("question").innerText=q.q;
 
   let html="";
   q.options.forEach((opt,i)=>{
@@ -84,24 +108,31 @@ function loadQuestion(){
   startTimer();
 }
 
+// ================= CHECK =================
 function check(ans,btn){
-  let correct=questions[index].answer;
+  let correct=filteredQuestions[index].answer;
   let all=document.querySelectorAll(".option");
 
   all.forEach(b=>b.disabled=true);
 
-  if(ans==correct){
+  let isCorrect = ans==correct;
+
+  if(isCorrect){
     btn.classList.add("correct");
     score+=4;
+    correctCount++;
   }else{
     btn.classList.add("wrong");
     all[correct].classList.add("correct");
     score-=1;
+    wrongCount++;
   }
 
+  updateStats(filteredQuestions[index], isCorrect);
   clearInterval(timer);
 }
 
+// ================= NEXT =================
 function nextQuestion(){
   index++;
   loadQuestion();
@@ -109,20 +140,104 @@ function nextQuestion(){
 
 document.getElementById("nextBtn").onclick=nextQuestion;
 
+// ================= FINISH =================
 function finishQuiz(){
   document.getElementById("quiz").style.display="none";
-  document.getElementById("result").innerText="Score: "+score;
+
+  let total=correctCount+wrongCount;
+  let acc = total ? ((correctCount/total)*100).toFixed(1) : 0;
+
+  document.getElementById("result").innerHTML=`
+    🔥 Score: ${score}<br>
+    ✅ Correct: ${correctCount}<br>
+    ❌ Wrong: ${wrongCount}<br>
+    🎯 Accuracy: ${acc}%
+  `;
 
   saveScore();
 }
 
-// ===== Firebase =====
+// ================= RESET =================
+function reset(){
+  index=0; score=0; correctCount=0; wrongCount=0;
+}
+
+// ================= STATS =================
+function updateStats(q,correct){
+  let key=q.chapter;
+
+  if(!stats[key]){
+    stats[key]={correct:0,wrong:0};
+  }
+
+  correct ? stats[key].correct++ : stats[key].wrong++;
+  localStorage.setItem("stats",JSON.stringify(stats));
+}
+
+function getWeakChapters(){
+  let weak=[];
+  for(let ch in stats){
+    let d=stats[ch];
+    let total=d.correct+d.wrong;
+    if(total>3){
+      let acc=d.correct/total;
+      if(acc<0.5) weak.push(ch);
+    }
+  }
+  return weak;
+}
+
+// ================= ADAPTIVE =================
+function startAdaptiveTest(){
+  let weak=getWeakChapters();
+
+  filteredQuestions = weak.length
+    ? questions.filter(q=>weak.includes(q.chapter))
+    : questions;
+
+  filteredQuestions = filteredQuestions.sort(()=>0.5-Math.random()).slice(0,30);
+
+  reset();
+  loadQuestion();
+}
+
+// ================= DAILY =================
+function startDailyTest(){
+  let today=new Date().toDateString();
+  let last=localStorage.getItem("lastTest");
+
+  if(last===today){
+    alert("Already done today");
+    return;
+  }
+
+  localStorage.setItem("lastTest",today);
+
+  filteredQuestions=questions.sort(()=>0.5-Math.random()).slice(0,30);
+
+  reset();
+  loadQuestion();
+}
+
+// ================= PROGRESS =================
+function showProgress(){
+  let html="<h3>📊 Progress</h3>";
+  for(let ch in stats){
+    let d=stats[ch];
+    let total=d.correct+d.wrong;
+    let acc=((d.correct/total)*100).toFixed(1);
+    html+=`<p>${ch} → ${acc}%</p>`;
+  }
+  document.getElementById("result").innerHTML=html;
+}
+
+// ================= FIREBASE =================
 const firebaseConfig = {
   databaseURL: "https://console.firebase.google.com/project/neet-2027-9792f/database/neet-2027-9792f-default-rtdb/data/~2F"
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db=firebase.database();
 
 function saveScore(){
   db.ref("scores").push({
@@ -141,7 +256,6 @@ db.ref("scores").on("value", snap=>{
 });
 </script>
 
-<!-- Firebase CDN -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
