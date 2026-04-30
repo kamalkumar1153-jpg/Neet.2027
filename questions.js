@@ -121,7 +121,7 @@ const questions = [
   {id:117,subject:"Chemistry",chapter:"Bonding",q:"Polar bond:",options:["Unequal share","Equal share","None","Mix"],answer:0},
   {id:118,subject:"Chemistry",chapter:"Atomic",q:"Mass number:",options:["p+n","p","n","e"],answer:0},
   {id:119,subject:"Chemistry",chapter:"Thermo",q:"Work unit:",options:["Joule","Watt","Volt","Amp"],answer:0},
-  {id:120,subject:"Chemistry",chapter:"Organic",q:"Methane:",options:["CH4","C2H6","C3H8","None"],answer:0}
+  {id:120,subject:"Chemistry",chapter:"Organic",q:"Methane:",options:["CH4","C2H6","C3H8","None"],answer:0},
 
 ];
 
