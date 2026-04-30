@@ -1,148 +1,150 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Study Vault Pro - Negative Marking</title>
-    <style>
-        :root { --physics: #3b82f6; --chemistry: #ff8a65; --biology: #4caf50; --bg: #0f172a; --card: #1e293b; --accent: #6366f1; --success: #10b981; --error: #ef4444; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #f1f5f9; user-select: none; }
-        #home-screen, #quiz-screen, #result-screen { padding: 20px; max-width: 500px; margin: auto; }
-        #quiz-screen, #result-screen { display: none; }
-        .header { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 30px 20px; border-radius: 0 0 30px 30px; text-align: center; }
-        .mode-card { background: var(--card); padding: 18px; margin: 12px 0; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .q-card { background: var(--card); padding: 20px; border-radius: 20px; margin-top: 15px; text-align: center; position: relative; }
-        #q-img { width: 100%; max-height: 200px; object-fit: contain; display: none; margin-bottom: 15px; background: white; border-radius: 12px; }
-        .opt { width: 100%; padding: 16px; margin: 10px 0; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: white; text-align: left; font-size: 15px; cursor: pointer; }
-        .opt:active { background: var(--accent); }
-        .p-container { width: 100%; height: 6px; background: #334155; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        #progress-bar { width: 0%; height: 100%; background: var(--accent); transition: 0.3s; }
-        .start-btn { width: 100%; padding: 18px; border-radius: 15px; background: var(--accent); color: white; border: none; font-weight: bold; font-size: 17px; margin-top: 15px; cursor: pointer; }
-        .skip-btn { background: transparent; border: 1px solid #64748b; color: #94a3b8; margin-top: 10px; padding: 10px; width: 100%; border-radius: 10px; }
-        .mistake-card { background: #161e31; padding: 12px; border-radius: 12px; margin-top: 10px; border-left: 4px solid var(--error); text-align: left; font-size: 14px; }
-        .score-tag { font-size: 20px; color: #fbbf24; font-weight: bold; }
-    </style>
+  <title>NEET Pro App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body { font-family: Arial; background:#0f172a; color:white; padding:10px;}
+    .card { background:#1e293b; padding:15px; border-radius:10px; margin-top:10px;}
+    button { width:100%; padding:10px; margin:5px 0; border:none; border-radius:8px;}
+    .option { background:#334155; }
+    .correct { background:green !important; }
+    .wrong { background:red !important; }
+    #nextBtn { background:orange; }
+  </style>
 </head>
+
 <body>
 
-    <div id="home-screen">
-        <div class="header">
-            <h1 style="margin:0; color: #fbbf24;">Study Vault Pro 🎓</h1>
-            <p style="opacity: 0.8;">Full 170 Qs Test (+4 / -1 Marking)</p>
-        </div>
-        <div style="margin-top: 25px;">
-            <div class="mode-card" onclick="start('Physics')"><span>Physics</span><small>50 Qs</small></div>
-            <div class="mode-card" onclick="start('Chemistry')"><span>Chemistry</span><small>50 Qs</small></div>
-            <div class="mode-card" onclick="start('Biology')"><span>Biology</span><small>50 Qs</small></div>
-            <div class="mode-card" onclick="start('Diagram')"><span>Diagram Special</span><small>20 Qs</small></div>
-            <button class="start-btn" onclick="start('All')" style="background: linear-gradient(135deg, #6366f1, #a855f7);">🚀 START FULL 170 Qs TEST</button>
-        </div>
-    </div>
+<h2>🔥 NEET Pro App</h2>
 
-    <div id="quiz-screen">
-        <div style="display:flex; justify-content: space-between; align-items: center;">
-            <span id="sub-tag" style="color: #64748b; font-weight: bold;">SUBJECT</span>
-            <span class="score-tag">Score: <span id="live-score">0</span></span>
-        </div>
-        <div class="p-container"><div id="progress-bar"></div></div>
-        <div style="text-align: right; opacity: 0.6; font-size: 12px;" id="counter">0/0</div>
-        <div class="q-card">
-            <img id="q-img" src="">
-            <p id="question" style="font-size: 1.1rem; line-height: 1.4;"></p>
-            <div id="options-box"></div>
-            <button class="skip-btn" onclick="handleAnswer(null)">⏭ Skip Question (0 marks)</button>
-        </div>
-    </div>
+<input id="name" placeholder="Enter Name">
+<button onclick="startQuiz()">Start Quiz</button>
 
-    <div id="result-screen" style="text-align: center;">
-        <h2 style="color: #fbbf24;">Final Performance</h2>
-        <div style="font-size: 4rem; font-weight: bold; color: var(--success);" id="final-score">0</div>
-        <p style="opacity: 0.7;">Total Score Achieved</p>
-        <div id="review-box" style="margin-top: 20px; max-height: 350px; overflow-y: auto;"></div>
-        <button class="start-btn" onclick="location.reload()">🏠 BACK TO DASHBOARD</button>
-    </div>
+<div id="quiz" style="display:none;">
+  <h3 id="timer">Time: 30</h3>
+
+  <div class="card">
+    <h3 id="question"></h3>
+    <div id="options"></div>
+  </div>
+
+  <button id="nextBtn">Next</button>
+</div>
+
+<h3 id="result"></h3>
+
+<div class="card">
+  <h3>🏆 Leaderboard</h3>
+  <div id="board"></div>
+</div>
+
+<script src="questions.js"></script>
 
 <script>
-// Bank data remains the same as before
-const bank = [
-    {s:"Physics", q:"The working of a transformer is based on?", o:["Self Induction","Mutual Induction","Eddy Currents","None"], a:"Mutual Induction"},
-    {s:"Physics", q:"Power of a plane glass plate is?", o:["Zero","Infinite","1D","10D"], a:"Zero"},
-    {s:"Physics", q:"The phase difference between current and voltage in a pure inductor is?", o:["0°","90°","180°","45°"], a:"90°"},
-    {s:"Chemistry", q:"Colligative properties depend on?", o:["Nature of solute","Number of solute particles","Nature of solvent","None"], a:"Number of solute particles"},
-    {s:"Chemistry", q:"Standard reduction potential of Hydrogen is?", o:["0.0 V","1.0 V","-1.0 V","0.5 V"], a:"0.0 V"}
-    // ... baaki sawal yahan add karein
-];
+let index=0, score=0, timer, time=30, username="";
 
-let testSet = [], idx = 0, score = 0, userAnswers = [];
+function startQuiz(){
+  username = document.getElementById("name").value;
+  if(!username) return alert("Enter name");
 
-function start(mode) {
-    testSet = (mode === 'All') ? [...bank] : bank.filter(x => x.s === mode);
-    testSet.sort(() => 0.5 - Math.random());
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('quiz-screen').style.display = 'block';
-    idx = 0; score = 0; userAnswers = [];
-    showQ();
+  document.getElementById("quiz").style.display="block";
+  loadQuestion();
 }
 
-function showQ() {
-    if(idx >= testSet.length) { showFinal(); return; }
-    const q = testSet[idx];
-    const imgTag = document.getElementById('q-img');
-    imgTag.style.display = q.img ? "block" : "none";
-    if(q.img) imgTag.src = q.img;
-
-    document.getElementById('sub-tag').innerText = q.s.toUpperCase();
-    document.getElementById('counter').innerText = (idx + 1) + " / " + testSet.length;
-    document.getElementById('question').innerText = q.q;
-    document.getElementById('live-score').innerText = score;
-    document.getElementById('progress-bar').style.width = ((idx / testSet.length) * 100) + "%";
-    
-    const box = document.getElementById('options-box');
-    box.innerHTML = "";
-    q.o.forEach(opt => {
-        const b = document.createElement('button');
-        b.className = "opt";
-        b.innerText = opt;
-        b.onclick = () => handleAnswer(opt);
-        box.appendChild(b);
-    });
-}
-
-function handleAnswer(selected) {
-    const q = testSet[idx];
-    let isCorrect = false;
-    let status = "skipped";
-
-    if (selected !== null) {
-        isCorrect = (selected === q.a);
-        if (isCorrect) {
-            score += 4; // Correct answer +4
-            status = "correct";
-        } else {
-            score -= 1; // Wrong answer -1
-            status = "wrong";
-        }
+function startTimer(){
+  clearInterval(timer);
+  time=30;
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById("timer").innerText="Time: "+time;
+    if(time==0){
+      clearInterval(timer);
+      nextQuestion();
     }
-
-    userAnswers.push({ q: q.q, sel: selected, ans: q.a, status: status });
-    idx++;
-    showQ();
+  },1000);
 }
 
-function showFinal() {
-    document.getElementById('quiz-screen').style.display = 'none';
-    document.getElementById('result-screen').style.display = 'block';
-    document.getElementById('final-score').innerText = score;
-    
-    let html = "<h4>Mistakes Report:</h4>";
-    let mistakes = userAnswers.filter(a => a.status === "wrong");
-    
-    mistakes.forEach(m => {
-        html += `<div class="mistake-card"><b>Q:</b> ${m.q}<br><span style="color:var(--error)">${m.sel || 'Skipped'}</span> | <span style="color:var(--success)">✅ ${m.ans}</span></div>`;
-    });
-    document.getElementById('review-box').innerHTML = mistakes.length ? html : "🔥 Perfect! No mistakes.";
+function loadQuestion(){
+  if(index>=questions.length){
+    finishQuiz();
+    return;
+  }
+
+  let q=questions[index];
+  document.getElementById("question").innerText=`Q${index+1}: ${q.q}`;
+
+  let html="";
+  q.options.forEach((opt,i)=>{
+    html+=`<button class="option" onclick="check(${i},this)">${opt}</button>`;
+  });
+
+  document.getElementById("options").innerHTML=html;
+  startTimer();
 }
+
+function check(ans,btn){
+  let correct=questions[index].answer;
+  let all=document.querySelectorAll(".option");
+
+  all.forEach(b=>b.disabled=true);
+
+  if(ans==correct){
+    btn.classList.add("correct");
+    score+=4;
+  }else{
+    btn.classList.add("wrong");
+    all[correct].classList.add("correct");
+    score-=1;
+  }
+
+  clearInterval(timer);
+}
+
+function nextQuestion(){
+  index++;
+  loadQuestion();
+}
+
+document.getElementById("nextBtn").onclick=nextQuestion;
+
+function finishQuiz(){
+  document.getElementById("quiz").style.display="none";
+  document.getElementById("result").innerText="Score: "+score;
+
+  saveScore();
+}
+
+// ===== Firebase =====
+const firebaseConfig = {
+  databaseURL: "YOUR_FIREBASE_URL"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+function saveScore(){
+  db.ref("scores").push({
+    name: username,
+    score: score
+  });
+}
+
+db.ref("scores").on("value", snap=>{
+  let data=snap.val();
+  let html="";
+  for(let k in data){
+    html+=`<p>${data[k].name} - ${data[k].score}</p>`;
+  }
+  document.getElementById("board").innerHTML=html;
+});
 </script>
+
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
 </body>
 </html>
 
